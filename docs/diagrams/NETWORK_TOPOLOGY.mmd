@@ -1,0 +1,26 @@
+```mermaid
+graph TB
+    subgraph Core Systems
+        L1[Layer 1] --> CON[Consensus]
+        L1 --> VAL[Validators]
+        L1 --> ORD[Orderers]
+    end
+    
+    subgraph Network Rails
+        CON --> SWIFT[SWIFT]
+        CON --> RTGS[RTGS]
+        CON --> ACH[ACH]
+    end
+    
+    subgraph Settlement
+        SWIFT --> FX[FX Settlement]
+        RTGS --> SEC[Securities]
+        ACH --> PAY[Payments]
+    end
+    
+    subgraph Compliance
+        FX --> REG[Regulatory]
+        SEC --> AUD[Audit]
+        PAY --> REP[Reporting]
+    end
+```

@@ -1,0 +1,30 @@
+```mermaid
+graph TB
+    subgraph RWA Portfolio [$222M]
+        RE[Real Estate $120M]
+        TB[Treasury Bills $60M]
+        CP[Commercial Paper $30M]
+        PM[Precious Metals $12M]
+    end
+    
+    subgraph Tokenization
+        RE --> RET[RE Tokens]
+        TB --> TBT[T-Bill Tokens]
+        CP --> CPT[CP Tokens]
+        PM --> PMT[PM Tokens]
+    end
+    
+    subgraph Compliance
+        RET --> KYC[KYC Check]
+        TBT --> KYC
+        CPT --> KYC
+        PMT --> KYC
+        KYC --> AML[AML Verification]
+    end
+    
+    subgraph Settlement
+        AML --> SWIFT[SWIFT Rail]
+        AML --> RTGS[RTGS System]
+        AML --> ACH[ACH Network]
+    end
+```

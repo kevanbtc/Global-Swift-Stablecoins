@@ -8,8 +8,43 @@ optimizer = true
 optimizer_runs = 500000
 solc_version = "0.8.24"
 via_ir = true
+gas_reports = ["*"]
+block_timestamp = 1698969600  # 2023-11-03
+block_number = 18_000_000
+chain_id = 1337
 
-# Besu-specific profiles for Hyperledger Besu deployment
+# Test settings
+fuzz_runs = 1000  # Number of fuzz runs
+fuzz_max_local_rejects = 10000
+fuzz_max_global_rejects = 10000
+invariant_runs = 100  # Number of invariant test runs
+invariant_depth = 100  # Depth of invariant tests
+verbosity = 3  # Detailed test output
+
+# Coverage settings
+coverage = true
+coverage_report_lines = true
+coverage_report_functions = true
+coverage_report_statements = true
+
+# Profiles for different test types
+[profile.sequencer]
+test = "foundry/test/sequencer"
+fuzz_runs = 2000
+invariant_runs = 200
+
+[profile.performance]
+test = "foundry/test/performance"
+fuzz_runs = 100  # Reduced for performance tests
+gas_reports = ["*"]
+verbosity = 4  # Maximum detail for benchmarks
+
+[profile.integration]
+test = "foundry/test/integration"
+fuzz_runs = 500
+eth_rpc_url = "${ETH_RPC_URL}"  # For forking tests
+
+# Besu-specific profiles for deployment
 [profile.besu]
 eth_rpc_url = "http://localhost:8545"  # Besu RPC endpoint
 chain_id = 1337  # Besu chain ID
@@ -18,6 +53,16 @@ gas_limit = 8000000
 
 [profile.besu_testnet]
 eth_rpc_url = "https://besu-testnet.example.com"  # Placeholder for Besu testnet
+chain_id = 1338
+gas_price = 20000000000
+gas_limit = 8000000
+
+# CI/CD profile for automated testing
+[profile.ci]
+fuzz_runs = 500
+invariant_runs = 50
+verbosity = 4
+fail_on_revert = true
 chain_id = 1338
 gas_price = 20000000000
 gas_limit = 8000000

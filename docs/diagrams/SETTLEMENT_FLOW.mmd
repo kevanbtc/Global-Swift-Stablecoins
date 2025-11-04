@@ -1,0 +1,23 @@
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Settlement
+    participant SWIFT
+    participant ISO20022
+    participant RWA
+    participant Compliance
+    
+    Client->>Settlement: initiate_settlement()
+    Settlement->>Compliance: check_compliance()
+    Compliance-->>Settlement: compliance_ok
+    
+    Settlement->>SWIFT: create_message()
+    SWIFT->>ISO20022: format_message()
+    ISO20022-->>SWIFT: formatted_message
+    
+    SWIFT->>RWA: verify_assets()
+    RWA-->>SWIFT: assets_verified
+    
+    SWIFT->>Settlement: confirm_ready()
+    Settlement->>Client: settlement_complete()
+```

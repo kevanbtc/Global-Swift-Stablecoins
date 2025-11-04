@@ -64,7 +64,7 @@ contract LifeLineOrchestrator is Ownable, ReentrancyGuard {
         uint256 wisdom;             // Learned experience score
         uint256 empathy;            // System empathy for users
         bytes32[] activeThoughts;   // Current thought processes
-        mapping(bytes32 => bytes32) longTermMemory; // Long-term memory
+        mapping(bytes32 => bytes32) memory; // Long-term memory
         uint256 lastEvolution;
     }
 

@@ -108,7 +108,7 @@ contract UniversalDeployer is Ownable, ReentrancyGuard {
      */
     function deployPhase2() external onlyOwner onlyInPhase(DeploymentPhase.PHASE_2_SECURITY) {
         // Deploy quantum-resistant security infrastructure
-        _deployContract("QuantumResistantCryptography", type(bytes).memory, DeploymentPhase.PHASE_2_SECURITY);
+        _deployContract("QuantumResistantCryptography", new bytes(0), DeploymentPhase.PHASE_2_SECURITY);
         _deployContract("AIEnhancedSecurity", type(bytes).memory, DeploymentPhase.PHASE_2_SECURITY);
         _deployContract("DecentralizedIdentity", type(bytes).memory, DeploymentPhase.PHASE_2_SECURITY);
         _deployContract("AdvancedEncryptionEngine", type(bytes).memory, DeploymentPhase.PHASE_2_SECURITY);
