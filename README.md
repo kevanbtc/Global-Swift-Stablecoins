@@ -119,8 +119,8 @@ Multi-rail settlement system:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/unykorn-l1.git
-cd unykorn-l1
+git clone https://github.com/kevanbtc/Global-Swift-Stablecoins.git
+cd Global-Swift-Stablecoins
 
 # Install dependencies
 npm install
