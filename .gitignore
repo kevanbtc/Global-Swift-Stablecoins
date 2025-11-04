@@ -1,0 +1,66 @@
+# Dependencies
+node_modules/
+yarn.lock
+package-lock.json
+
+# Environment
+.env
+.env.*
+
+# Build
+dist/
+build/
+cache/
+artifacts/
+typechain/
+typechain-types/
+
+# Coverage
+coverage/
+coverage.json
+.coverage_*/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Hardhat
+artifacts/
+cache/
+deployments/
+
+# Foundry
+out/
+forge-cache/
+
+# Local deployments
+.openzeppelin/unknown-*.json
+
+# Temporary files
+*.tmp
+*.temp
+.temp/
+
+# Private keys and mnemonic
+.secret
+mnemonic.txt
+private-key.txt
+
+# Test data
+test/data/
+
+# Documentation
+docs/generated/
