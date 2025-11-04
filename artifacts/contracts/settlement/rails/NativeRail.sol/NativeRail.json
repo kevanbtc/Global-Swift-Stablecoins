@@ -1,0 +1,355 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "NativeRail",
+  "sourceName": "contracts/settlement/rails/NativeRail.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_admin",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "id",
+          "type": "bytes32"
+        }
+      ],
+      "name": "RailCancelled",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "id",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "RailPrepared",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "id",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "RailRefunded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "id",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "RailReleased",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "admin",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "kind",
+      "outputs": [
+        {
+          "internalType": "enum IRail.Kind",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "asset",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "metadata",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct IRail.Transfer",
+          "name": "t",
+          "type": "tuple"
+        }
+      ],
+      "name": "prepare",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "id",
+          "type": "bytes32"
+        },
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "asset",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "metadata",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct IRail.Transfer",
+          "name": "t",
+          "type": "tuple"
+        }
+      ],
+      "name": "refund",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "id",
+          "type": "bytes32"
+        },
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "asset",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "metadata",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct IRail.Transfer",
+          "name": "t",
+          "type": "tuple"
+        }
+      ],
+      "name": "release",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "id",
+          "type": "bytes32"
+        }
+      ],
+      "name": "status",
+      "outputs": [
+        {
+          "internalType": "enum IRail.Status",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "asset",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "metadata",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct IRail.Transfer",
+          "name": "t",
+          "type": "tuple"
+        }
+      ],
+      "name": "transferId",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x6080346100a957601f6107a738819003918201601f19168301916001600160401b038311848410176100ae578084926020946040528339810103126100a957516001600160a01b038116908190036100a957801561007a57600080546001600160a01b0319169190911790556040516106e290816100c58239f35b60405162461bcd60e51b81526020600482015260076024820152660524e41543a20360cc1b6044820152606490fd5b600080fd5b634e487b7160e01b600052604160045260246000fdfe608060408181526004918236101561001657600080fd5b600092833560e01c91826304baa00b146104475750816308432d57146103275781634dd6e2b51461030557816352ad0d5e146102bb57816390ee1dfa146101bf578163cfcb5b1b1461009a575063f851a4401461007257600080fd5b346100965781600319360112610096576001600160a01b0360209254169051908152f35b5080fd5b9050346101bb576100aa36610499565b9290916001600160a01b03906100c48287541633146105d4565b838652600160205260ff838720541660058110156101a85760016100e89114610620565b8386526001602052828620600360ff198254161790556020850190868080806060610112876104cf565b9a0135809a5af161012161066c565b50156101655750906101547f368c9a8588242d513faa21c32bf5aaee15ee1150a43690313e009727607c71d393926104cf565b16938151908682526020820152a380f35b606490602085519162461bcd60e51b8352820152601160248201527f524e41543a20726566756e64206661696c0000000000000000000000000000006044820152fd5b634e487b7160e01b875260218252602487fd5b8280fd5b9050346101bb576101cf36610499565b9290916001600160a01b03906101e98287541633146105d4565b838652600160205260ff838720541660058110156101a857600161020d9114610620565b8386526001602052828620805460ff1916600217905584830190868080806060610236876104cf565b9a0135809a5af161024561066c565b50156102785750906101547fd246ccc6c6f9471c400e2ef416699d6cef45c429f224da93084d39b3f807286b93926104cf565b606490602085519162461bcd60e51b8352820152600f60248201527f524e41543a2078666572206661696c00000000000000000000000000000000006044820152fd5b8383346100965760203660031901126100965782358252600160205260ff818320541690519160058210156102f257602083838152f35b634e487b7160e01b815260218452602490fd5b5050346100965760209061032061031b36610462565b61051b565b9051908152f35b905061033236610462565b9161033c8361051b565b908185526020926001845260ff828720541660058110156101a857610417576060850135908134036103d45750907f10876f5ef21c4a7c28973a179a5d95ec8815150f2fbf9c39ba9c73132d2589da9183875260018552818720600160ff198254161790556103b7826103b08789016104cf565b97016104cf565b906001600160a01b039182918451978a895288015216951693a480f35b825162461bcd60e51b8152908101859052601360248201527f524e41543a20626164206d73672e76616c7565000000000000000000000000006044820152606490fd5b83606492519162461bcd60e51b8352820152600c60248201526b524e41543a2065786973747360a01b6044820152fd5b84903461009657816003193601126100965780600160209252f35b60031990602081830112610494576004359167ffffffffffffffff8311610494578260a0920301126104945760040190565b600080fd5b9060031960408184011261049457600435926024359167ffffffffffffffff8311610494578260a0920301126104945760040190565b356001600160a01b03811681036104945790565b90601f8019910116810190811067ffffffffffffffff82111761050557604052565b634e487b7160e01b600052604160045260246000fd5b610527602082016104cf565b90610534604082016104cf565b916080820135601e19833603018112156104945782019081359167ffffffffffffffff83116104945760200190823603821361049457826105ce9360e0936060604051978895602087019a60008c526001600160a01b03809216604089015216828701520135608085015260a0808501528160c0850152848401376000838284010152601f801991011681010360c08101845201826104e3565b51902090565b156105db57565b60405162461bcd60e51b815260206004820152600f60248201527f524e41543a206e6f742061646d696e00000000000000000000000000000000006044820152606490fd5b1561062757565b60405162461bcd60e51b815260206004820152600f60248201527f524e41543a2062616420737461746500000000000000000000000000000000006044820152606490fd5b3d156106a7573d9067ffffffffffffffff8211610505576040519161069b601f8201601f1916602001846104e3565b82523d6000602084013e565b60609056fea264697066735822122086d56b90bb7e0c795df4ab6d30f391fa343dc28613bef107781dff6e67867d8e64736f6c63430008180033",
+  "deployedBytecode": "0x608060408181526004918236101561001657600080fd5b600092833560e01c91826304baa00b146104475750816308432d57146103275781634dd6e2b51461030557816352ad0d5e146102bb57816390ee1dfa146101bf578163cfcb5b1b1461009a575063f851a4401461007257600080fd5b346100965781600319360112610096576001600160a01b0360209254169051908152f35b5080fd5b9050346101bb576100aa36610499565b9290916001600160a01b03906100c48287541633146105d4565b838652600160205260ff838720541660058110156101a85760016100e89114610620565b8386526001602052828620600360ff198254161790556020850190868080806060610112876104cf565b9a0135809a5af161012161066c565b50156101655750906101547f368c9a8588242d513faa21c32bf5aaee15ee1150a43690313e009727607c71d393926104cf565b16938151908682526020820152a380f35b606490602085519162461bcd60e51b8352820152601160248201527f524e41543a20726566756e64206661696c0000000000000000000000000000006044820152fd5b634e487b7160e01b875260218252602487fd5b8280fd5b9050346101bb576101cf36610499565b9290916001600160a01b03906101e98287541633146105d4565b838652600160205260ff838720541660058110156101a857600161020d9114610620565b8386526001602052828620805460ff1916600217905584830190868080806060610236876104cf565b9a0135809a5af161024561066c565b50156102785750906101547fd246ccc6c6f9471c400e2ef416699d6cef45c429f224da93084d39b3f807286b93926104cf565b606490602085519162461bcd60e51b8352820152600f60248201527f524e41543a2078666572206661696c00000000000000000000000000000000006044820152fd5b8383346100965760203660031901126100965782358252600160205260ff818320541690519160058210156102f257602083838152f35b634e487b7160e01b815260218452602490fd5b5050346100965760209061032061031b36610462565b61051b565b9051908152f35b905061033236610462565b9161033c8361051b565b908185526020926001845260ff828720541660058110156101a857610417576060850135908134036103d45750907f10876f5ef21c4a7c28973a179a5d95ec8815150f2fbf9c39ba9c73132d2589da9183875260018552818720600160ff198254161790556103b7826103b08789016104cf565b97016104cf565b906001600160a01b039182918451978a895288015216951693a480f35b825162461bcd60e51b8152908101859052601360248201527f524e41543a20626164206d73672e76616c7565000000000000000000000000006044820152606490fd5b83606492519162461bcd60e51b8352820152600c60248201526b524e41543a2065786973747360a01b6044820152fd5b84903461009657816003193601126100965780600160209252f35b60031990602081830112610494576004359167ffffffffffffffff8311610494578260a0920301126104945760040190565b600080fd5b9060031960408184011261049457600435926024359167ffffffffffffffff8311610494578260a0920301126104945760040190565b356001600160a01b03811681036104945790565b90601f8019910116810190811067ffffffffffffffff82111761050557604052565b634e487b7160e01b600052604160045260246000fd5b610527602082016104cf565b90610534604082016104cf565b916080820135601e19833603018112156104945782019081359167ffffffffffffffff83116104945760200190823603821361049457826105ce9360e0936060604051978895602087019a60008c526001600160a01b03809216604089015216828701520135608085015260a0808501528160c0850152848401376000838284010152601f801991011681010360c08101845201826104e3565b51902090565b156105db57565b60405162461bcd60e51b815260206004820152600f60248201527f524e41543a206e6f742061646d696e00000000000000000000000000000000006044820152606490fd5b1561062757565b60405162461bcd60e51b815260206004820152600f60248201527f524e41543a2062616420737461746500000000000000000000000000000000006044820152606490fd5b3d156106a7573d9067ffffffffffffffff8211610505576040519161069b601f8201601f1916602001846104e3565b82523d6000602084013e565b60609056fea264697066735822122086d56b90bb7e0c795df4ab6d30f391fa343dc28613bef107781dff6e67867d8e64736f6c63430008180033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

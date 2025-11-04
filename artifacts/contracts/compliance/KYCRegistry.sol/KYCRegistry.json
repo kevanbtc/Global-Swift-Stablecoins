@@ -1,0 +1,160 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "KYCRegistry",
+  "sourceName": "contracts/compliance/KYCRegistry.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_admin",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        }
+      ],
+      "name": "AdminTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "party",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "approved",
+          "type": "bool"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "jurisdiction",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "riskTier",
+          "type": "bytes32"
+        }
+      ],
+      "name": "KYCSet",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "admin",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "records",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "approved",
+          "type": "bool"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "jurisdiction",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "riskTier",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint64",
+          "name": "updatedAt",
+          "type": "uint64"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "party",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "approved",
+          "type": "bool"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "jurisdiction",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "riskTier",
+          "type": "bytes32"
+        }
+      ],
+      "name": "set",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        }
+      ],
+      "name": "transferAdmin",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x6080346100ae57601f61040138819003918201601f19168301916001600160401b038311848410176100b3578084926020946040528339810103126100ae57516001600160a01b038116908190036100ae57801561007a57600080546001600160a01b03191691909117905560405161033790816100ca8239f35b60405162461bcd60e51b815260206004820152600c60248201526b04b59433a2061646d696e20360a41b6044820152606490fd5b600080fd5b634e487b7160e01b600052604160045260246000fdfe60806040818152600436101561001457600080fd5b600091823560e01c908163469e90671461023257508063578a6f5c1461012257806375829def146100765763f851a4401461004e57600080fd5b346100725781600319360112610072576001600160a01b0360209254169051908152f35b5080fd5b50346100725760203660031901126100725761009061029a565b8254906001600160a01b03808316916100aa8333146102b5565b169283156100f6575082907ff8ccb027dfcd135e000e9d45e6cc2d662578a8825d4c45b5e32e0adf67e79ec68580a373ffffffffffffffffffffffffffffffffffffffff191617815580f35b5162461bcd60e51b815260206004820152600660248201526504b59433a20360d41b6044820152606490fd5b50346100725760803660031901126100725761013c61029a565b6024359182151580930361022e57604435606435926001600160a01b036101678188541633146102b5565b835167ffffffffffffffff91608082018381118382101761021a579260038a9996937f3f489e81226da4008a1a17f9c169c7ae64df1c810404f0fbcde2b3e60fcbd979999693899660609a528882526020820186815287808401928a84528c8501978742168952169d8e81526001602052209251151560ff801985541691161783555160018301555160028201550191511667ffffffffffffffff1982541617905581519384526020840152820152a280f35b634e487b7160e01b8a52604160045260248afd5b8380fd5b9190503461029657602036600319011261029657806080936001600160a01b0361025a61029a565b16815260016020522060ff81541691600182015467ffffffffffffffff6003600285015494015416931515855260208501528301526060820152f35b8280fd5b600435906001600160a01b03821682036102b057565b600080fd5b156102bc57565b60405162461bcd60e51b815260206004820152600e60248201527f4b59433a206e6f742061646d696e0000000000000000000000000000000000006044820152606490fdfea264697066735822122047df9f078ed7a6a5f7e38e658cdf41c7fec1d742071d66abc16ffc51bcb75bde64736f6c63430008180033",
+  "deployedBytecode": "0x60806040818152600436101561001457600080fd5b600091823560e01c908163469e90671461023257508063578a6f5c1461012257806375829def146100765763f851a4401461004e57600080fd5b346100725781600319360112610072576001600160a01b0360209254169051908152f35b5080fd5b50346100725760203660031901126100725761009061029a565b8254906001600160a01b03808316916100aa8333146102b5565b169283156100f6575082907ff8ccb027dfcd135e000e9d45e6cc2d662578a8825d4c45b5e32e0adf67e79ec68580a373ffffffffffffffffffffffffffffffffffffffff191617815580f35b5162461bcd60e51b815260206004820152600660248201526504b59433a20360d41b6044820152606490fd5b50346100725760803660031901126100725761013c61029a565b6024359182151580930361022e57604435606435926001600160a01b036101678188541633146102b5565b835167ffffffffffffffff91608082018381118382101761021a579260038a9996937f3f489e81226da4008a1a17f9c169c7ae64df1c810404f0fbcde2b3e60fcbd979999693899660609a528882526020820186815287808401928a84528c8501978742168952169d8e81526001602052209251151560ff801985541691161783555160018301555160028201550191511667ffffffffffffffff1982541617905581519384526020840152820152a280f35b634e487b7160e01b8a52604160045260248afd5b8380fd5b9190503461029657602036600319011261029657806080936001600160a01b0361025a61029a565b16815260016020522060ff81541691600182015467ffffffffffffffff6003600285015494015416931515855260208501528301526060820152f35b8280fd5b600435906001600160a01b03821682036102b057565b600080fd5b156102bc57565b60405162461bcd60e51b815260206004820152600e60248201527f4b59433a206e6f742061646d696e0000000000000000000000000000000000006044820152606490fdfea264697066735822122047df9f078ed7a6a5f7e38e658cdf41c7fec1d742071d66abc16ffc51bcb75bde64736f6c63430008180033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

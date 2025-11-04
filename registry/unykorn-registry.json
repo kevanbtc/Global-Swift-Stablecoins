@@ -1,0 +1,469 @@
+{
+  "generated_at": "2025-11-03T18:04:00.0000000",
+  "admin_wallets": [
+    {
+      "Name": "Polygon Admin",
+      "Address": "0x8aced25DC8530FDaf0f86D53a0A1E02AAfA7Ac7A"
+    },
+    {
+      "Name": "Solana Admin",
+      "Address": "GFHJQ7JgcRGYToPf2KXdGWDABRVnqzMU7ePDu4b3BqZg"
+    }
+  ],
+  "tld_registry_contracts": [
+    {
+      "TLD": ".farm",
+      "Contract": "0x06b0c665159fcac1b7f6ad36c167808f542ea790"
+    },
+    {
+      "TLD": ".water",
+      "Contract": "0xFfbdbcBc7624b27Ac484BCA8A43EfFEc11Fc8d65"
+    },
+    {
+      "TLD": ".silver",
+      "Contract": "0xf89f79fcc66903234dad9b09c6167ace02ec1776"
+    },
+    {
+      "TLD": ".steel",
+      "Contract": "0x783053a053c8e68a54659a7952e385d4c686418a"
+    },
+    {
+      "TLD": ".med",
+      "Contract": "0xa1a15b88de195759e1a0cf0ed4af1cdb197dbf9e"
+    },
+    {
+      "TLD": ".bio",
+      "Contract": "0xeaede9be187516f665d5c5c383b12425d025ce54"
+    },
+    {
+      "TLD": ".real",
+      "Contract": "0x0a2c01031c6e4d0668b49f1d3db9e4d805d69f8c"
+    },
+    {
+      "TLD": ".v",
+      "Contract": "0x2c4f3f4c33713233218f942d195668476584af47"
+    },
+    {
+      "TLD": ".911",
+      "Contract": "0xEdd543476C929E9eE062fE9EcF1150E403533126"
+    },
+    {
+      "TLD": ".brics",
+      "Contract": "0xa497f59dd691c26cc0322fbaf588e439216068f3"
+    },
+    {
+      "TLD": ".peso",
+      "Contract": "0x9e9399d7967f628c1e779860222b92d29b60a095"
+    },
+    {
+      "TLD": ".yen",
+      "Contract": "0xcb72ac9b5f9b5488234928a17b6f7bb86ad994cb"
+    },
+    {
+      "TLD": ".diversegy",
+      "Contract": "0x7aaaeea71ae66ddfb0a448975b6d7b9b0f752103"
+    }
+  ],
+  "glaciermint_root": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6",
+  "glaciermint2_root": "0xf569734BCDc2908f99F48952B1dDA884d05a52C4",
+  "roots_glaciermint_A": [
+    {
+      "TLD": ".",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".$$",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".$$$",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".vault",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".bank",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".usd",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".bot",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".yoda",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".oil",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".gas",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".energy",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".nil",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".grid",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".meta",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".sun",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".vr",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".ar",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".panda",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".chain",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".ai.",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".ai.$$",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".ai.$$$",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".hydro",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".power",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".life",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".goat",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".lunaa",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".z",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".atl",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".gamechanger",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".gc",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".pay",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".sho",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".onlyfans",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".cuba",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".havana",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    },
+    {
+      "TLD": ".unykorn",
+      "Contract": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6"
+    }
+  ],
+  "roots_glaciermint_B": [
+    {
+      "TLD": ".law",
+      "Contract": "0xf569734BCDc2908f99F48952B1dDA884d05a52C4"
+    },
+    {
+      "TLD": ".legal",
+      "Contract": "0xf569734BCDc2908f99F48952B1dDA884d05a52C4"
+    }
+  ],
+  "erc20_polygon": [
+    {
+      "Symbol": "DTT",
+      "Contract": "0x6c170f8daBE417e75e4A717A7B9D1ad39c23D3b3"
+    },
+    {
+      "Symbol": "UTRX",
+      "Contract": "0x5835B205eC7233b01ADa846B0a58D5aA20Da22fA"
+    },
+    {
+      "Symbol": "NRG",
+      "Contract": "0xFCaB274Ca815F0F89E26197c1E7932B36c94c0e3"
+    },
+    {
+      "Symbol": "OIB",
+      "Contract": "0x249d1085FC4e4074e00eBC315dF08f7dCd707420"
+    },
+    {
+      "Symbol": "OGB",
+      "Contract": "0xF09d19D04B6Ea1635BAe1c518ce1cFe1be6f4125"
+    },
+    {
+      "Symbol": "SHO",
+      "Contract": "0xF53B88Ac178B045E34183ec21A01327345D245E8"
+    },
+    {
+      "Symbol": "UNY",
+      "Contract": "0x3b7a56B6778adA2B341F49be3755Da6Ef455578d"
+    },
+    {
+      "Symbol": "OFT",
+      "Contract": "0xAE6801DbBe0404f75390B7Fd22FC49A9bbFb55a1"
+    },
+    {
+      "Symbol": "NILX",
+      "Contract": "0x857a05e920b911497554a1142829e9015b670900"
+    },
+    {
+      "Symbol": "UCLAX",
+      "Contract": "0x9d48f28a4550964121864dcd7574ff493b68713e"
+    },
+    {
+      "Symbol": "LSUX",
+      "Contract": "0xA4DBC7358F5382770D8Cdfd828e9Ed489228C7a4"
+    },
+    {
+      "Symbol": "USCX",
+      "Contract": "0x757cebAca4132378c054c29CaCDE15948d89F50a"
+    },
+    {
+      "Symbol": "GOATX",
+      "Contract": "0x0850981d20A6F0F39520bB3A53b2B9650790d00f"
+    },
+    {
+      "Symbol": "ATHX",
+      "Contract": "0xd00e1A767AaBEfCc1be2D60e4cb84E392070e2Ea"
+    },
+    {
+      "Symbol": "GSwitch",
+      "Contract": "0x33b4656465f4968b701194c7061d74b36c2611bd"
+    },
+    {
+      "Symbol": "WUF",
+      "Contract": "0xa78f40f73ea565f61a1db90e654bf0ea37c529d1"
+    },
+    {
+      "Symbol": "QuickBuck",
+      "Contract": "0x567512c4ea81d221f8f4cc1f378092c5016e340f"
+    },
+    {
+      "Symbol": "TROX",
+      "Contract": "0x7c26dBc201beD4c081C304Fd3869cFa4bE5dEBe2"
+    }
+  ],
+  "fractional_rwa": [
+    {
+      "Token": "GOLDx",
+      "Contract": "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e"
+    },
+    {
+      "Token": "BAUXx",
+      "Contract": "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0"
+    },
+    {
+      "Token": "NIQx",
+      "Contract": "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82"
+    },
+    {
+      "Token": "IRONx",
+      "Contract": "0x9A676e781A523b5d0C0e43731313A708CB607508"
+    },
+    {
+      "Token": "FELDx",
+      "Contract": "0x0B306BF915C4d645ff596e518fAf3F9669b97016"
+    },
+    {
+      "Token": "PHOSx",
+      "Contract": "0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1"
+    },
+    {
+      "Token": "DIAMx",
+      "Contract": "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE"
+    }
+  ],
+  "erc6551_vaults": [
+    {
+      "Name": "SubVaultFactory",
+      "Contract": "0xe1299c378f56903248f0357597d57d48d2d67a6c"
+    },
+    {
+      "Name": ".nil Root Vault",
+      "Contract": "0xAc2a8CFcB7E01Ed80585235b3a994E51aa268a4C"
+    },
+    {
+      "Name": "ninja.goat",
+      "Contract": "0xa4Dd5A03D447fE8063276127aF3272328B8Da632"
+    },
+    {
+      "Name": "legend.goat",
+      "Contract": "0x1AFBF71829f28da20F36bAb1d17F3C22D12FacA3"
+    },
+    {
+      "Name": "donk.goat",
+      "Contract": "0xFB9e1983EF6d9F867f26feA76632B831E85D9a0f"
+    },
+    {
+      "Name": "sho.goat",
+      "Contract": "0x4F6AeAcEd9025f7b67317cebaaF1A3C08C726184"
+    },
+    {
+      "Name": "rob.goat",
+      "Contract": "0xfEF31B3C8Cb1E58207b2A92E4bFDEa3e4fD2dEB1"
+    },
+    {
+      "Name": ".swift Vault",
+      "Contract": "0x1a17307db1c50f2517fc981e14ce56f00363f02a"
+    },
+    {
+      "Name": "MineralVault",
+      "Contract": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+    },
+    {
+      "Name": "TroptionsVaultNFT",
+      "Contract": "0x1C77Ed0dE393bb82d09a08afE4F2aAa237353fa0"
+    }
+  ],
+  "protocol_infra": [
+    {
+      "Contract": "OptimaVault4626",
+      "Address": "0x4399312599e936097870561fdb30451448d3e00c"
+    },
+    {
+      "Contract": "GenieRewardVault",
+      "Address": "0xb38ea864a29b89dd6cd2d4d6ad3682eee52f52ef"
+    },
+    {
+      "Contract": "CommissionOverrideEngine",
+      "Address": "0xf3c5fceb67d0289463910f082d868ef9f9d97c5d"
+    },
+    {
+      "Contract": "PayoutRouter",
+      "Address": "0xb05e0434f6a86075ac6563a0503531271a901a97"
+    },
+    {
+      "Contract": "VaultAutoPayout",
+      "Address": "0x5c14f339f0ae72e1d8f62ce4227a5bd931168ec7"
+    },
+    {
+      "Contract": "RegistryAggregator",
+      "Address": "0xb9ca719983c7cf1de869da520cbd14594fae6aba"
+    }
+  ],
+  "nft_genie_suite": [
+    {
+      "Contract": "SwiftMessageNFT",
+      "Address": "0x47c2B4284a23666301e16408e473C7A05b0A1B56"
+    },
+    {
+      "Contract": "GenieBrokerSBT",
+      "Address": "0x8740e6dfae81ef8bfca6b13a3f72787198154142"
+    },
+    {
+      "Contract": "CapriceRequestNFT",
+      "Address": "0x649ffd3f41e5839d31cc802ddf5062f86a7963ac"
+    },
+    {
+      "Contract": "MatrixQuoteNFT",
+      "Address": "0x98b3060a3a5867ef09b8814946a6b53c13bd4aac"
+    },
+    {
+      "Contract": "BrokerQuoteNFT",
+      "Address": "0x95ca17addf2d0a5f0265c1111a757ae421c3fe0e"
+    },
+    {
+      "Contract": "DealTrackerNFT",
+      "Address": "0xd02cbbcad44191dc41b1f688e720db9f716bca38"
+    },
+    {
+      "Contract": "CustomerLOANFT",
+      "Address": "0xf3539302cf71333fb30a109ee3893e7534214eb0"
+    },
+    {
+      "Contract": "CommissionReceiptNFT",
+      "Address": "0xaccd3f54aa64d1f6312024881024478efbd3d27f"
+    },
+    {
+      "Contract": "AgentProfileNFT",
+      "Address": "0x15b671f5e4bd1f3ddfa5ed03e38aefa2fba6ec27"
+    }
+  ],
+  "spl_solana": [
+    {
+      "Token": "CUBANAID",
+      "MintAddress": "GVqL9r7o1cMBvq5NCNgZPsXDNYdGrcM2Uy9bfmEEqGVi"
+    },
+    {
+      "Token": "WORLDCHILD",
+      "MintAddress": "9VM1nRdSRFBsP5ZGH3bcxyFHVUqZZHs1Hf4ckSAAhvf6"
+    },
+    {
+      "Token": "BROKEX",
+      "MintAddress": "HMHAkMJZLP7ZZnCRHvRzH3W91w5NSp1R4amG6dCJVNUj"
+    },
+    {
+      "Token": "LEGACY",
+      "MintAddress": "DpHBiCMwc6F2ConLnn7S4t82cxnjrkhFafn8JNWXKZ3o"
+    },
+    {
+      "Token": "FBM",
+      "MintAddress": "gQWhvA5RSmnwVF8j44cRs8vZrygVatkYx53a9nkCYa3"
+    },
+    {
+      "Token": "COWTOKEN",
+      "MintAddress": "2GadUvdn2DLFS8wXJwZdp8Qbe3kRMZUYeRBQvLbPps4F"
+    },
+    {
+      "Token": "ZIGGY",
+      "MintAddress": "2dUsRbXc4arxa8vy2xzbUK4tRLbZj1MffQjFEBQUG7By"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+powershell.exe -NoProfile -Command "cd 'c:\Users\Kevan\stablecoin and cbdc'; npx hardhat run scripts/deploy-cctp-rail.ts"
+  -ContentType 'application/json'
+  -Body '{"id":"0xDEADBEEF...32BYTES","released":true,"settledAt":1699999999}' `
+Invoke-RestMethod -Uri http://localhost:8787/sign -Method Post `
+$env:PRIVATE_KEY="0xYOUR_SIGNER_PK"; $env:RAIL_ADDRESS="0xX712_RAIL"; npm run exec:eip712
+$env:RAIL_ADDRESS="0xCCIP_RAIL_ADDRESS"; $env:ACTION="release"; npm run exec:ccip
+$env:RAIL_ADDRESS="0xYOUR_RAIL_ADDRESS"; $env:ACTION="refund"; npm run exec:cctp
+$env:RAIL_ADDRESS="0xYOUR_RAIL_ADDRESS"; $env:ACTION="release"; npm run exec:cctp
+  --meta "note"
+  --amount 123 `
+  --to 0x0000000000000000000000000000000000000001 `
+  --asset 0x0000000000000000000000000000000000000000 `
+  --contract 0xYOUR_RAIL_ADDRESS `
+npx hardhat rail:prepare `

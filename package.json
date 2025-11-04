@@ -1,0 +1,49 @@
+{
+  "name": "regulatory-compliant-stablecoin",
+  "version": "1.0.0",
+  "description": "Templates for regulatory-compliant stablecoins and CBDCs supporting Basel III/IV, ISO 20022, MiCA, and other frameworks",
+  "scripts": {
+    "test": "hardhat test",
+    "compile": "hardhat compile",
+    "deploy": "hardhat run scripts/deploy.js",
+    "wire:governance": "hardhat run scripts/wire-governance.ts",
+    "migrate:chainlink": "tsx scripts/migrate-chainlink-feeds.ts",
+    "migrate:pyth": "tsx scripts/migrate-pyth-ids.ts",
+    "seed:wam": "tsx scripts/load-maturity-lots.ts",
+    "import:csv": "tsx scripts/import-lots-from-csv.ts",
+    "bootstrap:roles": "tsx scripts/bootstrap-roles.ts",
+    "safe:batch": "tsx scripts/build-safe-batch.ts",
+    "test:hh:reporter": "hardhat test test/CustodianNavReporter.e2e.ts",
+    "test:foundry": "forge test -vv",
+    "exec:ccip": "hardhat run --no-compile cli/executors/ccip-executor.ts",
+    "exec:cctp": "hardhat run --no-compile cli/executors/cctp-executor.ts",
+    "exec:eip712": "hardhat run --no-compile cli/executors/eip712-signer.ts"
+  },
+  "dependencies": {
+    "@chainlink/contracts": "^0.8.0",
+    "@chainlink/contracts-ccip": "^0.8.0"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "@openzeppelin/contracts": "^5.4.0",
+    "@openzeppelin/contracts-upgradeable": "^5.4.0",
+    "@openzeppelin/hardhat-upgrades": "^3.0.1",
+    "@types/js-yaml": "^4.0.9",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "csv-parse": "^6.1.0",
+    "date-fns": "^4.1.0",
+    "hardhat": "^2.19.1",
+    "hardhat-storage-layout": "^0.1.7",
+    "js-yaml": "^4.1.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.2.2"
+  },
+  "main": "hardhat.config.js",
+  "directories": {
+    "test": "test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

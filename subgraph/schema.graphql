@@ -1,0 +1,33 @@
+type NavPoint @entity {
+  id: ID!
+  instrument: Bytes!
+  nav1e18: BigInt!
+  asOf: BigInt!
+  epoch: BigInt!
+  reserveHash: Bytes!
+  tx: Bytes!
+  ts: BigInt!
+}
+
+type Journal @entity {
+  id: ID!
+  doc: Bytes!
+  debit: Bytes!
+  credit: Bytes!
+  amount1e2: BigInt!
+  currency: String!
+  memo: String!
+  tx: Bytes!
+  ts: BigInt!
+}
+
+type PoRRound @entity {
+  id: ID!
+  epoch: BigInt!
+  totalAssets1e18: BigInt!
+  cash1e18: BigInt!
+  tBills1e18: BigInt!
+  documentsCid: Bytes!
+  tx: Bytes!
+  ts: BigInt!
+}

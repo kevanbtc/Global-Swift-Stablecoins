@@ -1,0 +1,71 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IReserveQuorumView",
+  "sourceName": "contracts/ccip/PorBroadcaster.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "latestSealed",
+      "outputs": [
+        {
+          "internalType": "uint64",
+          "name": "epoch",
+          "type": "uint64"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "totalAssets1e18",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "totalLiabilities1e18",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "cash1e18",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "tBills1e18",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "repos1e18",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "other1e18",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "documentsCid",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint64",
+              "name": "asOf",
+              "type": "uint64"
+            }
+          ],
+          "internalType": "struct IReserveQuorumView.Snapshot",
+          "name": "s",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

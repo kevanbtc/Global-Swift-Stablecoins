@@ -1,0 +1,22 @@
+{
+  "name": "compliant-bill-token",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy": "hardhat run scripts/01_deploy.ts --network hardhat",
+    "grant": "hardhat run scripts/02_grant_roles.ts --network hardhat",
+    "mint": "hardhat run scripts/03_demo_mint.ts --network hardhat",
+    "rebase": "hardhat run scripts/04_demo_rebase.ts --network hardhat"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@openzeppelin/contracts-upgradeable": "^5.4.0",
+    "@openzeppelin/hardhat-upgrades": "^3.9.1",
+    "dotenv": "^16.6.1",
+    "hardhat": "^2.26.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}

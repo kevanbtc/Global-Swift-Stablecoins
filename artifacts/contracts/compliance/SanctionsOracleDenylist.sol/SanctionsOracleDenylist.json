@@ -1,0 +1,123 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "SanctionsOracleDenylist",
+  "sourceName": "contracts/compliance/SanctionsOracleDenylist.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_admin",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        }
+      ],
+      "name": "AdminTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "flagged",
+          "type": "bool"
+        }
+      ],
+      "name": "SanctionSet",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "admin",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "a",
+          "type": "address"
+        }
+      ],
+      "name": "isSanctioned",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "a",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "flagged",
+          "type": "bool"
+        }
+      ],
+      "name": "set",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        }
+      ],
+      "name": "transferAdmin",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x6080346100ad57601f61033738819003918201601f19168301916001600160401b038311848410176100b2578084926020946040528339810103126100ad57516001600160a01b038116908190036100ad57801561007a57600080546001600160a01b03191691909117905560405161026e90816100c98239f35b60405162461bcd60e51b815260206004820152600b60248201526a0534f3a2061646d696e20360ac1b6044820152606490fd5b600080fd5b634e487b7160e01b600052604160045260246000fdfe604060808152600436101561001357600080fd5b600090813560e01c806335e3b25a1461015957806375829def146100ae578063df592f7d146100735763f851a4401461004b57600080fd5b3461006f578160031936011261006f576001600160a01b0360209254169051908152f35b5080fd5b503461006f57602036600319011261006f5760ff816020936001600160a01b0361009b6101e1565b1681526001855220541690519015158152f35b503461006f57602036600319011261006f576100c86101e1565b8254906001600160a01b03808316916100e28333146101fc565b1692831561012e575082907ff8ccb027dfcd135e000e9d45e6cc2d662578a8825d4c45b5e32e0adf67e79ec68580a373ffffffffffffffffffffffffffffffffffffffff191617815580f35b5162461bcd60e51b81526020600482015260056024820152640534f3a20360dc1b6044820152606490fd5b503461006f578060031936011261006f576101726101e1565b602435908115158092036101dd577f136d7a722ab47b70411cb0d7b80198df8d273731d7fad15853eb7d95643629f8916020916001600160a01b03906101bc8288541633146101fc565b16938486526001835280862060ff1981541660ff841617905551908152a280f35b8380fd5b600435906001600160a01b03821682036101f757565b600080fd5b1561020357565b60405162461bcd60e51b815260206004820152600d60248201526c29a79d103737ba1030b236b4b760991b6044820152606490fdfea2646970667358221220f4dad3854466699b1861e583abe833f363c84269ebe64ee400ebfc2ac264daa564736f6c63430008180033",
+  "deployedBytecode": "0x604060808152600436101561001357600080fd5b600090813560e01c806335e3b25a1461015957806375829def146100ae578063df592f7d146100735763f851a4401461004b57600080fd5b3461006f578160031936011261006f576001600160a01b0360209254169051908152f35b5080fd5b503461006f57602036600319011261006f5760ff816020936001600160a01b0361009b6101e1565b1681526001855220541690519015158152f35b503461006f57602036600319011261006f576100c86101e1565b8254906001600160a01b03808316916100e28333146101fc565b1692831561012e575082907ff8ccb027dfcd135e000e9d45e6cc2d662578a8825d4c45b5e32e0adf67e79ec68580a373ffffffffffffffffffffffffffffffffffffffff191617815580f35b5162461bcd60e51b81526020600482015260056024820152640534f3a20360dc1b6044820152606490fd5b503461006f578060031936011261006f576101726101e1565b602435908115158092036101dd577f136d7a722ab47b70411cb0d7b80198df8d273731d7fad15853eb7d95643629f8916020916001600160a01b03906101bc8288541633146101fc565b16938486526001835280862060ff1981541660ff841617905551908152a280f35b8380fd5b600435906001600160a01b03821682036101f757565b600080fd5b1561020357565b60405162461bcd60e51b815260206004820152600d60248201526c29a79d103737ba1030b236b4b760991b6044820152606490fdfea2646970667358221220f4dad3854466699b1861e583abe833f363c84269ebe64ee400ebfc2ac264daa564736f6c63430008180033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

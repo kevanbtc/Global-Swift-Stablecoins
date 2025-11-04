@@ -1,0 +1,9 @@
+@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/
+@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/
+@openzeppelin/contracts/security/=lib/openzeppelin-contracts/contracts/utils/
+@openzeppelin/contracts-upgradeable/security/=lib/openzeppelin-contracts-upgradeable/contracts/utils/
+forge-std/=lib/forge-std/src/
+@chainlink/contracts/=lib/chainlink/contracts/
+ds-test/=lib/forge-std/lib/ds-test/src/
+erc4626-tests/=lib/openzeppelin-contracts/lib/erc4626-tests/src/
+halmos-cheatcodes/=lib/openzeppelin-contracts/lib/halmos-cheatcodes/src/

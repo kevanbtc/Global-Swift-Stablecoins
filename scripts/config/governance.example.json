@@ -1,0 +1,34 @@
+{
+  "timelock": {
+    "minDelay": 3600,
+    "proposers": ["0x0000000000000000000000000000000000000001"],
+    "executors": ["0x0000000000000000000000000000000000000002"],
+    "admin": ""
+  },
+  "guardian": {
+    "admin": "0x0000000000000000000000000000000000000003",
+    "guardians": [
+      "0x0000000000000000000000000000000000000004",
+      "0x0000000000000000000000000000000000000005"
+    ],
+    "threshold": 2
+  },
+  "targets": [
+    {
+      "name": "StableUSD",
+      "address": "0xYourStableUSDAddress",
+      "roles": [
+        { "role": "GOVERNOR_ROLE", "to": "<TIMELOCK>", "revokeFrom": "0xDeployerEOA" },
+        { "role": "GUARDIAN_ROLE", "to": "<GUARDIAN>" }
+      ]
+    },
+    {
+      "name": "ReserveProofRegistry",
+      "address": "0xYourReserveRegistryAddress",
+      "roles": [
+        { "role": "GOVERNOR_ROLE", "to": "<TIMELOCK>", "revokeFrom": "0xDeployerEOA" },
+        { "role": "AUDITOR_ROLE", "to": "0xYourAuditorEOA" }
+      ]
+    }
+  ]
+}

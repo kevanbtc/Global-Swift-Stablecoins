@@ -1,0 +1,112 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "ReserveOracleMock",
+  "sourceName": "contracts/mocks/ReserveOracleMock.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "fresh",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "isFresh",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "liab",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "liabilitiesUSD",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "nav",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "navUSD",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_nav",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_liab",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "_fresh",
+          "type": "bool"
+        }
+      ],
+      "name": "set",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x60806040526000805460ff1916600117905534801561001d57600080fd5b506101778061002d6000396000f3fe608060405234801561001057600080fd5b506004361061007d5760003560e01c806364482f791161005b57806364482f79146100b9578063b466b76f146100e5578063c1590cd7146100f2578063e5dfbf54146100fb57600080fd5b8063074b63a9146100825780633319999c146100995780636268ceaa146100a2575b600080fd5b6001545b6040519081526020015b60405180910390f35b61008660025481565b60005460ff165b6040519015158152602001610090565b6100e36100c7366004610103565b6001929092556002556000805460ff1916911515919091179055565b005b6000546100a99060ff1681565b61008660015481565b600254610086565b60008060006060848603121561011857600080fd5b83359250602084013591506040840135801515811461013657600080fd5b80915050925092509256fea26469706673582212207aeabe392c6a63bc8843942894048e0bee35ac0b7364eb9655f004cfcd6de27864736f6c63430008180033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b506004361061007d5760003560e01c806364482f791161005b57806364482f79146100b9578063b466b76f146100e5578063c1590cd7146100f2578063e5dfbf54146100fb57600080fd5b8063074b63a9146100825780633319999c146100995780636268ceaa146100a2575b600080fd5b6001545b6040519081526020015b60405180910390f35b61008660025481565b60005460ff165b6040519015158152602001610090565b6100e36100c7366004610103565b6001929092556002556000805460ff1916911515919091179055565b005b6000546100a99060ff1681565b61008660015481565b600254610086565b60008060006060848603121561011857600080fd5b83359250602084013591506040840135801515811461013657600080fd5b80915050925092509256fea26469706673582212207aeabe392c6a63bc8843942894048e0bee35ac0b7364eb9655f004cfcd6de27864736f6c63430008180033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

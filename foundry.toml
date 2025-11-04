@@ -1,0 +1,23 @@
+[profile.default]
+src = "contracts"
+test = "foundry/test"
+out = "foundry/out"
+libs = ["lib"]
+evm_version = "paris"
+optimizer = true
+optimizer_runs = 500000
+solc_version = "0.8.24"
+via_ir = true
+
+# Besu-specific profiles for Hyperledger Besu deployment
+[profile.besu]
+eth_rpc_url = "http://localhost:8545"  # Besu RPC endpoint
+chain_id = 1337  # Besu chain ID
+gas_price = 20000000000  # 20 gwei
+gas_limit = 8000000
+
+[profile.besu_testnet]
+eth_rpc_url = "https://besu-testnet.example.com"  # Placeholder for Besu testnet
+chain_id = 1338
+gas_price = 20000000000
+gas_limit = 8000000

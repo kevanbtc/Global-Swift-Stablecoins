@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Treasury Auction Results (FiscalData)",
+  "type": "object",
+  "required": ["record_date", "cusip", "security_type", "security_term", "security_maturity_date", "accepted_amount", "high_discount_rate"],
+  "properties": {
+    "record_date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "cusip": { "type": "string", "minLength": 6, "maxLength": 12 },
+    "security_type": { "type": "string", "enum": ["Bill","Note","Bond"] },
+    "security_term": { "type": "string" },
+    "security_maturity_date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "accepted_amount": { "type": "string", "pattern": "^[0-9,]+(\\.[0-9]+)?$" },
+    "high_discount_rate": { "type": "string" },
+    "high_yield_rate": { "type": "string" },
+    "bid_to_cover_ratio": { "type": "string" }
+  },
+  "additionalProperties": true
+}

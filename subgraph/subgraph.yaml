@@ -1,0 +1,64 @@
+specVersion: 0.0.7
+schema:
+  file: ./schema.graphql
+
+dataSources:
+  - kind: ethereum/contract
+    name: NavQuorumOracle
+    network: mainnet
+    source:
+      address: "0xOracleAddress"   # fill in after deploy
+      abi: NavQuorumOracle
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [NavPoint]
+      abis:
+        - name: NavQuorumOracle
+          file: ../foundry/out/NavQuorumOracleUpgradeable.sol/NavQuorumOracleUpgradeable.json
+      eventHandlers:
+        - event: Sealed(indexed address,(uint256,uint64,uint64,bytes32))
+          handler: handleSealed
+      file: ./src/nav.ts
+
+  - kind: ethereum/contract
+    name: CreationRedemptionRouter
+    network: mainnet
+    source:
+      address: "0xRouterAddress"
+      abi: CreationRedemptionRouter
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Journal]
+      abis:
+        - name: CreationRedemptionRouter
+          file: ../foundry/out/CreationRedemptionRouterUpgradeable.sol/CreationRedemptionRouterUpgradeable.json
+      eventHandlers:
+        - event: Journal(indexed bytes32,indexed bytes32,indexed bytes32,uint256,string,string)
+          handler: handleJournal
+      file: ./src/router.ts
+
+  - kind: ethereum/contract
+    name: ProofOfReserveEmitter
+    network: mainnet
+    source:
+      address: "0xPorEmitter"
+      abi: ProofOfReserveEmitter
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [PoRRound]
+      abis:
+        - name: ProofOfReserveEmitter
+          file: ../foundry/out/ProofOfReserveEmitter.sol/ProofOfReserveEmitter.json
+      eventHandlers:
+        - event: Published(indexed uint64,uint256,uint256,bytes32)
+          handler: handlePublished
+      file: ./src/por.ts

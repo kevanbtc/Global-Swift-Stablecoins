@@ -1,0 +1,10 @@
+{
+  "name": "Reserve Attest & Upgrade Console",
+  "description": "Anchor reserve attestations and manage upgrades for ReserveProofRegistry.",
+  "iconPath": "logo.svg",
+  "developerUrl": "https://unykorn.org",
+  "main": "https://your-safe-app-host/index.html",
+  "types": ["dapp"],
+  "version": "1.0.0",
+  "faviconPath": "favicon.ico"
+}

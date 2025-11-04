@@ -1,0 +1,81 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IComplianceRegistry",
+  "sourceName": "contracts/compliance/PolicyEngineUpgradeable.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "getStatus",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "enum Types.KYCState",
+              "name": "kyc",
+              "type": "uint8"
+            },
+            {
+              "internalType": "enum Types.Jurisdiction",
+              "name": "juris",
+              "type": "uint8"
+            },
+            {
+              "internalType": "enum Types.InvestorClass",
+              "name": "klass",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint64",
+              "name": "reviewedAt",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "lockupEnd",
+              "type": "uint64"
+            },
+            {
+              "internalType": "bool",
+              "name": "frozen",
+              "type": "bool"
+            }
+          ],
+          "internalType": "struct Types.AccountStatus",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "sanctioned",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

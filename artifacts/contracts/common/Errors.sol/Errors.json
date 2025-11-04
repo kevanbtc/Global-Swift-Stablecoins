@@ -1,0 +1,111 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "Errors",
+  "sourceName": "contracts/common/Errors.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "AttestationInvalid",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ConcentrationBreach",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "CourtOrderActive",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "Expired",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "Frozen",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "GlobalPause",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidParam",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvestorClassBlocked",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "JurisdictionBlocked",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "LockupActive",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "NotAuthorized",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "NotReady",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "Paused",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "PositionCapExceeded",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "Replay",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "Sanctioned",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "Signature",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "Stale",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "Unauthorized",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "UnsafeUpgrade",
+      "type": "error"
+    }
+  ],
+  "bytecode": "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea26469706673582212201568bf9e54db5ad11ce9fc30b6d7353e17e7dbd00529fcd123483565ab44737364736f6c63430008180033",
+  "deployedBytecode": "0x600080fdfea26469706673582212201568bf9e54db5ad11ce9fc30b6d7353e17e7dbd00529fcd123483565ab44737364736f6c63430008180033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

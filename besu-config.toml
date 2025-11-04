@@ -1,0 +1,47 @@
+# Besu Configuration for Unykorn L1
+# Chain ID: 7777
+# Consensus: QBFT (IBFT 2.0)
+# Block time: 2 seconds
+
+# Network Configuration
+p2p-host = "0.0.0.0"
+p2p-port = 30303
+max-peers = 25
+
+# RPC Configuration
+rpc-http-enabled = true
+rpc-http-host = "0.0.0.0"
+rpc-http-port = 8545
+rpc-http-api = ["ETH", "NET", "WEB3", "ADMIN", "CLIQUE", "IBFT", "QBFT", "PERM"]
+rpc-http-cors-origins = ["*"]
+
+# WebSocket Configuration
+rpc-ws-enabled = true
+rpc-ws-host = "0.0.0.0"
+rpc-ws-port = 8546
+rpc-ws-api = ["ETH", "NET", "WEB3"]
+
+# Metrics
+metrics-enabled = true
+metrics-host = "0.0.0.0"
+metrics-port = 9545
+
+# QBFT Consensus Configuration
+qbft-enabled = true
+
+# Genesis Configuration (separate file)
+# genesis-file = "genesis.json"
+
+# Data Directory
+data-path = "./data"
+
+# Logging
+logging = "INFO"
+
+# Mining (for validators)
+miner-enabled = true
+miner-coinbase = "0xdd2f1e6e4b28d1766f482b22e8a405423f1eddfd"
+
+# Permissioning (optional)
+# permissions-nodes-config-file-enabled = true
+# permissions-nodes-config-file = "permissions_config.toml"

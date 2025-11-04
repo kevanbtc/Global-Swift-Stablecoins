@@ -1,0 +1,17 @@
+version: 1
+sources:
+  - name: fiscaldata_auction_results
+    schema: schemas/fiscaldata.auction.results.schema.json
+    maturityCol: security_maturity_date
+    weightCol: accepted_amount
+    dateFmt: yyyy-MM-dd
+    settlePlus: 0
+  - name: broker_fills
+    schema: schemas/broker.fills.schema.json
+    maturityCol: maturity
+    weightCol: face
+    dateFmt: yyyy-MM-dd
+    settlePlus: 1
+output:
+  chunkSize: 64
+  sortByDate: true
