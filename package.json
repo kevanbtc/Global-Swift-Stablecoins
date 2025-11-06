@@ -1,7 +1,7 @@
 {
-  "name": "regulatory-compliant-stablecoin",
+  "name": "global-swift-stablecoins",
   "version": "1.0.0",
-  "description": "Templates for regulatory-compliant stablecoins and CBDCs supporting Basel III/IV, ISO 20022, MiCA, and other frameworks",
+  "description": "Scalable, compliance-first blockchain infrastructure for stablecoins and real-world asset tokenization. Supporting Basel III/IV, ISO 20022, MiCA, CBDCs, and global financial standards.",
   "scripts": {
     "test": "hardhat test",
     "compile": "hardhat compile",
@@ -43,7 +43,35 @@
   "directories": {
     "test": "test"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "keywords": [
+    "stablecoin",
+    "blockchain",
+    "defi",
+    "cbdc",
+    "rwa",
+    "tokenization",
+    "compliance",
+    "swift",
+    "iso20022",
+    "basel",
+    "mica",
+    "cross-border-payments",
+    "smart-contracts",
+    "ethereum",
+    "solidity",
+    "fintech",
+    "regulatory-compliance",
+    "treasury",
+    "settlement"
+  ],
+  "author": "Global Swift Stablecoins Contributors",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kevanbtc/Global-Swift-Stablecoins.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kevanbtc/Global-Swift-Stablecoins/issues"
+  },
+  "homepage": "https://github.com/kevanbtc/Global-Swift-Stablecoins#readme"
 }
