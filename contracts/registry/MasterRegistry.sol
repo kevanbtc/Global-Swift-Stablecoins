@@ -70,25 +70,25 @@ contract MasterRegistry is Ownable {
     }
     
     /// @notice Set RWA registry
-    function setRWARegistry(address registry) external onlyOwner {
+    function setRWARegistry(address registry) public onlyOwner {
         rwaRegistry = registry;
         emit RWARegistrySet(registry);
     }
     
     /// @notice Set oracle registry
-    function setOracleRegistry(address registry) external onlyOwner {
+    function setOracleRegistry(address registry) public onlyOwner {
         oracleRegistry = registry;
         emit OracleRegistrySet(registry);
     }
     
     /// @notice Set SWIFT registry
-    function setSWIFTRegistry(address registry) external onlyOwner {
+    function setSWIFTRegistry(address registry) public onlyOwner {
         swiftRegistry = registry;
         emit SWIFTRegistrySet(registry);
     }
     
     /// @notice Set Besu bridge registry
-    function setBesuBridgeRegistry(address registry) external onlyOwner {
+    function setBesuBridgeRegistry(address registry) public onlyOwner {
         besuBridgeRegistry = registry;
         emit BesuBridgeRegistrySet(registry);
     }
@@ -98,7 +98,7 @@ contract MasterRegistry is Ownable {
         string calldata chainName,
         uint256 chainId,
         string calldata version
-    ) external onlyOwner {
+    ) public onlyOwner {
         systemInfo.chainName = chainName;
         systemInfo.chainId = chainId;
         systemInfo.version = version;
@@ -106,7 +106,7 @@ contract MasterRegistry is Ownable {
     }
     
     /// @notice Get all registry addresses
-    function getAllRegistries() external view returns (
+    function getAllRegistries() public view returns (
         address rail,
         address stablecoin,
         address compliance,
@@ -127,23 +127,23 @@ contract MasterRegistry is Ownable {
     }
     
     /// @notice Get rail address
-    function getRail(bytes32 railKey) external view returns (address) {
+    function getRail(bytes32 railKey) public view returns (address) {
         return railRegistry.get(railKey);
     }
     
     /// @notice Get stablecoin metadata
-    function getStablecoin(address token) external view returns (StablecoinRegistry.Meta memory) {
+    function getStablecoin(address token) public view returns (StablecoinRegistry.Meta memory) {
         return stablecoinRegistry.get(token);
     }
     
     /// @notice Check compliance for address
-    function isCompliant(address account) external view returns (bool) {
+    function isCompliant(address account) public view returns (bool) {
         // Simplified - in production, call actual compliance check
         return account != address(0);
     }
     
     /// @notice Get system info
-    function getSystemInfo() external view returns (SystemInfo memory) {
+    function getSystemInfo() public view returns (SystemInfo memory) {
         return systemInfo;
     }
 }

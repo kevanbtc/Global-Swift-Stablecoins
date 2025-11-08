@@ -2,8 +2,8 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import {Pausable} from "@openzeppelin/contracts/security/Pausable.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -165,7 +165,7 @@ contract FractionalAssetProtocol is Ownable, ReentrancyGuard, Pausable {
         uint256 _minimumInvestment,
         uint256 _lockupPeriod,
         string memory _ipfsMetadata
-    ) external whenNotPaused returns (bytes32) {
+    ) public whenNotPaused returns (bytes32) {
         require(_totalValue >= minAssetValue, "Asset value too low");
         require(_totalFractions > 0 && _totalFractions <= maxFractionSupply, "Invalid fraction supply");
         require(_fractionPrice >= minFractionPrice, "Fraction price too low");
@@ -223,7 +223,7 @@ contract FractionalAssetProtocol is Ownable, ReentrancyGuard, Pausable {
         address _custodian,
         address _fractionToken,
         bytes32 _valuationHash
-    ) external onlyOwner validAsset(_assetId) {
+    ) public onlyOwner validAsset(_assetId) {
         FractionalAsset storage asset = fractionalAssets[_assetId];
         require(asset.status == AssetStatus.PROPOSED, "Asset not in proposed status");
         require(_custodian != address(0), "Invalid custodian");
@@ -240,7 +240,7 @@ contract FractionalAssetProtocol is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Activate asset tokenization
      */
-    function activateAsset(bytes32 _assetId) external onlyAssetCustodian(_assetId) validAsset(_assetId) {
+    function activateAsset(bytes32 _assetId) public onlyAssetCustodian(_assetId) validAsset(_assetId) {
         FractionalAsset storage asset = fractionalAssets[_assetId];
         require(asset.status == AssetStatus.VERIFIED, "Asset not verified");
         require(asset.fractionToken != address(0), "Fraction token not set");
@@ -256,7 +256,7 @@ contract FractionalAssetProtocol is Ownable, ReentrancyGuard, Pausable {
     function purchaseFractions(
         bytes32 _assetId,
         uint256 _fractionAmount
-    ) external payable whenNotPaused assetActive(_assetId) nonReentrant {
+    ) public payable whenNotPaused assetActive(_assetId) nonReentrant {
         FractionalAsset storage asset = fractionalAssets[_assetId];
         require(_fractionAmount >= asset.minimumInvestment, "Below minimum investment");
         require(_fractionAmount <= asset.availableFractions, "Insufficient available fractions");
@@ -297,7 +297,7 @@ contract FractionalAssetProtocol is Ownable, ReentrancyGuard, Pausable {
     function sellFractions(
         bytes32 _assetId,
         uint256 _fractionAmount
-    ) external assetActive(_assetId) nonReentrant {
+    ) public assetActive(_assetId) nonReentrant {
         FractionOwnership storage ownership = fractionOwnerships[_assetId][msg.sender];
         require(ownership.fractionAmount >= _fractionAmount, "Insufficient fractions");
         require(!ownership.isLocked || block.timestamp >= ownership.lockExpiry, "Fractions still locked");
@@ -323,7 +323,7 @@ contract FractionalAssetProtocol is Ownable, ReentrancyGuard, Pausable {
         bytes32 _assetId,
         uint256 _totalYield,
         address _yieldToken
-    ) external onlyAssetCustodian(_assetId) assetActive(_assetId) whenNotPaused {
+    ) public onlyAssetCustodian(_assetId) assetActive(_assetId) whenNotPaused {
         require(_totalYield > 0, "Invalid yield amount");
 
         FractionalAsset storage asset = fractionalAssets[_assetId];
@@ -354,7 +354,7 @@ contract FractionalAssetProtocol is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Claim yield for fraction holder
      */
-    function claimYield(bytes32 _assetId) external whenNotPaused {
+    function claimYield(bytes32 _assetId) public whenNotPaused {
         FractionOwnership storage ownership = fractionOwnerships[_assetId][msg.sender];
         require(ownership.fractionAmount > 0, "No fractions owned");
 
@@ -386,7 +386,7 @@ contract FractionalAssetProtocol is Ownable, ReentrancyGuard, Pausable {
         uint256 _newValuation,
         string memory _methodology,
         bytes32 _supportingDocsHash
-    ) external onlyAssetCustodian(_assetId) validAsset(_assetId) {
+    ) public onlyAssetCustodian(_assetId) validAsset(_assetId) {
         require(_newValuation > 0, "Invalid valuation");
 
         FractionalAsset storage asset = fractionalAssets[_assetId];
@@ -416,7 +416,7 @@ contract FractionalAssetProtocol is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Liquidate an asset
      */
-    function liquidateAsset(bytes32 _assetId) external onlyAssetCustodian(_assetId) validAsset(_assetId) {
+    function liquidateAsset(bytes32 _assetId) public onlyAssetCustodian(_assetId) validAsset(_assetId) {
         FractionalAsset storage asset = fractionalAssets[_assetId];
         require(asset.status == AssetStatus.ACTIVE, "Asset not active");
 
@@ -439,9 +439,7 @@ contract FractionalAssetProtocol is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Get asset details
      */
-    function getAsset(bytes32 _assetId)
-        external
-        view
+    function getAsset(bytes32 _assetId) public view
         returns (
             string memory assetName,
             AssetType assetType,
@@ -467,9 +465,7 @@ contract FractionalAssetProtocol is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Get fraction ownership
      */
-    function getFractionOwnership(bytes32 _assetId, address _owner)
-        external
-        view
+    function getFractionOwnership(bytes32 _assetId, address _owner) public view
         returns (
             uint256 fractionAmount,
             uint256 accumulatedYield,
@@ -489,9 +485,7 @@ contract FractionalAssetProtocol is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Get latest asset valuation
      */
-    function getLatestValuation(bytes32 _assetId)
-        external
-        view
+    function getLatestValuation(bytes32 _assetId) public view
         returns (
             uint256 valuation,
             uint256 valuationDate,
@@ -521,7 +515,7 @@ contract FractionalAssetProtocol is Ownable, ReentrancyGuard, Pausable {
         uint256 _maxFractionSupply,
         uint256 _minFractionPrice,
         uint256 _maxLockupPeriod
-    ) external onlyOwner {
+    ) public onlyOwner {
         minAssetValue = _minAssetValue;
         maxFractionSupply = _maxFractionSupply;
         minFractionPrice = _minFractionPrice;
@@ -531,23 +525,21 @@ contract FractionalAssetProtocol is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Emergency pause
      */
-    function emergencyPause() external onlyOwner {
+    function emergencyPause() public onlyOwner {
         _pause();
     }
 
     /**
      * @notice Emergency unpause
      */
-    function emergencyUnpause() external onlyOwner {
+    function emergencyUnpause() public onlyOwner {
         _unpause();
     }
 
     /**
      * @notice Get global statistics
      */
-    function getGlobalStatistics()
-        external
-        view
+    function getGlobalStatistics() public view
         returns (
             uint256 _totalAssets,
             uint256 _totalAssetValue,

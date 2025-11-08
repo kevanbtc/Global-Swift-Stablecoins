@@ -51,7 +51,7 @@ contract PolicyGuard is Initializable, UUPSUpgradeable, PausableUpgradeable, Acc
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() { _disableInitializers(); }
 
-    function initialize(address governor, address guardian) external initializer {
+    function initialize(address governor, address guardian) public initializer {
         __Pausable_init();
         __AccessControl_init();
         __UUPSUpgradeable_init();
@@ -64,27 +64,26 @@ contract PolicyGuard is Initializable, UUPSUpgradeable, PausableUpgradeable, Acc
 
     // --- admin controls ---
 
-    function pause() external onlyRole(Roles.GUARDIAN) { _pause(); emit Paused(msg.sender); }
-    function unpause() external onlyRole(Roles.GUARDIAN) { _unpause(); emit Unpaused(msg.sender); }
+    function pause() public onlyRole(Roles.GUARDIAN) { _pause(); emit Paused(msg.sender); }
+    function unpause() public onlyRole(Roles.GUARDIAN) { _unpause(); emit Unpaused(msg.sender); }
 
-    function setFreshness(bytes32 op, uint256 secsValid) external onlyRole(Roles.GOVERNOR) {
+    function setFreshness(bytes32 op, uint256 secsValid) public onlyRole(Roles.GOVERNOR) {
         freshnessByOp[op] = secsValid;
         emit FreshnessSet(op, secsValid);
     }
 
-    function setClassLimits(AssetClass cls, ClassLimits calldata lim) external onlyRole(Roles.GOVERNOR) {
+    function setClassLimits(AssetClass cls, ClassLimits calldata lim) public onlyRole(Roles.GOVERNOR) {
         limitsByClass[cls] = lim;
         emit ClassLimitsSet(cls, lim);
     }
 
-    function setJurisdiction(bytes32 op, bytes32 country, bool listed, bool whitelistMode)
-        external onlyRole(Roles.COMPLIANCE)
+    function setJurisdiction(bytes32 op, bytes32 country, bool listed, bool whitelistMode) public onlyRole(Roles.COMPLIANCE)
     {
         jurisdiction[op][country] = JurisdictionRule({ listed: listed, whitelist: whitelistMode });
         emit JurisdictionSet(op, country, listed, whitelistMode);
     }
 
-    function setKyc(address user, bool ok) external onlyRole(Roles.COMPLIANCE) {
+    function setKyc(address user, bool ok) public onlyRole(Roles.COMPLIANCE) {
         kycApproved[user] = ok;
         emit KycSet(user, ok);
     }
@@ -108,7 +107,7 @@ contract PolicyGuard is Initializable, UUPSUpgradeable, PausableUpgradeable, Acc
         uint16 classAllocBp,
         uint16 issuerAllocBp,
         AssetClass cls
-    ) external view whenNotPaused returns (bool, string memory) {
+    ) public view whenNotPaused returns (bool, string memory) {
         // 1) freshness
         uint256 window = freshnessByOp[op];
         if (window > 0 && attAgeSec > window) {

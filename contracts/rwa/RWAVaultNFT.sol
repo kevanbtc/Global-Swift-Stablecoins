@@ -31,8 +31,8 @@ contract RWAVaultNFT is ERC721URIStorage, AccessControl, Pausable {
         _grantRole(PolicyRoles.ROLE_GUARDIAN, admin);
     }
 
-    function pause() external onlyRole(PolicyRoles.ROLE_GUARDIAN) { _pause(); }
-    function unpause() external onlyRole(PolicyRoles.ROLE_GUARDIAN) { _unpause(); }
+    function pause() public onlyRole(PolicyRoles.ROLE_GUARDIAN) { _pause(); }
+    function unpause() public onlyRole(PolicyRoles.ROLE_GUARDIAN) { _unpause(); }
 
     function mint(
         address to,
@@ -41,7 +41,7 @@ contract RWAVaultNFT is ERC721URIStorage, AccessControl, Pausable {
         bytes32 jurisdiction,
         bytes32 appraisalHash,
         bytes32 lienStackHash
-    ) external onlyRole(PolicyRoles.ROLE_ISSUER) whenNotPaused returns (uint256 tokenId) {
+    ) public onlyRole(PolicyRoles.ROLE_ISSUER) whenNotPaused returns (uint256 tokenId) {
         tokenId = ++_id;
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, tokenURI_);
@@ -49,11 +49,11 @@ contract RWAVaultNFT is ERC721URIStorage, AccessControl, Pausable {
         emit VaultMinted(tokenId, to, assetType, jurisdiction);
     }
 
-    function setLocked(uint256 tokenId, bool on) external onlyRole(PolicyRoles.ROLE_ADMIN) {
+    function setLocked(uint256 tokenId, bool on) public onlyRole(PolicyRoles.ROLE_ADMIN) {
         vaults[tokenId].locked = on; emit Locked(tokenId, on);
     }
 
-    function updateMeta(uint256 tokenId, bytes32 appraisalHash, bytes32 lienStackHash) external onlyRole(PolicyRoles.ROLE_ADMIN) {
+    function updateMeta(uint256 tokenId, bytes32 appraisalHash, bytes32 lienStackHash) public onlyRole(PolicyRoles.ROLE_ADMIN) {
         vaults[tokenId].appraisalHash = appraisalHash;
         vaults[tokenId].lienStackHash = lienStackHash;
         emit MetaUpdated(tokenId, appraisalHash, lienStackHash);

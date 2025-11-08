@@ -38,22 +38,22 @@ export declare namespace Client {
     receiver: BytesLike;
     data: BytesLike;
     tokenAmounts: Client.EVMTokenAmountStruct[];
-    extraArgs: BytesLike;
     feeToken: AddressLike;
+    extraArgs: BytesLike;
   };
 
   export type EVM2AnyMessageStructOutput = [
     receiver: string,
     data: string,
     tokenAmounts: Client.EVMTokenAmountStructOutput[],
-    extraArgs: string,
-    feeToken: string
+    feeToken: string,
+    extraArgs: string
   ] & {
     receiver: string;
     data: string;
     tokenAmounts: Client.EVMTokenAmountStructOutput[];
-    extraArgs: string;
     feeToken: string;
+    extraArgs: string;
   };
 }
 
@@ -226,8 +226,8 @@ export interface MockRouterClient extends BaseContract {
       [string, string, string, string] & {
         receiver: string;
         data: string;
-        extraArgs: string;
         feeToken: string;
+        extraArgs: string;
       }
     ],
     "view"
@@ -281,8 +281,8 @@ export interface MockRouterClient extends BaseContract {
       [string, string, string, string] & {
         receiver: string;
         data: string;
-        extraArgs: string;
         feeToken: string;
+        extraArgs: string;
       }
     ],
     "view"

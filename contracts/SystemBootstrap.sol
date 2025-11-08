@@ -2,12 +2,13 @@
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
-import "@openzeppelin/contracts/proxy/ProxyAdmin.sol";
-import "../common/Types.sol";
-import "../common/Roles.sol";
-import "../common/Errors.sol";
+import "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
+import {ITransparentUpgradeableProxy} from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
+import "./common/Types.sol";
+import "./common/Roles.sol";
+import "./common/Errors.sol";
 
 /**
  * @title SystemBootstrap
@@ -57,8 +58,8 @@ contract SystemBootstrap is AccessControl, Pausable {
         _grantRole(DEPLOYER_ROLE, msg.sender);
         _grantRole(UPGRADER_ROLE, msg.sender);
         
-        // Deploy proxy admin
-        proxyAdmin = new ProxyAdmin();
+    // Deploy proxy admin with this contract's deployer as the owner
+    proxyAdmin = new ProxyAdmin(msg.sender);
     }
 
     /**
@@ -73,9 +74,7 @@ contract SystemBootstrap is AccessControl, Pausable {
         address implementation,
         bytes memory initData,
         bool upgradeable
-    )
-        external
-        onlyRole(DEPLOYER_ROLE)
+    ) public onlyRole(DEPLOYER_ROLE)
         whenNotPaused
         returns (address proxy)
     {
@@ -129,9 +128,7 @@ contract SystemBootstrap is AccessControl, Pausable {
         bytes32 componentId,
         address newImplementation,
         bytes memory data
-    )
-        external
-        onlyRole(UPGRADER_ROLE)
+    ) public onlyRole(UPGRADER_ROLE)
         whenNotPaused
     {
         Component storage component = components[componentId];
@@ -141,18 +138,13 @@ contract SystemBootstrap is AccessControl, Pausable {
         
         address oldImplementation = component.implementation;
         
-        if (data.length > 0) {
-            proxyAdmin.upgradeAndCall(
-                TransparentUpgradeableProxy(payable(component.proxy)),
-                newImplementation,
-                data
-            );
-        } else {
-            proxyAdmin.upgrade(
-                TransparentUpgradeableProxy(payable(component.proxy)),
-                newImplementation
-            );
-        }
+        // OZ v5 ProxyAdmin only has upgradeAndCall; convert empty string to empty bytes if needed
+        bytes memory upgradeData = (data.length > 0) ? data : new bytes(0);
+        proxyAdmin.upgradeAndCall(
+            ITransparentUpgradeableProxy(payable(component.proxy)),
+            newImplementation,
+            upgradeData
+        );
         
         component.implementation = newImplementation;
         component.version++;
@@ -169,9 +161,7 @@ contract SystemBootstrap is AccessControl, Pausable {
      * @notice Get component details
      * @param componentId Component identifier
      */
-    function getComponent(bytes32 componentId)
-        external
-        view
+    function getComponent(bytes32 componentId) public view
         returns (
             address implementation,
             address proxy,
@@ -198,9 +188,7 @@ contract SystemBootstrap is AccessControl, Pausable {
      * @notice Get component version history
      * @param componentId Component identifier
      */
-    function getComponentVersions(bytes32 componentId)
-        external
-        view
+    function getComponentVersions(bytes32 componentId) public view
         returns (address[] memory)
     {
         return componentVersions[componentId];
@@ -210,9 +198,7 @@ contract SystemBootstrap is AccessControl, Pausable {
      * @notice Get component ID from proxy address
      * @param proxy Proxy contract address
      */
-    function getComponentId(address proxy)
-        external
-        view
+    function getComponentId(address proxy) public view
         returns (bytes32)
     {
         bytes32 componentId = componentIds[proxy];
@@ -221,11 +207,11 @@ contract SystemBootstrap is AccessControl, Pausable {
     }
 
     // Admin functions
-    function pause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _pause();
     }
 
-    function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _unpause();
     }
 }

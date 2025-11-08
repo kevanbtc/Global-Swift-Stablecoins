@@ -2,7 +2,7 @@
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
 import "../common/Types.sol";
 import "../common/Roles.sol";
 import "../common/Errors.sol";
@@ -127,9 +127,7 @@ contract PolicyEngine is AccessControl, Pausable {
         bytes32[] calldata actions,
         uint256 startTime,
         uint256 endTime
-    )
-        external
-        onlyRole(POLICY_ADMIN_ROLE)
+    ) public onlyRole(POLICY_ADMIN_ROLE)
         whenNotPaused
         returns (bytes32)
     {
@@ -177,9 +175,7 @@ contract PolicyEngine is AccessControl, Pausable {
         ConditionOperator operator,
         bytes calldata value,
         bool negate
-    )
-        external
-        onlyRole(POLICY_ADMIN_ROLE)
+    ) public onlyRole(POLICY_ADMIN_ROLE)
         whenNotPaused
         returns (bytes32)
     {
@@ -212,9 +208,7 @@ contract PolicyEngine is AccessControl, Pausable {
     function createAction(
         string calldata actionType,
         bytes calldata parameters
-    )
-        external
-        onlyRole(POLICY_ADMIN_ROLE)
+    ) public onlyRole(POLICY_ADMIN_ROLE)
         whenNotPaused
         returns (bytes32)
     {
@@ -242,9 +236,7 @@ contract PolicyEngine is AccessControl, Pausable {
      * @param policyId Policy identifier
      * @param context Execution context
      */
-    function executePolicy(bytes32 policyId, bytes calldata context)
-        external
-        onlyRole(EXECUTOR_ROLE)
+    function executePolicy(bytes32 policyId, bytes calldata context) public onlyRole(EXECUTOR_ROLE)
         whenNotPaused
         returns (bytes32)
     {
@@ -418,9 +410,7 @@ contract PolicyEngine is AccessControl, Pausable {
      * @param policyId Policy identifier
      * @param active New active status
      */
-    function updatePolicy(bytes32 policyId, bool active)
-        external
-        onlyRole(POLICY_ADMIN_ROLE)
+    function updatePolicy(bytes32 policyId, bool active) public onlyRole(POLICY_ADMIN_ROLE)
     {
         Policy storage policy = policies[policyId];
         require(policy.creator == msg.sender, "Not policy creator");
@@ -434,9 +424,7 @@ contract PolicyEngine is AccessControl, Pausable {
      * @notice Get policy details
      * @param policyId Policy identifier
      */
-    function getPolicy(bytes32 policyId)
-        external
-        view
+    function getPolicy(bytes32 policyId) public view
         returns (
             PolicyType policyType,
             bytes32[] memory conditionIds,
@@ -465,9 +453,7 @@ contract PolicyEngine is AccessControl, Pausable {
      * @notice Get execution details
      * @param executionId Execution identifier
      */
-    function getExecution(bytes32 executionId)
-        external
-        view
+    function getExecution(bytes32 executionId) public view
         returns (PolicyExecution memory)
     {
         PolicyExecution storage execution = executions[executionId];
@@ -476,11 +462,11 @@ contract PolicyEngine is AccessControl, Pausable {
     }
 
     // Admin functions
-    function pause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _pause();
     }
 
-    function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _unpause();
     }
 }

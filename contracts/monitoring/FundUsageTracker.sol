@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title FundUsageTracker
@@ -65,6 +65,7 @@ contract FundUsageTracker is Ownable, ReentrancyGuard {
         bytes32 locationHash;
         bool isVerified;
         RiskLevel riskScore;
+        uint256 fraudProbability;
         bytes32 aiAnalysisHash;
     }
 
@@ -159,7 +160,7 @@ contract FundUsageTracker is Ownable, ReentrancyGuard {
         uint256 _amount,
         uint256 _expiryDate,
         bytes32 _purposeHash
-    ) external onlyOwner returns (bytes32) {
+    ) public onlyOwner returns (bytes32) {
         bytes32 allocationId = keccak256(abi.encodePacked(
             _citizenId,
             _fundType,
@@ -197,7 +198,7 @@ contract FundUsageTracker is Ownable, ReentrancyGuard {
         address _merchant,
         bytes32 _receiptHash,
         bytes32 _locationHash
-    ) external validCitizen(_citizenId) validAllocation(_allocationId) returns (bytes32) {
+    ) public validCitizen(_citizenId) validAllocation(_allocationId) returns (bytes32) {
         FundAllocation memory allocation = fundAllocations[_allocationId];
         require(allocation.citizenId == _citizenId, "Allocation not for citizen");
         require(allocation.isActive, "Allocation not active");
@@ -265,7 +266,7 @@ contract FundUsageTracker is Ownable, ReentrancyGuard {
         string memory _merchantName,
         string memory _businessType,
         bytes32 _licenseHash
-    ) external onlyOwner {
+    ) public onlyOwner {
         MerchantProfile storage merchant = merchantProfiles[_merchantAddress];
         merchant.merchantAddress = _merchantAddress;
         merchant.merchantName = _merchantName;
@@ -281,7 +282,7 @@ contract FundUsageTracker is Ownable, ReentrancyGuard {
     /**
      * @notice Update merchant reputation
      */
-    function updateMerchantReputation(address _merchant, int256 _scoreChange) external onlyOwner {
+    function updateMerchantReputation(address _merchant, int256 _scoreChange) public onlyOwner {
         MerchantProfile storage merchant = merchantProfiles[_merchant];
         require(merchant.registrationDate > 0, "Merchant not registered");
 
@@ -302,7 +303,7 @@ contract FundUsageTracker is Ownable, ReentrancyGuard {
     /**
      * @notice Resolve a monitoring alert
      */
-    function resolveAlert(bytes32 _alertId, bytes32 _resolutionHash) external onlyOwner {
+    function resolveAlert(bytes32 _alertId, bytes32 _resolutionHash) public onlyOwner {
         MonitoringAlert storage alert = monitoringAlerts[_alertId];
         require(!alert.isResolved, "Alert already resolved");
 
@@ -314,9 +315,7 @@ contract FundUsageTracker is Ownable, ReentrancyGuard {
     /**
      * @notice Get citizen spending pattern
      */
-    function getSpendingPattern(bytes32 _citizenId)
-        external
-        view
+    function getSpendingPattern(bytes32 _citizenId) public view
         returns (
             uint256 totalSpent,
             uint256 transactionCount,
@@ -325,7 +324,7 @@ contract FundUsageTracker is Ownable, ReentrancyGuard {
             uint256 fraudProbability
         )
     {
-        SpendingPattern memory pattern = spendingPatterns[_citizenId];
+        SpendingPattern storage pattern = spendingPatterns[_citizenId];
         return (
             pattern.totalSpent,
             pattern.transactionCount,
@@ -338,21 +337,17 @@ contract FundUsageTracker is Ownable, ReentrancyGuard {
     /**
      * @notice Get category spending for a citizen
      */
-    function getCategorySpending(bytes32 _citizenId, TransactionCategory _category)
-        external
-        view
+    function getCategorySpending(bytes32 _citizenId, TransactionCategory _category) public view
         returns (uint256 amount, uint256 count)
     {
-        SpendingPattern memory pattern = spendingPatterns[_citizenId];
+        SpendingPattern storage pattern = spendingPatterns[_citizenId];
         return (pattern.categorySpending[_category], pattern.categoryCount[_category]);
     }
 
     /**
      * @notice Get transaction details
      */
-    function getTransaction(bytes32 _transactionId)
-        external
-        view
+    function getTransaction(bytes32 _transactionId) public view
         returns (
             bytes32 citizenId,
             uint256 amount,
@@ -378,9 +373,7 @@ contract FundUsageTracker is Ownable, ReentrancyGuard {
     /**
      * @notice Get merchant profile
      */
-    function getMerchantProfile(address _merchant)
-        external
-        view
+    function getMerchantProfile(address _merchant) public view
         returns (
             string memory merchantName,
             uint256 reputationScore,
@@ -402,9 +395,7 @@ contract FundUsageTracker is Ownable, ReentrancyGuard {
     /**
      * @notice Get monitoring alert
      */
-    function getMonitoringAlert(bytes32 _alertId)
-        external
-        view
+    function getMonitoringAlert(bytes32 _alertId) public view
         returns (
             bytes32 citizenId,
             string memory alertType,
@@ -431,7 +422,7 @@ contract FundUsageTracker is Ownable, ReentrancyGuard {
         uint256 _dailySpendingLimit,
         uint256 _monthlySpendingLimit,
         uint256 _fraudThreshold
-    ) external onlyOwner {
+    ) public onlyOwner {
         maxTransactionAmount = _maxTransactionAmount;
         dailySpendingLimit = _dailySpendingLimit;
         monthlySpendingLimit = _monthlySpendingLimit;
@@ -441,9 +432,7 @@ contract FundUsageTracker is Ownable, ReentrancyGuard {
     /**
      * @notice Get global monitoring statistics
      */
-    function getGlobalStatistics()
-        external
-        view
+    function getGlobalStatistics() public view
         returns (
             uint256 _totalAllocations,
             uint256 _totalTransactions,
@@ -463,7 +452,7 @@ contract FundUsageTracker is Ownable, ReentrancyGuard {
     {
         TransactionRecord memory transaction = transactionRecords[_transactionId];
         MerchantProfile memory merchant = merchantProfiles[transaction.merchant];
-        SpendingPattern memory pattern = spendingPatterns[transaction.citizenId];
+        SpendingPattern storage pattern = spendingPatterns[transaction.citizenId];
 
         uint256 riskScore = 0;
 

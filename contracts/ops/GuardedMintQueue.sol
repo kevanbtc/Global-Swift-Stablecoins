@@ -26,7 +26,7 @@ contract GuardedMintQueue is AccessControl {
         emit LimitsSet(perAddrDaily, globalDaily);
     }
 
-    function setLimits(uint256 perAddrDaily, uint256 globalDaily) external onlyRole(ADMIN_ROLE) {
+    function setLimits(uint256 perAddrDaily, uint256 globalDaily) public onlyRole(ADMIN_ROLE) {
         limits = Limits({perAddressDaily: perAddrDaily, globalDaily: globalDaily});
         emit LimitsSet(perAddrDaily, globalDaily);
     }
@@ -34,7 +34,7 @@ contract GuardedMintQueue is AccessControl {
     function _dayKey(uint256 ts) internal pure returns (uint256) { return ts / 1 days; }
 
     /// @notice Request a mint. Returns true if within T+0 allowance; false if it should be queued.
-    function request(address owner, uint256 amount) external returns (bool immediate) {
+    function request(address owner, uint256 amount) public returns (bool immediate) {
         uint256 day = _dayKey(block.timestamp);
         Limits memory lim = limits;
         uint256 g = globalUsed[day];
@@ -56,7 +56,7 @@ contract GuardedMintQueue is AccessControl {
     }
 
     /// @notice View helper for tests and monitoring: computes immediacy without modifying state.
-    function preview(address owner, uint256 amount) external view returns (
+    function preview(address owner, uint256 amount) public view returns (
         uint256 u, uint256 g, uint256 perAddr, uint256 glob, uint8 immediateInt
     ) {
         uint256 day = _dayKey(block.timestamp);
@@ -70,7 +70,7 @@ contract GuardedMintQueue is AccessControl {
     }
 
     /// @notice Expose current day's counters for a given owner and global aggregate.
-    function usedToday(address owner) external view returns (uint256 ownerUsed, uint256 globalUsedTotal) {
+    function usedToday(address owner) public view returns (uint256 ownerUsed, uint256 globalUsedTotal) {
         uint256 day = _dayKey(block.timestamp);
         ownerUsed = usedBy[day][owner];
         globalUsedTotal = globalUsed[day];

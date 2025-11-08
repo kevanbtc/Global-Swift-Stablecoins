@@ -25,16 +25,16 @@ contract PorAggregator is AccessControl, Pausable {
         if (oracle != address(0)) _grantRole(PolicyRoles.ROLE_ORACLE, oracle);
     }
 
-    function set(bytes32 reserveId, bool ok, uint64 asOf) external onlyRole(PolicyRoles.ROLE_ORACLE) whenNotPaused {
+    function set(bytes32 reserveId, bool ok, uint64 asOf) public onlyRole(PolicyRoles.ROLE_ORACLE) whenNotPaused {
         statusOf[reserveId] = Status({ok: ok, asOf: asOf, signer: msg.sender});
         emit PorUpdated(reserveId, ok, asOf, msg.sender);
     }
 
-    function get(bytes32 reserveId) external view returns (bool ok, uint64 asOf, address signer) {
+    function get(bytes32 reserveId) public view returns (bool ok, uint64 asOf, address signer) {
         Status memory s = statusOf[reserveId];
         return (s.ok, s.asOf, s.signer);
     }
 
-    function pause() external onlyRole(DEFAULT_ADMIN_ROLE) { _pause(); }
-    function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) { _unpause(); }
+    function pause() public onlyRole(DEFAULT_ADMIN_ROLE) { _pause(); }
+    function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) { _unpause(); }
 }

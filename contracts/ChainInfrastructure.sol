@@ -2,11 +2,11 @@
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "../common/Types.sol";
-import "../common/Roles.sol";
-import "../common/Errors.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "./common/Types.sol";
+import "./common/Roles.sol";
+import "./common/Errors.sol";
 
 /**
  * @title ChainInfrastructure
@@ -99,9 +99,7 @@ contract ChainInfrastructure is AccessControl, Pausable, ReentrancyGuard {
         string memory networkType,
         uint256 blockTime,
         uint256 gasLimit
-    )
-        external
-        onlyRole(OPERATOR_ROLE)
+    ) public onlyRole(OPERATOR_ROLE)
         whenNotPaused
     {
         require(chainConfigs[chainId].chainId == 0, "Chain exists");
@@ -129,9 +127,7 @@ contract ChainInfrastructure is AccessControl, Pausable, ReentrancyGuard {
         uint256 blockHeight,
         bytes32 blockHash,
         bytes32 networkState
-    )
-        external
-        onlyRole(VALIDATOR_ROLE)
+    ) public onlyRole(VALIDATOR_ROLE)
         whenNotPaused
     {
         require(chainConfigs[chainId].active, "Chain not active");
@@ -160,9 +156,7 @@ contract ChainInfrastructure is AccessControl, Pausable, ReentrancyGuard {
         address bridge,
         uint256 minConfirmations,
         uint256 maxMessageSize
-    )
-        external
-        onlyRole(OPERATOR_ROLE)
+    ) public onlyRole(OPERATOR_ROLE)
         whenNotPaused
         returns (bytes32)
     {
@@ -192,9 +186,7 @@ contract ChainInfrastructure is AccessControl, Pausable, ReentrancyGuard {
         address recipient,
         bytes32 protocolId,
         bytes memory data
-    )
-        external
-        whenNotPaused
+    ) public whenNotPaused
         nonReentrant
         returns (bytes32)
     {
@@ -233,9 +225,7 @@ contract ChainInfrastructure is AccessControl, Pausable, ReentrancyGuard {
      * @notice Process received message
      * @param messageId Message identifier
      */
-    function processMessage(bytes32 messageId)
-        external
-        onlyRole(VALIDATOR_ROLE)
+    function processMessage(bytes32 messageId) public onlyRole(VALIDATOR_ROLE)
         whenNotPaused
         nonReentrant
         returns (bool)
@@ -260,9 +250,7 @@ contract ChainInfrastructure is AccessControl, Pausable, ReentrancyGuard {
      * @notice Get chain configuration
      * @param chainId Chain identifier
      */
-    function getChainConfig(uint256 chainId)
-        external
-        view
+    function getChainConfig(uint256 chainId) public view
         returns (
             string memory name,
             string memory networkType,
@@ -284,11 +272,11 @@ contract ChainInfrastructure is AccessControl, Pausable, ReentrancyGuard {
     }
 
     // Admin functions
-    function pause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _pause();
     }
 
-    function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _unpause();
     }
 }

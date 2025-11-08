@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
@@ -51,7 +51,7 @@ contract AtomicCrossAssetSettlement is ReentrancyGuard, Ownable {
         Asset[] memory assetsOut,
         address[] memory participants,
         uint256 expiryTime
-    ) external nonReentrant returns (bool) {
+    ) public nonReentrant returns (bool) {
         require(assetsIn.length > 0 && assetsOut.length > 0, "Empty assets");
         require(participants.length >= 2, "Need at least 2 participants");
         require(expiryTime > block.timestamp, "Invalid expiry");
@@ -78,7 +78,7 @@ contract AtomicCrossAssetSettlement is ReentrancyGuard, Ownable {
     /**
      * @notice Execute atomic settlement (all-or-nothing)
      */
-    function executeAtomicSettlement(bytes32 settlementId) external nonReentrant onlyOwner {
+    function executeAtomicSettlement(bytes32 settlementId) public nonReentrant onlyOwner {
         AtomicSettlement storage settlement = settlements[settlementId];
         require(!settlement.isCompleted, "Already completed");
         require(!settlement.isCancelled, "Cancelled");
@@ -100,7 +100,7 @@ contract AtomicCrossAssetSettlement is ReentrancyGuard, Ownable {
     /**
      * @notice Cancel settlement (if expired or by participant)
      */
-    function cancelSettlement(bytes32 settlementId) external {
+    function cancelSettlement(bytes32 settlementId) public {
         AtomicSettlement storage settlement = settlements[settlementId];
         require(!settlement.isCompleted, "Already completed");
         require(!settlement.isCancelled, "Already cancelled");
@@ -138,14 +138,14 @@ contract AtomicCrossAssetSettlement is ReentrancyGuard, Ownable {
     /**
      * @notice Get settlement information
      */
-    function getSettlement(bytes32 settlementId) external view returns (AtomicSettlement memory) {
+    function getSettlement(bytes32 settlementId) public view returns (AtomicSettlement memory) {
         return settlements[settlementId];
     }
     
     /**
      * @notice Get asset count for settlement
      */
-    function getAssetCount(bytes32 settlementId, bool isInput) external view returns (uint256) {
+    function getAssetCount(bytes32 settlementId, bool isInput) public view returns (uint256) {
         AtomicSettlement storage settlement = settlements[settlementId];
         return isInput ? settlement.assetsIn.length : settlement.assetsOut.length;
     }

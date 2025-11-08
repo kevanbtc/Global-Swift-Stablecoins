@@ -34,12 +34,12 @@ contract ComplianceModuleRBAC is IComplianceGate {
         require(_admin != address(0), "CM: admin 0"); admin = _admin; kyc = IKYC(_kyc); sanctions = ISanctionsView(_sanctions);
     }
 
-    function transferAdmin(address to) external onlyAdmin { require(to != address(0), "CM: 0"); emit AdminTransferred(admin, to); admin = to; }
-    function setKYC(address k) external onlyAdmin { kyc = IKYC(k); emit KYCSet(k); }
-    function setSanctions(address s) external onlyAdmin { sanctions = ISanctionsView(s); emit SanctionsSet(s); }
-    function setAssetAllowed(address asset, bool allowed) external onlyAdmin { assetAllowed[asset] = allowed; emit AssetAllowed(asset, allowed); }
+    function transferAdmin(address to) public onlyAdmin { require(to != address(0), "CM: 0"); emit AdminTransferred(admin, to); admin = to; }
+    function setKYC(address k) public onlyAdmin { kyc = IKYC(k); emit KYCSet(k); }
+    function setSanctions(address s) public onlyAdmin { sanctions = ISanctionsView(s); emit SanctionsSet(s); }
+    function setAssetAllowed(address asset, bool allowed) public onlyAdmin { assetAllowed[asset] = allowed; emit AssetAllowed(asset, allowed); }
 
-    function check(address from, address to, address asset, uint256 /*amount*/, bytes calldata /*context*/) external view override returns (bool ok, bytes memory reason) {
+    function check(address from, address to, address asset, uint256 /*amount*/, bytes calldata /*context*/) public view override returns (bool ok, bytes memory reason) {
         // Sanctions
         if (address(sanctions) != address(0)) {
             if (sanctions.isSanctioned(from) || sanctions.isSanctioned(to)) return (false, bytes("SANCTIONED"));

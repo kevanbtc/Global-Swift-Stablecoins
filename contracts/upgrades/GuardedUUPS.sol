@@ -42,18 +42,18 @@ abstract contract GuardedUUPS is UUPSUpgradeable, PausableUpgradeable, AccessCon
         emit GuardianThresholdSet(threshold);
     }
 
-    function setGuardianThreshold(uint256 n) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function setGuardianThreshold(uint256 n) public onlyRole(DEFAULT_ADMIN_ROLE) {
         require(n>0, "bad_threshold");
         guardianThreshold = n;
         emit GuardianThresholdSet(n);
     }
 
-    function setImplementationAllowed(address impl, bool ok) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function setImplementationAllowed(address impl, bool ok) public onlyRole(DEFAULT_ADMIN_ROLE) {
         allowedImplementation[impl] = ok;
         emit ImplementationAllowed(impl, ok);
     }
 
-    function guardianApprove(uint256 nonce) external onlyRole(GUARDIAN_ROLE) {
+    function guardianApprove(uint256 nonce) public onlyRole(GUARDIAN_ROLE) {
         require(!approvals[nonce][_msgSender()], "already");
         approvals[nonce][_msgSender()] = true;
         approvalCount[nonce] += 1;
@@ -67,8 +67,8 @@ abstract contract GuardedUUPS is UUPSUpgradeable, PausableUpgradeable, AccessCon
         currentUpgradeNonce += 1;
     }
 
-    function pause() external onlyRole(DEFAULT_ADMIN_ROLE) { _pause(); }
-    function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) { _unpause(); }
+    function pause() public onlyRole(DEFAULT_ADMIN_ROLE) { _pause(); }
+    function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) { _unpause(); }
 
     uint256[43] private __gap; // storage gap for future vars
 }

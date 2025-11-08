@@ -7,8 +7,10 @@ import type * as navEventOracleUpgradeableSol from "./NAVEventOracleUpgradeable.
 export type { navEventOracleUpgradeableSol };
 import type * as adapters from "./adapters";
 export type { adapters };
+export type { AdvancedPriceOracle } from "./AdvancedPriceOracle";
 export type { AttestationOracle } from "./AttestationOracle";
 export type { BankAccountProofOracle } from "./BankAccountProofOracle";
+export type { DecentralizedOracleNetwork } from "./DecentralizedOracleNetwork";
 export type { IPriceOracle } from "./IPriceOracle";
 export type { NavOracleRouter } from "./NavOracleRouter";
 export type { OracleCommittee } from "./OracleCommittee";

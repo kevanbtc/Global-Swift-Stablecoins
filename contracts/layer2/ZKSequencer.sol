@@ -2,7 +2,7 @@
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "../common/Types.sol";
 import "../common/Roles.sol";
@@ -120,9 +120,7 @@ contract ZKSequencer is AccessControl, Pausable {
         address to,
         uint256 amount,
         bytes calldata data
-    )
-        external
-        whenNotPaused
+    ) public whenNotPaused
         returns (bytes32)
     {
         uint256 nonce = nonces[msg.sender]++;
@@ -164,9 +162,7 @@ contract ZKSequencer is AccessControl, Pausable {
         bytes32 newStateRoot,
         bytes32 withdrawalRoot,
         bytes calldata proof
-    )
-        external
-        onlyRole(OPERATOR_ROLE)
+    ) public onlyRole(OPERATOR_ROLE)
         whenNotPaused
     {
         require(
@@ -207,9 +203,7 @@ contract ZKSequencer is AccessControl, Pausable {
      * @notice Verify a batch using its zero-knowledge proof
      * @param batchId Batch identifier
      */
-    function verifyBatch(uint256 batchId)
-        external
-        onlyRole(PROVER_ROLE)
+    function verifyBatch(uint256 batchId) public onlyRole(PROVER_ROLE)
         whenNotPaused
     {
         ZKBatch storage batch = batches[batchId];
@@ -251,9 +245,7 @@ contract ZKSequencer is AccessControl, Pausable {
         address recipient,
         uint256 amount,
         bytes32[] calldata proof
-    )
-        external
-        whenNotPaused
+    ) public whenNotPaused
     {
         require(!processedWithdrawals[withdrawalHash], "Already processed");
         require(
@@ -279,9 +271,7 @@ contract ZKSequencer is AccessControl, Pausable {
         address verifier,
         bytes32 codeHash,
         uint256 proofSize
-    )
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
+    ) public onlyRole(DEFAULT_ADMIN_ROLE)
     {
         verifierConfig = VerifierConfig({
             verifierContract: verifier,
@@ -325,9 +315,7 @@ contract ZKSequencer is AccessControl, Pausable {
      * @notice Get batch details
      * @param batchId Batch identifier
      */
-    function getBatch(uint256 batchId)
-        external
-        view
+    function getBatch(uint256 batchId) public view
         returns (ZKBatch memory)
     {
         require(batches[batchId].timestamp > 0, "Batch not found");
@@ -338,9 +326,7 @@ contract ZKSequencer is AccessControl, Pausable {
      * @notice Get transaction details
      * @param txHash Transaction hash
      */
-    function getTransaction(bytes32 txHash)
-        external
-        view
+    function getTransaction(bytes32 txHash) public view
         returns (ZKTransaction memory)
     {
         require(transactions[txHash].nonce > 0, "Transaction not found");
@@ -348,11 +334,11 @@ contract ZKSequencer is AccessControl, Pausable {
     }
 
     // Admin functions
-    function pause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _pause();
     }
 
-    function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _unpause();
     }
 }

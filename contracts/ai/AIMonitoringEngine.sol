@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 
 /**
  * @title AIMonitoringEngine
@@ -138,7 +138,7 @@ contract AIMonitoringEngine is OwnableUpgradeable, UUPSUpgradeable, ReentrancyGu
         _disableInitializers();
     }
 
-    function initialize(address initialOwner) external initializer {
+    function initialize(address initialOwner) public initializer {
         __Ownable_init(initialOwner);
         __UUPSUpgradeable_init();
         __ReentrancyGuard_init();
@@ -160,7 +160,7 @@ contract AIMonitoringEngine is OwnableUpgradeable, UUPSUpgradeable, ReentrancyGu
         uint256 _thresholdLow,
         uint256 _updateFrequency,
         bytes32[] memory _dependencies
-    ) external onlyOwner returns (bytes32) {
+    ) public onlyOwner returns (bytes32) {
         bytes32 metricId = keccak256(abi.encodePacked(_name, _metricType, block.timestamp));
 
         MetricData storage metric = metrics[metricId];
@@ -184,7 +184,7 @@ contract AIMonitoringEngine is OwnableUpgradeable, UUPSUpgradeable, ReentrancyGu
     /**
      * @notice Update metric value (authorized reporters only)
      */
-    function updateMetric(bytes32 _metricId, uint256 _value) external {
+    function updateMetric(bytes32 _metricId, uint256 _value) public {
         require(authorizedReporters[msg.sender] || owner() == msg.sender, "Not authorized");
         require(metrics[_metricId].isActive, "Metric not active");
 
@@ -210,7 +210,7 @@ contract AIMonitoringEngine is OwnableUpgradeable, UUPSUpgradeable, ReentrancyGu
         uint256 _predictedValue,
         uint256 _confidence,
         uint256 _predictionHorizon
-    ) external onlyOwner returns (bytes32) {
+    ) public onlyOwner returns (bytes32) {
         require(metrics[_metricId].isActive, "Metric not active");
         require(_confidence <= 10000, "Invalid confidence");
 
@@ -251,7 +251,7 @@ contract AIMonitoringEngine is OwnableUpgradeable, UUPSUpgradeable, ReentrancyGu
         uint256 _expectedValue,
         uint256 _confidence,
         string memory _description
-    ) external onlyOwner returns (bytes32) {
+    ) public onlyOwner returns (bytes32) {
         require(metrics[_metricId].isActive, "Metric not active");
         require(_confidence >= anomalyThreshold, "Confidence too low");
 
@@ -288,7 +288,7 @@ contract AIMonitoringEngine is OwnableUpgradeable, UUPSUpgradeable, ReentrancyGu
     /**
      * @notice Acknowledge an alert
      */
-    function acknowledgeAlert(bytes32 _alertId) external onlyOwner {
+    function acknowledgeAlert(bytes32 _alertId) public onlyOwner {
         Alert storage alert = alerts[_alertId];
         require(alert.isActive, "Alert not active");
         require(!alert.isAcknowledged, "Alert already acknowledged");
@@ -306,16 +306,14 @@ contract AIMonitoringEngine is OwnableUpgradeable, UUPSUpgradeable, ReentrancyGu
     /**
      * @notice Authorize a reporter
      */
-    function authorizeReporter(address _reporter, bool _authorized) external onlyOwner {
+    function authorizeReporter(address _reporter, bool _authorized) public onlyOwner {
         authorizedReporters[_reporter] = _authorized;
     }
 
     /**
      * @notice Get metric details
      */
-    function getMetric(bytes32 _metricId)
-        external
-        view
+    function getMetric(bytes32 _metricId) public view
         returns (
             string memory name,
             MetricType metricType,
@@ -339,9 +337,7 @@ contract AIMonitoringEngine is OwnableUpgradeable, UUPSUpgradeable, ReentrancyGu
     /**
      * @notice Get alert details
      */
-    function getAlert(bytes32 _alertId)
-        external
-        view
+    function getAlert(bytes32 _alertId) public view
         returns (
             bytes32 metricId,
             AlertSeverity severity,
@@ -365,16 +361,14 @@ contract AIMonitoringEngine is OwnableUpgradeable, UUPSUpgradeable, ReentrancyGu
     /**
      * @notice Get active alerts
      */
-    function getActiveAlerts() external view returns (bytes32[] memory) {
+    function getActiveAlerts() public view returns (bytes32[] memory) {
         return activeAlerts;
     }
 
     /**
      * @notice Get alerts by severity
      */
-    function getAlertsBySeverity(AlertSeverity _severity)
-        external
-        view
+    function getAlertsBySeverity(AlertSeverity _severity) public view
         returns (bytes32[] memory)
     {
         return alertsBySeverity[_severity];
@@ -383,9 +377,7 @@ contract AIMonitoringEngine is OwnableUpgradeable, UUPSUpgradeable, ReentrancyGu
     /**
      * @notice Get metrics by type
      */
-    function getMetricsByType(MetricType _type)
-        external
-        view
+    function getMetricsByType(MetricType _type) public view
         returns (bytes32[] memory)
     {
         return metricsByType[_type];
@@ -394,9 +386,7 @@ contract AIMonitoringEngine is OwnableUpgradeable, UUPSUpgradeable, ReentrancyGu
     /**
      * @notice Get system health score
      */
-    function getSystemHealth()
-        external
-        view
+    function getSystemHealth() public view
         returns (
             uint256 overallScore,
             uint256 performanceScore,
@@ -428,7 +418,7 @@ contract AIMonitoringEngine is OwnableUpgradeable, UUPSUpgradeable, ReentrancyGu
         uint256 _healthUpdateFrequency,
         uint256 _maxPredictions,
         uint256 _maxAnomalies
-    ) external onlyOwner {
+    ) public onlyOwner {
         alertCooldown = _alertCooldown;
         predictionHorizon = _predictionHorizon;
         anomalyThreshold = _anomalyThreshold;
@@ -588,21 +578,21 @@ contract AIMonitoringEngine is OwnableUpgradeable, UUPSUpgradeable, ReentrancyGu
     /**
      * @notice Get all metrics
      */
-    function getAllMetrics() external view returns (bytes32[] memory) {
+    function getAllMetrics() public view returns (bytes32[] memory) {
         return allMetrics;
     }
 
     /**
      * @notice Get recent predictions
      */
-    function getRecentPredictions() external view returns (bytes32[] memory) {
+    function getRecentPredictions() public view returns (bytes32[] memory) {
         return recentPredictions;
     }
 
     /**
      * @notice Get detected anomalies
      */
-    function getDetectedAnomalies() external view returns (bytes32[] memory) {
+    function getDetectedAnomalies() public view returns (bytes32[] memory) {
         return detectedAnomalies;
     }
 }

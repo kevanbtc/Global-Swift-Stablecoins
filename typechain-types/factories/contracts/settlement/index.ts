@@ -6,5 +6,8 @@ export * as nettingPoolSol from "./NettingPool.sol";
 export * as srCompliantDvPSol from "./SrCompliantDvP.sol";
 export * as rails from "./rails";
 export * as stable from "./stable";
+export { AtomicCrossAssetSettlement__factory } from "./AtomicCrossAssetSettlement__factory";
+export { EmergencyCircuitBreaker__factory } from "./EmergencyCircuitBreaker__factory";
 export { FxPvPRouter__factory } from "./FxPvPRouter__factory";
+export { QuantumResistantZKSettlement__factory } from "./QuantumResistantZKSettlement__factory";
 export { SettlementHub2PC__factory } from "./SettlementHub2PC__factory";

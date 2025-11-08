@@ -24,20 +24,18 @@ contract NavOracleRouter is AccessControl, Pausable {
         if (oracle != address(0)) _grantRole(PolicyRoles.ROLE_ORACLE, oracle);
     }
 
-    function set(bytes32 instrument, uint256 navPerShare18, uint64 asOf)
-        external
-        onlyRole(PolicyRoles.ROLE_ORACLE)
+    function set(bytes32 instrument, uint256 navPerShare18, uint64 asOf) public onlyRole(PolicyRoles.ROLE_ORACLE)
         whenNotPaused
     {
         navOf[instrument] = Nav({navPerShare18: navPerShare18, asOf: asOf, signer: msg.sender});
         emit NavSet(instrument, navPerShare18, asOf, msg.sender);
     }
 
-    function get(bytes32 instrument) external view returns (uint256 navPerShare18, uint64 asOf, address signer) {
+    function get(bytes32 instrument) public view returns (uint256 navPerShare18, uint64 asOf, address signer) {
         Nav memory n = navOf[instrument];
         return (n.navPerShare18, n.asOf, n.signer);
     }
 
-    function pause() external onlyRole(DEFAULT_ADMIN_ROLE) { _pause(); }
-    function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) { _unpause(); }
+    function pause() public onlyRole(DEFAULT_ADMIN_ROLE) { _pause(); }
+    function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) { _unpause(); }
 }

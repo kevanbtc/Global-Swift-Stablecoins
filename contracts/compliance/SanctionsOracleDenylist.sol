@@ -15,9 +15,9 @@ contract SanctionsOracleDenylist {
     modifier onlyAdmin() { require(msg.sender == admin, "SO: not admin"); _; }
     constructor(address _admin) { require(_admin != address(0), "SO: admin 0"); admin = _admin; }
 
-    function transferAdmin(address to) external onlyAdmin { require(to != address(0), "SO: 0"); emit AdminTransferred(admin, to); admin = to; }
+    function transferAdmin(address to) public onlyAdmin { require(to != address(0), "SO: 0"); emit AdminTransferred(admin, to); admin = to; }
 
-    function isSanctioned(address a) external view returns (bool) { return _list[a]; }
+    function isSanctioned(address a) public view returns (bool) { return _list[a]; }
 
-    function set(address a, bool flagged) external onlyAdmin { _list[a] = flagged; emit SanctionSet(a, flagged); }
+    function set(address a, bool flagged) public onlyAdmin { _list[a] = flagged; emit SanctionSet(a, flagged); }
 }

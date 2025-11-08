@@ -4,8 +4,10 @@
 export * as navEventOracleSol from "./NAVEventOracle.sol";
 export * as navEventOracleUpgradeableSol from "./NAVEventOracleUpgradeable.sol";
 export * as adapters from "./adapters";
+export { AdvancedPriceOracle__factory } from "./AdvancedPriceOracle__factory";
 export { AttestationOracle__factory } from "./AttestationOracle__factory";
 export { BankAccountProofOracle__factory } from "./BankAccountProofOracle__factory";
+export { DecentralizedOracleNetwork__factory } from "./DecentralizedOracleNetwork__factory";
 export { IPriceOracle__factory } from "./IPriceOracle__factory";
 export { NavOracleRouter__factory } from "./NavOracleRouter__factory";
 export { OracleCommittee__factory } from "./OracleCommittee__factory";

@@ -2,12 +2,12 @@
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/utils/Create2.sol";
-import "../common/Types.sol";
-import "../common/Roles.sol";
-import "../common/Errors.sol";
+import "./common/Types.sol";
+import "./common/Roles.sol";
+import "./common/Errors.sol";
 
 /**
  * @title UniversalDeployer
@@ -54,9 +54,7 @@ contract UniversalDeployer is AccessControl, Pausable {
     function registerImplementation(
         string memory name,
         address implementation
-    )
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
+    ) public onlyRole(DEFAULT_ADMIN_ROLE)
         returns (bytes32)
     {
         require(implementation != address(0), "Invalid implementation");
@@ -80,9 +78,7 @@ contract UniversalDeployer is AccessControl, Pausable {
         bytes32 implementationId,
         bytes32 salt,
         bytes memory initData
-    )
-        external
-        onlyRole(DEPLOYER_ROLE)
+    ) public onlyRole(DEPLOYER_ROLE)
         whenNotPaused
         returns (address proxy)
     {
@@ -114,9 +110,7 @@ contract UniversalDeployer is AccessControl, Pausable {
         bytes32 id,
         bytes memory bytecode,
         bytes32 salt
-    )
-        external
-        onlyRole(DEPLOYER_ROLE)
+    ) public onlyRole(DEPLOYER_ROLE)
         whenNotPaused
         returns (address deployment)
     {
@@ -131,9 +125,7 @@ contract UniversalDeployer is AccessControl, Pausable {
      * @param implementationId Implementation identifier
      * @param salt Deployment salt
      */
-    function computeProxyAddress(bytes32 implementationId, bytes32 salt)
-        external
-        view
+    function computeProxyAddress(bytes32 implementationId, bytes32 salt) public view
         returns (address)
     {
         address implementation = implementations[implementationId];
@@ -147,9 +139,7 @@ contract UniversalDeployer is AccessControl, Pausable {
      * @param bytecode Contract creation bytecode
      * @param salt Deployment salt
      */
-    function computeContractAddress(bytes memory bytecode, bytes32 salt)
-        external
-        view
+    function computeContractAddress(bytes memory bytecode, bytes32 salt) public view
         returns (address)
     {
         return Create2.computeAddress(salt, keccak256(bytecode));
@@ -159,9 +149,7 @@ contract UniversalDeployer is AccessControl, Pausable {
      * @notice Get all deployments for an implementation or contract type
      * @param id Implementation or deployment identifier
      */
-    function getDeployments(bytes32 id)
-        external
-        view
+    function getDeployments(bytes32 id) public view
         returns (address[] memory)
     {
         return deployments[id];
@@ -171,20 +159,18 @@ contract UniversalDeployer is AccessControl, Pausable {
      * @notice Check if an address is a proxy
      * @param proxy Address to check
      */
-    function isProxyDeployment(address proxy)
-        external
-        view
+    function isProxyDeployment(address proxy) public view
         returns (bool)
     {
         return isProxy[proxy];
     }
 
     // Admin functions
-    function pause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _pause();
     }
 
-    function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _unpause();
     }
 }

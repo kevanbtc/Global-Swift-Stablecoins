@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title CBDCInfrastructure
@@ -119,7 +119,7 @@ contract CBDCInfrastructure is Ownable, ReentrancyGuard {
         uint256 _maxSupply,
         bool _programmable,
         bool _crossBorderEnabled
-    ) external onlyOwner returns (bytes32) {
+    ) public onlyOwner returns (bytes32) {
         require(cbdcConfigs[_cbdcId].cbdcToken == address(0), "CBDC already exists");
         require(_maxSupply <= globalMaxSupply, "Supply exceeds global limit");
 
@@ -144,7 +144,7 @@ contract CBDCInfrastructure is Ownable, ReentrancyGuard {
         bytes32 _cbdcId,
         uint256 _newSupply,
         string memory _reason
-    ) external onlyOwner validCBDC(_cbdcId) {
+    ) public onlyOwner validCBDC(_cbdcId) {
         CBDCConfig storage config = cbdcConfigs[_cbdcId];
         uint256 oldSupply = config.currentSupply;
 
@@ -165,7 +165,7 @@ contract CBDCInfrastructure is Ownable, ReentrancyGuard {
         uint256 _gdpGrowthTarget,
         uint256 _exchangeRateTarget,
         uint256 _quantityMultiplier
-    ) external onlyOwner validCBDC(_cbdcId) {
+    ) public onlyOwner validCBDC(_cbdcId) {
         MonetaryPolicyParams storage params = monetaryPolicies[_cbdcId];
         params.inflationTarget = _inflationTarget;
         params.unemploymentTarget = _unemploymentTarget;
@@ -179,9 +179,7 @@ contract CBDCInfrastructure is Ownable, ReentrancyGuard {
     /**
      * @notice Authorize minter for CBDC
      */
-    function authorizeMinter(bytes32 _cbdcId, address _minter, bool _authorized)
-        external
-        onlyOwner
+    function authorizeMinter(bytes32 _cbdcId, address _minter, bool _authorized) public onlyOwner
         validCBDC(_cbdcId)
     {
         cbdcConfigs[_cbdcId].authorizedMinters[_minter] = _authorized;
@@ -190,9 +188,7 @@ contract CBDCInfrastructure is Ownable, ReentrancyGuard {
     /**
      * @notice Authorize burner for CBDC
      */
-    function authorizeBurner(bytes32 _cbdcId, address _burner, bool _authorized)
-        external
-        onlyOwner
+    function authorizeBurner(bytes32 _cbdcId, address _burner, bool _authorized) public onlyOwner
         validCBDC(_cbdcId)
     {
         cbdcConfigs[_cbdcId].authorizedBurners[_burner] = _authorized;
@@ -207,7 +203,7 @@ contract CBDCInfrastructure is Ownable, ReentrancyGuard {
         uint256 _amount,
         bytes32 _conditionHash,
         uint256 _expiryTime
-    ) external validCBDC(_cbdcId) returns (bytes32) {
+    ) public validCBDC(_cbdcId) returns (bytes32) {
         require(cbdcConfigs[_cbdcId].programmable, "CBDC not programmable");
 
         bytes32 txId = keccak256(abi.encodePacked(
@@ -235,7 +231,7 @@ contract CBDCInfrastructure is Ownable, ReentrancyGuard {
     function executeProgrammableTransaction(
         bytes32 _txId,
         bytes32 _executionHash
-    ) external {
+    ) public {
         ProgrammableTransaction storage tx = programmableTransactions[_txId];
         require(tx.programmable, "Not a programmable transaction");
         require(!tx.executed, "Transaction already executed");
@@ -259,7 +255,7 @@ contract CBDCInfrastructure is Ownable, ReentrancyGuard {
     /**
      * @notice Emergency stop for CBDC
      */
-    function emergencyStop(bytes32 _cbdcId, string memory _reason) external onlyOwner validCBDC(_cbdcId) {
+    function emergencyStop(bytes32 _cbdcId, string memory _reason) public onlyOwner validCBDC(_cbdcId) {
         // Implementation would freeze all operations for this CBDC
         emit EmergencyStop(_cbdcId, _reason);
     }
@@ -267,9 +263,7 @@ contract CBDCInfrastructure is Ownable, ReentrancyGuard {
     /**
      * @notice Get CBDC configuration
      */
-    function getCBDCConfig(bytes32 _cbdcId)
-        external
-        view
+    function getCBDCConfig(bytes32 _cbdcId) public view
         returns (
             address tokenAddress,
             CBDCType cbdcType,
@@ -280,7 +274,7 @@ contract CBDCInfrastructure is Ownable, ReentrancyGuard {
             bool crossBorderEnabled
         )
     {
-        CBDCConfig memory config = cbdcConfigs[_cbdcId];
+        CBDCConfig storage config = cbdcConfigs[_cbdcId];
         return (
             config.cbdcToken,
             config.cbdcType,
@@ -295,9 +289,7 @@ contract CBDCInfrastructure is Ownable, ReentrancyGuard {
     /**
      * @notice Get monetary policy parameters
      */
-    function getMonetaryPolicyParams(bytes32 _cbdcId)
-        external
-        view
+    function getMonetaryPolicyParams(bytes32 _cbdcId) public view
         returns (
             uint256 inflationTarget,
             uint256 unemploymentTarget,
@@ -319,9 +311,7 @@ contract CBDCInfrastructure is Ownable, ReentrancyGuard {
     /**
      * @notice Get programmable transaction details
      */
-    function getProgrammableTransaction(bytes32 _txId)
-        external
-        view
+    function getProgrammableTransaction(bytes32 _txId) public view
         returns (
             address from,
             address to,
@@ -345,28 +335,28 @@ contract CBDCInfrastructure is Ownable, ReentrancyGuard {
     /**
      * @notice Check if address is authorized minter
      */
-    function isAuthorizedMinter(bytes32 _cbdcId, address _minter) external view returns (bool) {
+    function isAuthorizedMinter(bytes32 _cbdcId, address _minter) public view returns (bool) {
         return cbdcConfigs[_cbdcId].authorizedMinters[_minter];
     }
 
     /**
      * @notice Check if address is authorized burner
      */
-    function isAuthorizedBurner(bytes32 _cbdcId, address _burner) external view returns (bool) {
+    function isAuthorizedBurner(bytes32 _cbdcId, address _burner) public view returns (bool) {
         return cbdcConfigs[_cbdcId].authorizedBurners[_burner];
     }
 
     /**
      * @notice Get active CBDCs
      */
-    function getActiveCBDCs() external view returns (bytes32[] memory) {
+    function getActiveCBDCs() public view returns (bytes32[] memory) {
         return activeCBDCs;
     }
 
     /**
      * @notice Get pending programmable transactions
      */
-    function getPendingTransactions() external view returns (bytes32[] memory) {
+    function getPendingTransactions() public view returns (bytes32[] memory) {
         return pendingTransactions;
     }
 
@@ -377,7 +367,7 @@ contract CBDCInfrastructure is Ownable, ReentrancyGuard {
         uint256 _globalMaxSupply,
         uint256 _globalInterestRate,
         uint256 _emergencyStopThreshold
-    ) external onlyOwner {
+    ) public onlyOwner {
         globalMaxSupply = _globalMaxSupply;
         globalInterestRate = _globalInterestRate;
         emergencyStopThreshold = _emergencyStopThreshold;

@@ -2,12 +2,13 @@
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "../common/Types.sol";
-import "../common/Roles.sol";
-import "../common/Errors.sol";
-import "./AIAgentRegistry.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "./common/Types.sol";
+import "./common/Roles.sol";
+import "./common/Errors.sol";
+import "./ai/AIAgentRegistry.sol";
 
 /**
  * @title UnykornL1Bridge
@@ -68,9 +69,7 @@ contract UnykornL1Bridge is AccessControl, Pausable, ReentrancyGuard {
         uint256 minimumAmount,
         uint256 maximumAmount,
         uint256 fee
-    ) 
-        external 
-        onlyRole(DEFAULT_ADMIN_ROLE)
+    ) public onlyRole(DEFAULT_ADMIN_ROLE)
         whenNotPaused 
     {
         require(!supportedChains[chainId], "Chain already supported");
@@ -90,9 +89,7 @@ contract UnykornL1Bridge is AccessControl, Pausable, ReentrancyGuard {
      * @notice Remove support for an L2 chain
      * @param chainId Chain ID to remove
      */
-    function removeChain(uint256 chainId) 
-        external 
-        onlyRole(DEFAULT_ADMIN_ROLE)
+    function removeChain(uint256 chainId) public onlyRole(DEFAULT_ADMIN_ROLE)
         whenNotPaused
     {
         require(supportedChains[chainId], "Chain not supported");
@@ -112,9 +109,7 @@ contract UnykornL1Bridge is AccessControl, Pausable, ReentrancyGuard {
         address to,
         uint256 amount,
         uint256 toChainId
-    )
-        external
-        payable
+    ) public payable
         whenNotPaused
         nonReentrant
     {
@@ -146,9 +141,7 @@ contract UnykornL1Bridge is AccessControl, Pausable, ReentrancyGuard {
      * @param chainId Chain ID to process
      * @param maxMessages Maximum messages to process
      */
-    function processMessages(uint256 chainId, uint256 maxMessages)
-        external
-        onlyRole(OPERATOR_ROLE)
+    function processMessages(uint256 chainId, uint256 maxMessages) public onlyRole(OPERATOR_ROLE)
         whenNotPaused
     {
         require(supportedChains[chainId], "Chain not supported");
@@ -181,9 +174,7 @@ contract UnykornL1Bridge is AccessControl, Pausable, ReentrancyGuard {
      * @param chainId Chain ID
      * @param newFee New fee amount
      */
-    function updateFee(uint256 chainId, uint256 newFee)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
+    function updateFee(uint256 chainId, uint256 newFee) public onlyRole(DEFAULT_ADMIN_ROLE)
         whenNotPaused
     {
         require(supportedChains[chainId], "Chain not supported");
@@ -201,9 +192,7 @@ contract UnykornL1Bridge is AccessControl, Pausable, ReentrancyGuard {
         uint256 chainId,
         uint256 newMinimum,
         uint256 newMaximum
-    )
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
+    ) public onlyRole(DEFAULT_ADMIN_ROLE)
         whenNotPaused
     {
         require(supportedChains[chainId], "Chain not supported");
@@ -242,18 +231,16 @@ contract UnykornL1Bridge is AccessControl, Pausable, ReentrancyGuard {
     }
 
     // Emergency controls
-    function pause() external onlyRole(GUARDIAN_ROLE) {
+    function pause() public onlyRole(GUARDIAN_ROLE) {
         _pause();
     }
 
-    function unpause() external onlyRole(GUARDIAN_ROLE) {
+    function unpause() public onlyRole(GUARDIAN_ROLE) {
         _unpause();
     }
 
     // Withdraw bridge fees
-    function withdrawFees(address payable recipient)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
+    function withdrawFees(address payable recipient) public onlyRole(DEFAULT_ADMIN_ROLE)
     {
         uint256 balance = address(this).balance;
         (bool success, ) = recipient.call{value: balance}("");

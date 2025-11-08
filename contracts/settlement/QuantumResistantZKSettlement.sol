@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title QuantumResistantZKSettlement
@@ -61,7 +61,7 @@ contract QuantumResistantZKSettlement is Ownable, ReentrancyGuard {
         address[] memory participants,
         uint256[] memory amounts,
         address[] memory assets
-    ) external nonReentrant {
+    ) public nonReentrant {
         require(settlements[settlementId].timestamp == 0, "Settlement already exists");
         require(participants.length == amounts.length, "Array length mismatch");
         require(amounts.length == assets.length, "Array length mismatch");
@@ -95,7 +95,7 @@ contract QuantumResistantZKSettlement is Ownable, ReentrancyGuard {
         bytes32[] memory nullifierHashes,
         bytes32[] memory merkleProofs,
         uint256[] memory leafIndices
-    ) external nonReentrant {
+    ) public nonReentrant {
         PrivateSettlement storage settlement = settlements[settlementId];
         require(!settlement.isExecuted, "Already executed");
         require(block.timestamp >= settlement.timestamp + 1 hours, "Too early to execute");
@@ -135,14 +135,14 @@ contract QuantumResistantZKSettlement is Ownable, ReentrancyGuard {
     /**
      * @notice Update current merkle root (for privacy-preserving state)
      */
-    function updateMerkleRoot(bytes32 newRoot) external onlyOwner {
+    function updateMerkleRoot(bytes32 newRoot) public onlyOwner {
         currentMerkleRoot = newRoot;
     }
 
     /**
      * @notice Emergency reveal settlement details (governance only)
      */
-    function emergencyReveal(bytes32 settlementId) external onlyOwner {
+    function emergencyReveal(bytes32 settlementId) public onlyOwner {
         PrivateSettlement storage settlement = settlements[settlementId];
         require(!settlement.isExecuted, "Already executed");
 

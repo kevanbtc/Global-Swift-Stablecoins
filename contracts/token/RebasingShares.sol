@@ -42,7 +42,7 @@ contract RebasingShares is IERC20, AccessControl, Pausable {
         return (sharesOf[owner] * index) / 1e18;
     }
 
-    function allowance(address owner, address spender) external view returns (uint256) {
+    function allowance(address owner, address spender) public view returns (uint256) {
         return _allowances[owner][spender];
     }
 
@@ -56,18 +56,18 @@ contract RebasingShares is IERC20, AccessControl, Pausable {
     }
 
     // ---------------- ERC20 core ----------------
-    function transfer(address to, uint256 amount) external whenNotPaused returns (bool) {
+    function transfer(address to, uint256 amount) public whenNotPaused returns (bool) {
         _transfer(msg.sender, to, amount);
         return true;
     }
 
-    function approve(address spender, uint256 amount) external whenNotPaused returns (bool) {
+    function approve(address spender, uint256 amount) public whenNotPaused returns (bool) {
         _allowances[msg.sender][spender] = amount;
         emit Approval(msg.sender, spender, amount);
         return true;
     }
 
-    function transferFrom(address from, address to, uint256 amount) external whenNotPaused returns (bool) {
+    function transferFrom(address from, address to, uint256 amount) public whenNotPaused returns (bool) {
         uint256 allowed = _allowances[from][msg.sender];
         require(allowed >= amount, "allowance");
         if (allowed != type(uint256).max) {
@@ -87,13 +87,13 @@ contract RebasingShares is IERC20, AccessControl, Pausable {
     }
 
     // ---------------- mint/burn ----------------
-    function mint(address to, uint256 amount) external onlyRole(MINTER_ROLE) whenNotPaused {
+    function mint(address to, uint256 amount) public onlyRole(MINTER_ROLE) whenNotPaused {
         uint256 sh = _toShares(amount);
         totalShares += sh; sharesOf[to] += sh;
         emit Transfer(address(0), to, amount);
     }
 
-    function burn(address from, uint256 amount) external onlyRole(MINTER_ROLE) whenNotPaused {
+    function burn(address from, uint256 amount) public onlyRole(MINTER_ROLE) whenNotPaused {
         uint256 sh = _toShares(amount);
         require(sharesOf[from] >= sh, "balance");
         unchecked { sharesOf[from] -= sh; totalShares -= sh; }
@@ -101,12 +101,12 @@ contract RebasingShares is IERC20, AccessControl, Pausable {
     }
 
     // ---------------- admin ----------------
-    function rebase(uint256 newIndex) external onlyRole(ADMIN_ROLE) whenNotPaused {
+    function rebase(uint256 newIndex) public onlyRole(ADMIN_ROLE) whenNotPaused {
         require(newIndex > 0, "idx");
         uint256 old = index; index = newIndex;
         emit Rebased(old, newIndex);
     }
 
-    function pause() external onlyRole(ADMIN_ROLE) { _pause(); }
-    function unpause() external onlyRole(ADMIN_ROLE) { _unpause(); }
+    function pause() public onlyRole(ADMIN_ROLE) { _pause(); }
+    function unpause() public onlyRole(ADMIN_ROLE) { _unpause(); }
 }

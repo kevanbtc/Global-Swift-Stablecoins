@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
-import "lib/openzeppelin-contracts/contracts/access/AccessControl.sol";
-import "lib/openzeppelin-contracts/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title ContractAccessFee
@@ -53,7 +53,7 @@ contract ContractAccessFee is AccessControl, ReentrancyGuard {
      * @param contractAddress The contract to register
      * @param collector Address that receives fees
      */
-    function registerContract(address contractAddress, address collector) external onlyRole(FEE_SETTER_ROLE) {
+    function registerContract(address contractAddress, address collector) public onlyRole(FEE_SETTER_ROLE) {
         require(contractAddress != address(0), "Invalid contract address");
         require(collector != address(0), "Invalid collector address");
 
@@ -77,7 +77,7 @@ contract ContractAccessFee is AccessControl, ReentrancyGuard {
         address contractAddress,
         uint256 baseFee,
         uint256 perUseFee
-    ) external onlyRole(FEE_SETTER_ROLE) {
+    ) public onlyRole(FEE_SETTER_ROLE) {
         require(contractFees[contractAddress].collector != address(0), "Contract not registered");
 
         contractFees[contractAddress].baseFee = baseFee;
@@ -97,7 +97,7 @@ contract ContractAccessFee is AccessControl, ReentrancyGuard {
         address contractAddress,
         uint256 duration,
         uint256 maxUses
-    ) external nonReentrant {
+    ) public nonReentrant {
         ContractFee memory fee = contractFees[contractAddress];
         require(fee.active, "Contract fees not active");
         require(fee.baseFee > 0 || fee.perUseFee > 0, "No fees configured");
@@ -144,7 +144,7 @@ contract ContractAccessFee is AccessControl, ReentrancyGuard {
      * @param contractAddress Contract address
      * @return hasAccess Whether user has valid access
      */
-    function checkAccess(address user, address contractAddress) external view returns (bool hasAccess) {
+    function checkAccess(address user, address contractAddress) public view returns (bool hasAccess) {
         bytes32 grantId = keccak256(abi.encodePacked(user, contractAddress));
         AccessGrant memory grant = accessGrants[grantId];
 
@@ -159,7 +159,7 @@ contract ContractAccessFee is AccessControl, ReentrancyGuard {
      * @param user User address
      * @param contractAddress Contract address
      */
-    function consumeAccess(address user, address contractAddress) external {
+    function consumeAccess(address user, address contractAddress) public {
         // Only the contract itself can consume access
         require(msg.sender == contractAddress, "Only contract can consume access");
 
@@ -187,7 +187,7 @@ contract ContractAccessFee is AccessControl, ReentrancyGuard {
      * @param user User address
      * @param contractAddress Contract address
      */
-    function getAccessGrant(address user, address contractAddress) external view returns (AccessGrant memory) {
+    function getAccessGrant(address user, address contractAddress) public view returns (AccessGrant memory) {
         bytes32 grantId = keccak256(abi.encodePacked(user, contractAddress));
         return accessGrants[grantId];
     }
@@ -196,7 +196,7 @@ contract ContractAccessFee is AccessControl, ReentrancyGuard {
      * @notice Get contract fee details
      * @param contractAddress Contract address
      */
-    function getContractFee(address contractAddress) external view returns (ContractFee memory) {
+    function getContractFee(address contractAddress) public view returns (ContractFee memory) {
         return contractFees[contractAddress];
     }
 
@@ -205,7 +205,7 @@ contract ContractAccessFee is AccessControl, ReentrancyGuard {
      * @param contractAddress Contract to withdraw from
      * @param amount Amount to withdraw
      */
-    function withdrawFees(address contractAddress, uint256 amount) external {
+    function withdrawFees(address contractAddress, uint256 amount) public {
         ContractFee memory fee = contractFees[contractAddress];
         require(fee.collector == msg.sender, "Not the collector");
         require(amount <= collectedFees[contractAddress], "Insufficient collected fees");
@@ -218,7 +218,7 @@ contract ContractAccessFee is AccessControl, ReentrancyGuard {
      * @notice Get total collected fees for a contract
      * @param contractAddress Contract address
      */
-    function getCollectedFees(address contractAddress) external view returns (uint256) {
+    function getCollectedFees(address contractAddress) public view returns (uint256) {
         return collectedFees[contractAddress];
     }
 }

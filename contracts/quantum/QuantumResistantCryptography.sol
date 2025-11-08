@@ -2,7 +2,7 @@
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "../common/Types.sol";
 import "../common/Roles.sol";
@@ -73,9 +73,7 @@ contract QuantumResistantCryptography is AccessControl, Pausable {
      * @param owner Owner of the key pair
      * @param publicKeyData Public key data
      */
-    function generateKeyPair(address owner, bytes memory publicKeyData)
-        external
-        onlyRole(CRYPTO_OPERATOR_ROLE)
+    function generateKeyPair(address owner, bytes memory publicKeyData) public onlyRole(CRYPTO_OPERATOR_ROLE)
         whenNotPaused
         returns (bytes32)
     {
@@ -115,9 +113,7 @@ contract QuantumResistantCryptography is AccessControl, Pausable {
         bytes32 messageHash,
         bytes32 keyId,
         bytes memory signature
-    )
-        external
-        whenNotPaused
+    ) public whenNotPaused
         returns (bytes32)
     {
         require(publicKeys[keyId].active, "Invalid or inactive key");
@@ -146,9 +142,7 @@ contract QuantumResistantCryptography is AccessControl, Pausable {
      * @param signatureId Signature identifier
      * @param additionalData Additional verification data
      */
-    function verifySignature(bytes32 signatureId, bytes memory additionalData)
-        external
-        view
+    function verifySignature(bytes32 signatureId, bytes memory additionalData) public
         returns (bool)
     {
         Signature memory sig = signatures[signatureId];
@@ -174,9 +168,7 @@ contract QuantumResistantCryptography is AccessControl, Pausable {
      * @notice Revoke a quantum-resistant key
      * @param keyId Key identifier to revoke
      */
-    function revokeKey(bytes32 keyId)
-        external
-        onlyRole(CRYPTO_OPERATOR_ROLE)
+    function revokeKey(bytes32 keyId) public onlyRole(CRYPTO_OPERATOR_ROLE)
         whenNotPaused
     {
         require(publicKeys[keyId].active, "Key not active");
@@ -190,9 +182,7 @@ contract QuantumResistantCryptography is AccessControl, Pausable {
      * @notice Get all keys for a user
      * @param owner Key owner's address
      */
-    function getUserKeys(address owner)
-        external
-        view
+    function getUserKeys(address owner) public view
         returns (bytes32[] memory)
     {
         return userKeys[owner];
@@ -202,9 +192,7 @@ contract QuantumResistantCryptography is AccessControl, Pausable {
      * @notice Get signature details
      * @param signatureId Signature identifier
      */
-    function getSignature(bytes32 signatureId)
-        external
-        view
+    function getSignature(bytes32 signatureId) public view
         returns (
             bytes32 messageHash,
             bytes memory signature,
@@ -243,11 +231,11 @@ contract QuantumResistantCryptography is AccessControl, Pausable {
     }
 
     // Admin functions
-    function pause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _pause();
     }
 
-    function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _unpause();
     }
 }

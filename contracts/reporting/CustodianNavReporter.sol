@@ -46,19 +46,19 @@ contract CustodianNavReporter is AccessControl, EIP712 {
         _grantRole(VAULT_SETTER, governor);
     }
 
-    function setSigner(address signer, bool allowed) external onlyRole(ADMIN) {
+    function setSigner(address signer, bool allowed) public onlyRole(ADMIN) {
         signerAllowed[signer] = allowed;
         emit SignerSet(signer, allowed);
     }
 
     /// @notice Call from admin after deploying vaults: grant this reporter the CUSTODIAN role at vaults.
-    function setupVaultRole(IReportableVault vault) external onlyRole(VAULT_SETTER) {
+    function setupVaultRole(IReportableVault vault) public onlyRole(VAULT_SETTER) {
         // The admin of vault must have already granted this contract CUSTODIAN on the vault.
         // This function is mainly here to sanity-check the role hash exists and is readable.
         vault.CUSTODIAN();
     }
 
-    function submitSignedReport(NAVReport calldata r, bytes calldata signature) external {
+    function submitSignedReport(NAVReport calldata r, bytes calldata signature) public {
         require(r.vault != address(0) && r.totalAssets > 0, "bad_report");
         require(block.timestamp <= r.validUntil, "expired");
         require(!nonceUsed[r.vault][r.nonce], "replay");

@@ -42,7 +42,7 @@ contract OracleCommittee is Initializable, UUPSUpgradeable, AccessControlUpgrade
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() { _disableInitializers(); }
 
-    function initialize(address governor, uint8 minSigners, uint32 maxAgeSec) external initializer {
+    function initialize(address governor, uint8 minSigners, uint32 maxAgeSec) public initializer {
         __AccessControl_init();
         __UUPSUpgradeable_init();
         __EIP712_init("OracleCommittee", "1");
@@ -54,18 +54,18 @@ contract OracleCommittee is Initializable, UUPSUpgradeable, AccessControlUpgrade
 
     function _authorizeUpgrade(address) internal override onlyRole(Roles.UPGRADER) {}
 
-    function setSigner(address who, bool allowed) external onlyRole(Roles.GOVERNOR) {
+    function setSigner(address who, bool allowed) public onlyRole(Roles.GOVERNOR) {
         signers[who] = allowed;
         emit SignerSet(who, allowed);
     }
 
-    function setConfig(Config calldata cfg) external onlyRole(Roles.GOVERNOR) {
+    function setConfig(Config calldata cfg) public onlyRole(Roles.GOVERNOR) {
         require(cfg.minSigners >= 1 && cfg.maxAge > 0, "bad_cfg");
         config = cfg;
         emit ConfigSet(cfg);
     }
 
-    function postAggregate(Quote calldata q, bytes[] calldata sigs) external {
+    function postAggregate(Quote calldata q, bytes[] calldata sigs) public {
         require(block.timestamp >= q.asOf && (block.timestamp - q.asOf) <= config.maxAge, "stale_quote");
         // verify unique signer quorum
         uint256 n = sigs.length;

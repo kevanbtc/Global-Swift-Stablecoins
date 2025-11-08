@@ -12,7 +12,7 @@ contract PoRGuard is IReleaseGuard {
 
     constructor(address _registry){ require(_registry!=address(0), "PORG: 0"); registry = StablecoinRegistry(_registry); }
 
-    function canRelease(address token, address /*to*/, uint256 amount) external view override returns (bool ok, bytes memory reason){
+    function canRelease(address token, address /*to*/, uint256 amount) public view override returns (bool ok, bytes memory reason){
         StablecoinRegistry.Meta memory m = registry.get(token);
         // If not listed or no PoR adapter, do not block
         if (!m.supported || m.por == address(0)) {

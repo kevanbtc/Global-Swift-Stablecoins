@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title GlobalDEX
@@ -206,7 +206,7 @@ contract GlobalDEX is Ownable, ReentrancyGuard {
         uint256 _maxOrderSize,
         uint256 _tickSize,
         uint256 _lotSize
-    ) external onlyOwner returns (bytes32) {
+    ) public onlyOwner returns (bytes32) {
         bytes32 pairId = keccak256(abi.encodePacked(
             _baseAsset,
             _quoteAsset,
@@ -246,7 +246,7 @@ contract GlobalDEX is Ownable, ReentrancyGuard {
         TimeInForce _timeInForce,
         uint256 _expiration,
         bytes32 _clientOrderId
-    ) external validPair(_pairId) nonReentrant returns (bytes32) {
+    ) public validPair(_pairId) nonReentrant returns (bytes32) {
         TradingPair memory pair = tradingPairs[_pairId];
 
         // Validate order parameters
@@ -302,7 +302,7 @@ contract GlobalDEX is Ownable, ReentrancyGuard {
         OrderSide _side,
         uint256 _quantity,
         bytes32 _clientOrderId
-    ) external validPair(_pairId) nonReentrant returns (bytes32) {
+    ) public validPair(_pairId) nonReentrant returns (bytes32) {
         TradingPair memory pair = tradingPairs[_pairId];
         require(_quantity >= pair.minOrderSize && _quantity <= pair.maxOrderSize, "Invalid quantity");
 
@@ -338,7 +338,7 @@ contract GlobalDEX is Ownable, ReentrancyGuard {
     /**
      * @notice Cancel an order
      */
-    function cancelOrder(bytes32 _orderId) external validOrder(_orderId) {
+    function cancelOrder(bytes32 _orderId) public validOrder(_orderId) {
         Order storage order = orders[_orderId];
         require(order.trader == msg.sender, "Not order owner");
         require(order.status == OrderStatus.PENDING || order.status == OrderStatus.PARTIAL, "Cannot cancel");
@@ -362,7 +362,7 @@ contract GlobalDEX is Ownable, ReentrancyGuard {
         uint256 _maxDrawdown,
         uint256 _profitTarget,
         bytes32 _riskParameters
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         bytes32 strategyId = keccak256(abi.encodePacked(
             _strategyName,
             msg.sender,
@@ -387,7 +387,7 @@ contract GlobalDEX is Ownable, ReentrancyGuard {
     /**
      * @notice Execute arbitrage trade
      */
-    function executeArbitrage(bytes32 _opportunityId) external nonReentrant {
+    function executeArbitrage(bytes32 _opportunityId) public nonReentrant {
         ArbitrageOpportunity storage opportunity = arbitrageOpportunities[_opportunityId];
         require(opportunity.isActive, "Opportunity not active");
         require(block.timestamp <= opportunity.expiresAt, "Opportunity expired");
@@ -409,7 +409,7 @@ contract GlobalDEX is Ownable, ReentrancyGuard {
         uint256 _bidPrice,
         uint256 _askPrice,
         uint256 _volume24h
-    ) external onlyOwner validPair(_pairId) {
+    ) public onlyOwner validPair(_pairId) {
         MarketData storage data = marketData[_pairId];
         data.pairId = _pairId;
         data.lastPrice = _lastPrice;
@@ -436,9 +436,7 @@ contract GlobalDEX is Ownable, ReentrancyGuard {
     /**
      * @notice Get order book depth
      */
-    function getOrderBook(bytes32 _pairId, uint256 _depth)
-        external
-        view
+    function getOrderBook(bytes32 _pairId, uint256 _depth) public view
         returns (
             uint256[] memory bidPrices,
             uint256[] memory bidVolumes,
@@ -459,9 +457,7 @@ contract GlobalDEX is Ownable, ReentrancyGuard {
     /**
      * @notice Get trading pair details
      */
-    function getTradingPair(bytes32 _pairId)
-        external
-        view
+    function getTradingPair(bytes32 _pairId) public view
         returns (
             address baseAsset,
             address quoteAsset,
@@ -485,9 +481,7 @@ contract GlobalDEX is Ownable, ReentrancyGuard {
     /**
      * @notice Get order details
      */
-    function getOrder(bytes32 _orderId)
-        external
-        view
+    function getOrder(bytes32 _orderId) public view
         returns (
             bytes32 pairId,
             OrderType orderType,
@@ -513,9 +507,7 @@ contract GlobalDEX is Ownable, ReentrancyGuard {
     /**
      * @notice Get market data
      */
-    function getMarketData(bytes32 _pairId)
-        external
-        view
+    function getMarketData(bytes32 _pairId) public view
         returns (
             uint256 lastPrice,
             uint256 bidPrice,
@@ -545,7 +537,7 @@ contract GlobalDEX is Ownable, ReentrancyGuard {
         uint256 _maxOrderSize,
         uint256 _defaultMakerFee,
         uint256 _defaultTakerFee
-    ) external onlyOwner {
+    ) public onlyOwner {
         maxSlippage = _maxSlippage;
         minOrderSize = _minOrderSize;
         maxOrderSize = _maxOrderSize;
@@ -556,9 +548,7 @@ contract GlobalDEX is Ownable, ReentrancyGuard {
     /**
      * @notice Get global DEX statistics
      */
-    function getGlobalStatistics()
-        external
-        view
+    function getGlobalStatistics() public view
         returns (
             uint256 _totalPairs,
             uint256 _totalOrders,

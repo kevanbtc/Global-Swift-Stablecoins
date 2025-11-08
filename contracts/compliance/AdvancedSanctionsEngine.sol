@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title AdvancedSanctionsEngine
@@ -80,7 +80,7 @@ contract AdvancedSanctionsEngine is Ownable, ReentrancyGuard {
         SanctionSource source,
         RiskLevel riskLevel,
         string memory reason
-    ) external onlyOwner {
+    ) public onlyOwner {
         require(!sanctionedEntities[entityId].isActive, "Entity already sanctioned");
 
         sanctionedEntities[entityId] = SanctionedEntity({
@@ -104,7 +104,7 @@ contract AdvancedSanctionsEngine is Ownable, ReentrancyGuard {
     /**
      * @notice Remove entity from sanctions list
      */
-    function removeSanctionedEntity(bytes32 entityId) external onlyOwner {
+    function removeSanctionedEntity(bytes32 entityId) public onlyOwner {
         require(sanctionedEntities[entityId].isActive, "Entity not sanctioned");
 
         sanctionedEntities[entityId].isActive = false;
@@ -116,7 +116,7 @@ contract AdvancedSanctionsEngine is Ownable, ReentrancyGuard {
     /**
      * @notice Assess risk for an account
      */
-    function assessAccountRisk(address account) external returns (uint256 riskScore, RiskLevel riskLevel) {
+    function assessAccountRisk(address account) public returns (uint256 riskScore, RiskLevel riskLevel) {
         RiskProfile storage profile = riskProfiles[account];
 
         // Reset risk factors
@@ -196,7 +196,7 @@ contract AdvancedSanctionsEngine is Ownable, ReentrancyGuard {
     }
 
     /**
-     * @notice Evaluate transaction risk
+     * @notice Evaluate risk for a specific transaction
      */
     function evaluateTransactionRisk(
         bytes32 txId,
@@ -204,9 +204,10 @@ contract AdvancedSanctionsEngine is Ownable, ReentrancyGuard {
         address to,
         uint256 amount,
         address asset
-    ) external returns (bool isAllowed, string memory reason) {
+    ) public returns (bool isAllowed, string memory reason) {
         uint256 riskScore = 0;
-        string[] memory riskFactors;
+        string[] memory riskFactors = new string[](3); // Pre-allocate max 3 risk factors
+        uint256 factorCount = 0;
 
         // Assess sender risk
         (uint256 senderRisk,) = assessAccountRisk(from);
@@ -219,19 +220,19 @@ contract AdvancedSanctionsEngine is Ownable, ReentrancyGuard {
         // Amount-based risk
         if (amount > _getLargeTransactionThreshold(asset)) {
             riskScore += 200;
-            riskFactors.push("Large transaction amount");
+            if (factorCount < 3) riskFactors[factorCount++] = "Large transaction amount";
         }
 
         // Cross-border risk (simplified)
         if (_isCrossBorderTransaction(from, to)) {
             riskScore += 100;
-            riskFactors.push("Cross-border transaction");
+            if (factorCount < 3) riskFactors[factorCount++] = "Cross-border transaction";
         }
 
         // Velocity risk
         if (_checkTransactionVelocity(from, amount)) {
             riskScore += 150;
-            riskFactors.push("High transaction velocity");
+            if (factorCount < 3) riskFactors[factorCount++] = "High transaction velocity";
         }
 
         riskScore = riskScore > MAX_RISK_SCORE ? MAX_RISK_SCORE : riskScore;
@@ -266,7 +267,7 @@ contract AdvancedSanctionsEngine is Ownable, ReentrancyGuard {
     /**
      * @notice Manually freeze/unfreeze account
      */
-    function setAccountFrozen(address account, bool frozen, string memory reason) external onlyOwner {
+    function setAccountFrozen(address account, bool frozen, string memory reason) public onlyOwner {
         RiskProfile storage profile = riskProfiles[account];
         profile.isFrozen = frozen;
 
@@ -280,7 +281,7 @@ contract AdvancedSanctionsEngine is Ownable, ReentrancyGuard {
     /**
      * @notice Get risk profile for account
      */
-    function getRiskProfile(address account) external view returns (
+    function getRiskProfile(address account) public view returns (
         uint256 riskScore,
         RiskLevel riskLevel,
         bool isFrozen,

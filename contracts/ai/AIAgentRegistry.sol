@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title AIAgentRegistry
@@ -101,7 +101,7 @@ contract AIAgentRegistry is Ownable, ReentrancyGuard {
         string memory _description,
         AgentType _agentType,
         address _operator
-    ) external onlyAuthorizedOperator returns (bytes32) {
+    ) public onlyAuthorizedOperator returns (bytes32) {
         require(_agentAddress != address(0), "Invalid agent address");
         require(addressToAgentId[_agentAddress] == bytes32(0), "Agent already registered");
 
@@ -129,9 +129,7 @@ contract AIAgentRegistry is Ownable, ReentrancyGuard {
     /**
      * @notice Update agent status
      */
-    function updateAgentStatus(bytes32 _agentId, AgentStatus _status)
-        external
-        onlyAuthorizedOperator
+    function updateAgentStatus(bytes32 _agentId, AgentStatus _status) public onlyAuthorizedOperator
         agentExists(_agentId)
     {
         AgentStatus oldStatus = agents[_agentId].status;
@@ -143,9 +141,7 @@ contract AIAgentRegistry is Ownable, ReentrancyGuard {
     /**
      * @notice Grant capability to agent
      */
-    function grantCapability(bytes32 _agentId, bytes32 _capabilityId)
-        external
-        onlyAuthorizedOperator
+    function grantCapability(bytes32 _agentId, bytes32 _capabilityId) public onlyAuthorizedOperator
         agentExists(_agentId)
     {
         require(capabilities[_capabilityId].capabilityId != bytes32(0), "Capability does not exist");
@@ -159,9 +155,7 @@ contract AIAgentRegistry is Ownable, ReentrancyGuard {
     /**
      * @notice Revoke capability from agent
      */
-    function revokeCapability(bytes32 _agentId, bytes32 _capabilityId)
-        external
-        onlyAuthorizedOperator
+    function revokeCapability(bytes32 _agentId, bytes32 _capabilityId) public onlyAuthorizedOperator
         agentExists(_agentId)
     {
         agents[_agentId].permissions[_capabilityId] = false;
@@ -173,9 +167,7 @@ contract AIAgentRegistry is Ownable, ReentrancyGuard {
     /**
      * @notice Update agent trust score
      */
-    function updateTrustScore(bytes32 _agentId, uint256 _newScore)
-        external
-        onlyAuthorizedOperator
+    function updateTrustScore(bytes32 _agentId, uint256 _newScore) public onlyAuthorizedOperator
         agentExists(_agentId)
     {
         require(_newScore <= 100, "Invalid trust score");
@@ -189,7 +181,7 @@ contract AIAgentRegistry is Ownable, ReentrancyGuard {
     /**
      * @notice Authorize operator
      */
-    function authorizeOperator(address _operator, bool _authorized) external onlyOwner {
+    function authorizeOperator(address _operator, bool _authorized) public onlyOwner {
         authorizedOperators[_operator] = _authorized;
     }
 
@@ -201,23 +193,21 @@ contract AIAgentRegistry is Ownable, ReentrancyGuard {
         string memory _description,
         uint256 _riskLevel,
         bool _requiresApproval
-    ) external onlyOwner returns (bytes32) {
+    ) public onlyOwner returns (bytes32) {
         return _addCapability(_name, _description, _riskLevel, _requiresApproval);
     }
 
     /**
      * @notice Check if agent has capability
      */
-    function hasCapability(bytes32 _agentId, bytes32 _capabilityId) external view returns (bool) {
+    function hasCapability(bytes32 _agentId, bytes32 _capabilityId) public view returns (bool) {
         return agents[_agentId].permissions[_capabilityId];
     }
 
     /**
      * @notice Get agent details
      */
-    function getAgent(bytes32 _agentId)
-        external
-        view
+    function getAgent(bytes32 _agentId) public view
         returns (
             address agentAddress,
             string memory name,
@@ -228,7 +218,8 @@ contract AIAgentRegistry is Ownable, ReentrancyGuard {
             address operator
         )
     {
-        AIAgent memory agent = agents[_agentId];
+        // AIAgent contains mappings, so use storage reference
+        AIAgent storage agent = agents[_agentId];
         return (
             agent.agentAddress,
             agent.name,
@@ -243,23 +234,21 @@ contract AIAgentRegistry is Ownable, ReentrancyGuard {
     /**
      * @notice Get all agent IDs
      */
-    function getAllAgentIds() external view returns (bytes32[] memory) {
+    function getAllAgentIds() public view returns (bytes32[] memory) {
         return agentIds;
     }
 
     /**
      * @notice Get all capability IDs
      */
-    function getAllCapabilityIds() external view returns (bytes32[] memory) {
+    function getAllCapabilityIds() public view returns (bytes32[] memory) {
         return capabilityIds;
     }
 
     /**
      * @notice Get capability details
      */
-    function getCapability(bytes32 _capabilityId)
-        external
-        view
+    function getCapability(bytes32 _capabilityId) public view
         returns (
             string memory name,
             string memory description,

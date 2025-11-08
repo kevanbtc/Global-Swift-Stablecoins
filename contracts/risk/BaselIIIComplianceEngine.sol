@@ -2,8 +2,8 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import {Pausable} from "@openzeppelin/contracts/security/Pausable.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 
 /**
  * @title BaselIIIComplianceEngine
@@ -144,7 +144,7 @@ contract BaselIIIComplianceEngine is Ownable, ReentrancyGuard, Pausable {
         uint256 exposureAmount,
         AssetClass assetClass,
         uint256 maturityDate
-    ) external onlyOwner whenNotPaused {
+    ) public onlyOwner whenNotPaused {
         require(approvedAssets[asset], "Asset not approved");
 
         RiskWeight riskWeight = _calculateRiskWeight(assetClass, exposureAmount);
@@ -172,7 +172,7 @@ contract BaselIIIComplianceEngine is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Remove an asset position
      */
-    function removeAssetPosition(address asset) external onlyOwner {
+    function removeAssetPosition(address asset) public onlyOwner {
         require(assetPositions[asset].isActive, "Asset position not active");
 
         assetPositions[asset].isActive = false;
@@ -196,7 +196,7 @@ contract BaselIIIComplianceEngine is Ownable, ReentrancyGuard, Pausable {
     function updateCapital(
         uint256 tier1Capital,
         uint256 tier2Capital
-    ) external onlyOwner whenNotPaused {
+    ) public onlyOwner whenNotPaused {
         capitalPosition.tier1Capital = tier1Capital;
         capitalPosition.tier2Capital = tier2Capital;
         capitalPosition.totalCapital = tier1Capital + tier2Capital;
@@ -388,7 +388,7 @@ contract BaselIIIComplianceEngine is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Approve an asset for position tracking
      */
-    function approveAsset(address asset, bool approved) external onlyOwner {
+    function approveAsset(address asset, bool approved) public onlyOwner {
         approvedAssets[asset] = approved;
     }
 
@@ -400,7 +400,7 @@ contract BaselIIIComplianceEngine is Ownable, ReentrancyGuard, Pausable {
         uint256 _minLeverageRatio,
         uint256 _concentrationLimit,
         uint256 _largeExposureLimit
-    ) external onlyOwner {
+    ) public onlyOwner {
         regulatoryLimits.minCAR = _minCAR;
         regulatoryLimits.minLeverageRatio = _minLeverageRatio;
         regulatoryLimits.concentrationLimit = _concentrationLimit;
@@ -418,23 +418,19 @@ contract BaselIIIComplianceEngine is Ownable, ReentrancyGuard, Pausable {
         AssetClass assetClass,
         uint256[] memory exposures,
         RiskWeight[] memory weights
-    ) external onlyOwner {
+    ) public onlyOwner {
         require(exposures.length == weights.length, "Array length mismatch");
 
-        mapping(uint256 => RiskWeight) storage targetMapping;
-
-        if (assetClass == AssetClass.SOVEREIGN) {
-            targetMapping = sovereignRiskWeights;
-        } else if (assetClass == AssetClass.BANK) {
-            targetMapping = bankRiskWeights;
-        } else if (assetClass == AssetClass.CORPORATE) {
-            targetMapping = corporateRiskWeights;
-        } else {
-            revert("Unsupported asset class for custom weights");
-        }
-
         for (uint256 i = 0; i < exposures.length; i++) {
-            targetMapping[exposures[i]] = weights[i];
+            if (assetClass == AssetClass.SOVEREIGN) {
+                sovereignRiskWeights[exposures[i]] = weights[i];
+            } else if (assetClass == AssetClass.BANK) {
+                bankRiskWeights[exposures[i]] = weights[i];
+            } else if (assetClass == AssetClass.CORPORATE) {
+                corporateRiskWeights[exposures[i]] = weights[i];
+            } else {
+                revert("Unsupported asset class for custom weights");
+            }
             emit RiskWeightUpdated(assetClass, exposures[i], weights[i]);
         }
     }
@@ -442,9 +438,7 @@ contract BaselIIIComplianceEngine is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Get current capital adequacy status
      */
-    function getCapitalAdequacyStatus()
-        external
-        view
+    function getCapitalAdequacyStatus() public view
         returns (
             uint256 car,
             uint256 leverageRatio,
@@ -465,9 +459,7 @@ contract BaselIIIComplianceEngine is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Get asset position details
      */
-    function getAssetPosition(address asset)
-        external
-        view
+    function getAssetPosition(address asset) public view
         returns (
             uint256 exposureAmount,
             AssetClass assetClass,
@@ -492,21 +484,21 @@ contract BaselIIIComplianceEngine is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Get all active assets
      */
-    function getActiveAssets() external view returns (address[] memory) {
+    function getActiveAssets() public view returns (address[] memory) {
         return activeAssets;
     }
 
     /**
      * @notice Emergency pause
      */
-    function emergencyPause() external onlyOwner {
+    function emergencyPause() public onlyOwner {
         _pause();
     }
 
     /**
      * @notice Emergency unpause
      */
-    function emergencyUnpause() external onlyOwner {
+    function emergencyUnpause() public onlyOwner {
         _unpause();
     }
 }

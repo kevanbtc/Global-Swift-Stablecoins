@@ -32,7 +32,7 @@ contract BootstrapExample {
         admin = _admin;
     }
 
-    function deployAll() external {
+    function deployAll() public {
         require(msg.sender == admin, "only admin");
         require(address(compliance) == address(0), "already deployed");
 
@@ -60,7 +60,7 @@ contract BootstrapExample {
     }
 
     // Example configuration helpers
-    function configureExample() external {
+    function configureExample() public {
         require(msg.sender == admin, "only admin");
         require(address(compliance) != address(0), "not deployed");
 

@@ -5,7 +5,7 @@ import {Types} from "../common/Types.sol";
 import {IRail} from "../settlement/rails/IRail.sol";
 import {ExternalRail} from "../settlement/rails/ExternalRail.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /// @title SWIFTGPIAdapter
 /// @notice SR-level adapter for SWIFT Global Payments Innovation (GPI) integration.
@@ -36,7 +36,7 @@ contract SWIFTGPIAdapter is Ownable, ReentrancyGuard {
     }
     
     /// @notice Set trusted SWIFT executor (bank, FI)
-    function setTrustedExecutor(address executor, bool trusted) external onlyOwner {
+    function setTrustedExecutor(address executor, bool trusted) public onlyOwner {
         trustedExecutors[executor] = trusted;
         emit TrustedExecutorSet(executor, trusted);
     }
@@ -47,7 +47,7 @@ contract SWIFTGPIAdapter is Ownable, ReentrancyGuard {
     function initiateGPIPayment(
         string calldata uetr,
         bytes32 settlementId
-    ) external nonReentrant {
+    ) public nonReentrant {
         require(bytes(uetr).length > 0, "SGPI: Empty UETR");
         require(gpiTracking[uetr].timestamp == 0, "SGPI: UETR exists");
         
@@ -68,7 +68,7 @@ contract SWIFTGPIAdapter is Ownable, ReentrancyGuard {
     function updateGPIStatus(
         string calldata uetr,
         Types.SWIFTStatus status
-    ) external nonReentrant {
+    ) public nonReentrant {
         require(trustedExecutors[msg.sender], "SGPI: Not trusted");
         require(gpiTracking[uetr].timestamp > 0, "SGPI: UETR not found");
         require(status != Types.SWIFTStatus.PENDING, "SGPI: Invalid status");
@@ -93,7 +93,7 @@ contract SWIFTGPIAdapter is Ownable, ReentrancyGuard {
         string calldata uetr,
         bytes32 settlementId,
         bytes32 receiptHash
-    ) external nonReentrant {
+    ) public nonReentrant {
         require(trustedExecutors[msg.sender], "SGPI: Not trusted");
         require(gpiTracking[uetr].status == Types.SWIFTStatus.ACCEPTED, "SGPI: Not accepted");
         
@@ -123,7 +123,7 @@ contract SWIFTGPIAdapter is Ownable, ReentrancyGuard {
         string calldata uetr,
         bytes32 settlementId,
         string calldata reason
-    ) external nonReentrant {
+    ) public nonReentrant {
         require(trustedExecutors[msg.sender], "SGPI: Not trusted");
         require(gpiTracking[uetr].timestamp > 0, "SGPI: UETR not found");
         
@@ -146,12 +146,12 @@ contract SWIFTGPIAdapter is Ownable, ReentrancyGuard {
     }
     
     /// @notice Get SWIFT GPI tracking info
-    function getGPITracking(string calldata uetr) external view returns (Types.SWIFTTracking memory) {
+    function getGPITracking(string calldata uetr) public view returns (Types.SWIFTTracking memory) {
         return gpiTracking[uetr];
     }
     
     /// @notice Get UETR for settlement ID
-    function getUETRForSettlement(bytes32 settlementId) external view returns (string memory) {
+    function getUETRForSettlement(bytes32 settlementId) public view returns (string memory) {
         return settlementToUETR[settlementId];
     }
 }

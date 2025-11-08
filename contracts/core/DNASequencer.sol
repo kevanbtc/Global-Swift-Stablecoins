@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {UnykornDNACore} from "./UnykornDNACore.sol";
 
 /**
@@ -146,7 +146,7 @@ contract DNASequencer is Ownable, ReentrancyGuard {
         ExecutionMode _executionMode,
         bytes32[] memory _geneSequence,
         bytes[] memory _geneParameters
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         require(_geneSequence.length <= maxSequenceLength, "Sequence too long");
         require(_geneSequence.length == _geneParameters.length, "Parameter array mismatch");
 
@@ -186,7 +186,7 @@ contract DNASequencer is Ownable, ReentrancyGuard {
         bytes32 _templateId,
         string memory _customName,
         ExecutionMode _executionMode
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         SequenceTemplate memory template = templates[_templateId];
         require(template.isActive, "Template not active");
 
@@ -223,7 +223,7 @@ contract DNASequencer is Ownable, ReentrancyGuard {
         string memory _description,
         bytes32[] memory _defaultGeneSequence,
         ExecutionMode _defaultMode
-    ) external onlyOwner returns (bytes32) {
+    ) public onlyOwner returns (bytes32) {
         bytes32 templateId = keccak256(abi.encodePacked(
             _sequenceType, _name, block.timestamp
         ));
@@ -243,9 +243,7 @@ contract DNASequencer is Ownable, ReentrancyGuard {
     /**
      * @notice Start sequence execution
      */
-    function startExecution(bytes32 _sequenceId)
-        external
-        validSequence(_sequenceId)
+    function startExecution(bytes32 _sequenceId) public validSequence(_sequenceId)
     {
         DNASequence storage sequence = sequences[_sequenceId];
         require(sequence.authorizedExecutors[msg.sender], "Not authorized executor");
@@ -267,7 +265,7 @@ contract DNASequencer is Ownable, ReentrancyGuard {
         bytes32 _geneId,
         bytes memory _executionData,
         string memory _executionLog
-    ) external onlyAIAgent validSequence(_sequenceId) sequenceActive(_sequenceId) returns (bool) {
+    ) public onlyAIAgent validSequence(_sequenceId) sequenceActive(_sequenceId) returns (bool) {
         DNASequence storage sequence = sequences[_sequenceId];
 
         // Check if gene is in sequence and not already executed
@@ -316,7 +314,7 @@ contract DNASequencer is Ownable, ReentrancyGuard {
         uint256 _confidenceLevel,
         string memory _reasoning,
         bytes32[] memory _alternativePaths
-    ) external onlyAIAgent returns (bytes32) {
+    ) public onlyAIAgent returns (bytes32) {
         // Create execution context
         bytes32 contextId = keccak256(abi.encodePacked(
             _sequenceId, _geneId, msg.sender, block.timestamp
@@ -334,7 +332,7 @@ contract DNASequencer is Ownable, ReentrancyGuard {
         context.timestamp = block.timestamp;
 
         // Determine step number
-        DNASequence memory sequence = sequences[_sequenceId];
+        DNASequence storage sequence = sequences[_sequenceId];
         for (uint256 i = 0; i < sequence.geneSequence.length; i++) {
             if (sequence.geneSequence[i] == _geneId) {
                 context.stepNumber = i + 1;
@@ -358,7 +356,7 @@ contract DNASequencer is Ownable, ReentrancyGuard {
     /**
      * @notice Approve sequence for execution
      */
-    function approveSequence(bytes32 _sequenceId) external validSequence(_sequenceId) {
+    function approveSequence(bytes32 _sequenceId) public validSequence(_sequenceId) {
         DNASequence storage sequence = sequences[_sequenceId];
         require(sequence.status == SequenceStatus.VALIDATING, "Not in validation");
 
@@ -368,9 +366,7 @@ contract DNASequencer is Ownable, ReentrancyGuard {
     /**
      * @notice Fail sequence execution
      */
-    function failSequence(bytes32 _sequenceId, string memory _reason)
-        external
-        onlyAIAgent
+    function failSequence(bytes32 _sequenceId, string memory _reason) public onlyAIAgent
         validSequence(_sequenceId)
         sequenceActive(_sequenceId)
     {
@@ -390,9 +386,7 @@ contract DNASequencer is Ownable, ReentrancyGuard {
     /**
      * @notice Rollback sequence execution
      */
-    function rollbackSequence(bytes32 _sequenceId, string memory _reason)
-        external
-        onlyOwner
+    function rollbackSequence(bytes32 _sequenceId, string memory _reason) public onlyOwner
         validSequence(_sequenceId)
     {
         DNASequence storage sequence = sequences[_sequenceId];
@@ -411,9 +405,7 @@ contract DNASequencer is Ownable, ReentrancyGuard {
     /**
      * @notice Authorize executor for sequence
      */
-    function authorizeExecutor(bytes32 _sequenceId, address _executor, bool _authorized)
-        external
-        validSequence(_sequenceId)
+    function authorizeExecutor(bytes32 _sequenceId, address _executor, bool _authorized) public validSequence(_sequenceId)
     {
         DNASequence storage sequence = sequences[_sequenceId];
         require(sequence.creator == msg.sender || msg.sender == owner(), "Not authorized");
@@ -424,7 +416,7 @@ contract DNASequencer is Ownable, ReentrancyGuard {
     /**
      * @notice Set AI swarm coordinator
      */
-    function setAISwarmCoordinator(address _coordinator) external onlyOwner {
+    function setAISwarmCoordinator(address _coordinator) public onlyOwner {
         aiSwarmCoordinator = _coordinator;
         authorizedAIAgents[_coordinator] = true;
     }
@@ -432,7 +424,7 @@ contract DNASequencer is Ownable, ReentrancyGuard {
     /**
      * @notice Authorize AI agent
      */
-    function authorizeAIAgent(address _agent, bool _authorized) external onlyOwner {
+    function authorizeAIAgent(address _agent, bool _authorized) public onlyOwner {
         authorizedAIAgents[_agent] = _authorized;
     }
 
@@ -443,7 +435,7 @@ contract DNASequencer is Ownable, ReentrancyGuard {
         uint256 _maxSequenceLength,
         uint256 _maxExecutionTime,
         uint256 _minConfidenceLevel
-    ) external onlyOwner {
+    ) public onlyOwner {
         maxSequenceLength = _maxSequenceLength;
         maxExecutionTime = _maxExecutionTime;
         minConfidenceLevel = _minConfidenceLevel;
@@ -452,9 +444,7 @@ contract DNASequencer is Ownable, ReentrancyGuard {
     /**
      * @notice Get sequence details
      */
-    function getSequence(bytes32 _sequenceId)
-        external
-        view
+    function getSequence(bytes32 _sequenceId) public view
         returns (
             SequenceType sequenceType,
             string memory name,
@@ -466,7 +456,7 @@ contract DNASequencer is Ownable, ReentrancyGuard {
             uint256 failureCount
         )
     {
-        DNASequence memory sequence = sequences[_sequenceId];
+        DNASequence storage sequence = sequences[_sequenceId];
         return (
             sequence.sequenceType,
             sequence.name,
@@ -482,9 +472,7 @@ contract DNASequencer is Ownable, ReentrancyGuard {
     /**
      * @notice Get sequence gene sequence
      */
-    function getSequenceGenes(bytes32 _sequenceId)
-        external
-        view
+    function getSequenceGenes(bytes32 _sequenceId) public view
         returns (bytes32[] memory)
     {
         return sequences[_sequenceId].geneSequence;
@@ -493,9 +481,7 @@ contract DNASequencer is Ownable, ReentrancyGuard {
     /**
      * @notice Get sequence executed genes
      */
-    function getExecutedGenes(bytes32 _sequenceId)
-        external
-        view
+    function getExecutedGenes(bytes32 _sequenceId) public view
         returns (bytes32[] memory)
     {
         return sequences[_sequenceId].executedGenes;
@@ -504,9 +490,7 @@ contract DNASequencer is Ownable, ReentrancyGuard {
     /**
      * @notice Get AI execution context
      */
-    function getExecutionContext(bytes32 _contextId)
-        external
-        view
+    function getExecutionContext(bytes32 _contextId) public view
         returns (
             bytes32 sequenceId,
             address aiAgent,
@@ -532,9 +516,7 @@ contract DNASequencer is Ownable, ReentrancyGuard {
     /**
      * @notice Get template details
      */
-    function getTemplate(bytes32 _templateId)
-        external
-        view
+    function getTemplate(bytes32 _templateId) public view
         returns (
             SequenceType sequenceType,
             string memory name,
@@ -558,9 +540,7 @@ contract DNASequencer is Ownable, ReentrancyGuard {
     /**
      * @notice Get global sequencer statistics
      */
-    function getGlobalStatistics()
-        external
-        view
+    function getGlobalStatistics() public view
         returns (
             uint256 _totalSequences,
             uint256 _activeSequences,
@@ -575,9 +555,7 @@ contract DNASequencer is Ownable, ReentrancyGuard {
     /**
      * @notice Check if gene is executed in sequence
      */
-    function isGeneExecuted(bytes32 _sequenceId, bytes32 _geneId)
-        external
-        view
+    function isGeneExecuted(bytes32 _sequenceId, bytes32 _geneId) public view
         returns (bool)
     {
         return sequences[_sequenceId].geneExecuted[_geneId];
@@ -586,9 +564,7 @@ contract DNASequencer is Ownable, ReentrancyGuard {
     /**
      * @notice Get sequence execution log
      */
-    function getExecutionLog(bytes32 _sequenceId)
-        external
-        view
+    function getExecutionLog(bytes32 _sequenceId) public view
         returns (string memory)
     {
         return sequences[_sequenceId].executionLog;

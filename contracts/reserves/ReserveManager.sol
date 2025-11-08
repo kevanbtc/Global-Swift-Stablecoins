@@ -32,18 +32,18 @@ contract ReserveManager is AccessControl, IProofOfReserves {
         emit OracleSet(address(o));
     }
 
-    function setIssuer(address _issuer) external onlyRole(PolicyRoles.ROLE_ADMIN) {
+    function setIssuer(address _issuer) public onlyRole(PolicyRoles.ROLE_ADMIN) {
         issuer = _issuer;
         emit IssuerSet(_issuer);
     }
 
-    function registerReserve(bytes32 id, address custodianWallet, address[] calldata assets) external onlyRole(PolicyRoles.ROLE_ADMIN) {
+    function registerReserve(bytes32 id, address custodianWallet, address[] calldata assets) public onlyRole(PolicyRoles.ROLE_ADMIN) {
         reserves[id] = ReserveSlot({reserveId:id, custodianWallet:custodianWallet, assets:assets});
         emit ReserveRegistered(id, assets);
     }
 
     // --- IProofOfReserves
-    function checkMint(bytes32 reserveId, uint256 amount) external view returns (bool) {
+    function checkMint(bytes32 reserveId, uint256 amount) public view returns (bool) {
         require(msg.sender == issuer, "only issuer");
         (IAttestationOracle.ReserveReport memory r, bool ok) = oracle.latest(reserveId);
         if (!ok) return false;
@@ -52,7 +52,7 @@ contract ReserveManager is AccessControl, IProofOfReserves {
         return true;
     }
 
-    function checkRedeem(bytes32 reserveId, uint256 amount) external view returns (bool) {
+    function checkRedeem(bytes32 reserveId, uint256 amount) public view returns (bool) {
         require(msg.sender == issuer, "only issuer");
         (IAttestationOracle.ReserveReport memory r, bool ok) = oracle.latest(reserveId);
         if (!ok) return false;

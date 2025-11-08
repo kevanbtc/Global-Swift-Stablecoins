@@ -2,8 +2,8 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import {Pausable} from "@openzeppelin/contracts/security/Pausable.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 
 /**
  * @title DecentralizedIdentity
@@ -125,7 +125,7 @@ contract DecentralizedIdentity is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Create a new Decentralized Identifier (DID)
      */
-    function createDID(string memory _method) external whenNotPaused returns (string memory) {
+    function createDID(string memory _method) public whenNotPaused returns (string memory) {
         require(bytes(addressToDID[msg.sender]).length == 0, "Address already has DID");
 
         // Generate DID using method-specific format
@@ -172,7 +172,7 @@ contract DecentralizedIdentity is Ownable, ReentrancyGuard, Pausable {
         string memory _did,
         string[] memory _publicKeys,
         string[] memory _serviceEndpoints
-    ) external onlyDIDController(_did) validDID(_did) whenNotPaused {
+    ) public onlyDIDController(_did) validDID(_did) whenNotPaused {
         DIDDocument storage doc = didDocuments[_did];
         doc.publicKeys = _publicKeys;
         doc.serviceEndpoints = _serviceEndpoints;
@@ -190,7 +190,7 @@ contract DecentralizedIdentity is Ownable, ReentrancyGuard, Pausable {
         bytes32[] memory _claims,
         string memory _ipfsHash,
         VerificationLevel _level
-    ) external whenNotPaused returns (bytes32) {
+    ) public whenNotPaused returns (bytes32) {
         require(trustedIssuers[string(abi.encodePacked(msg.sender))], "Not trusted issuer");
         require(didDocuments[_subjectDID].isActive, "Subject DID not active");
         require(_claims.length > 0, "No claims provided");
@@ -252,7 +252,7 @@ contract DecentralizedIdentity is Ownable, ReentrancyGuard, Pausable {
         string memory _circuitId,
         bytes memory _proofData,
         bytes32 _publicInputsHash
-    ) external whenNotPaused returns (bool) {
+    ) public whenNotPaused returns (bool) {
         VerifiableCredential storage credential = verifiableCredentials[_credentialId];
         require(credential.status == CredentialStatus.ACTIVE, "Credential not active");
         require(block.timestamp <= credential.expirationDate, "Credential expired");
@@ -296,9 +296,13 @@ contract DecentralizedIdentity is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Revoke a credential
      */
-    function revokeCredential(bytes32 _credentialId, string memory _reason) external {
+    function revokeCredential(bytes32 _credentialId, string memory _reason) public {
         VerifiableCredential storage credential = verifiableCredentials[_credentialId];
-        require(credential.issuer == string(abi.encodePacked(msg.sender)) || owner() == msg.sender, "Not authorized");
+        require(
+            keccak256(bytes(credential.issuer)) == keccak256(abi.encodePacked(msg.sender)) || 
+            owner() == msg.sender, 
+            "Not authorized"
+        );
 
         credential.status = CredentialStatus.REVOKED;
 
@@ -316,8 +320,8 @@ contract DecentralizedIdentity is Ownable, ReentrancyGuard, Pausable {
         string memory _did,
         VerificationLevel _requiredLevel,
         uint256 _minTrustScore
-    ) external view returns (bool) {
-        IdentityProfile memory profile = identityProfiles[_did];
+    ) public view returns (bool) {
+        IdentityProfile storage profile = identityProfiles[_did];
         require(profile.walletAddress != address(0), "Identity not found");
 
         return (
@@ -331,9 +335,7 @@ contract DecentralizedIdentity is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Get DID document
      */
-    function getDIDDocument(string memory _did)
-        external
-        view
+    function getDIDDocument(string memory _did) public view
         returns (
             address controller,
             uint256 createdAt,
@@ -357,9 +359,7 @@ contract DecentralizedIdentity is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Get verifiable credential
      */
-    function getVerifiableCredential(bytes32 _credentialId)
-        external
-        view
+    function getVerifiableCredential(bytes32 _credentialId) public view
         returns (
             string memory did,
             string memory issuer,
@@ -385,9 +385,7 @@ contract DecentralizedIdentity is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Get identity profile
      */
-    function getIdentityProfile(string memory _did)
-        external
-        view
+    function getIdentityProfile(string memory _did) public view
         returns (
             address walletAddress,
             VerificationLevel verificationLevel,
@@ -398,7 +396,7 @@ contract DecentralizedIdentity is Ownable, ReentrancyGuard, Pausable {
             string memory jurisdiction
         )
     {
-        IdentityProfile memory profile = identityProfiles[_did];
+        IdentityProfile storage profile = identityProfiles[_did];
         return (
             profile.walletAddress,
             profile.verificationLevel,
@@ -416,7 +414,7 @@ contract DecentralizedIdentity is Ownable, ReentrancyGuard, Pausable {
     function addTrustedIssuer(
         string memory _issuer,
         VerificationLevel _level
-    ) external onlyOwner {
+    ) public onlyOwner {
         trustedIssuers[_issuer] = true;
         issuerLevels[_issuer] = _level;
     }
@@ -428,7 +426,7 @@ contract DecentralizedIdentity is Ownable, ReentrancyGuard, Pausable {
         string memory _did,
         string[] memory _keys,
         bytes32[] memory _values
-    ) external onlyDIDController(_did) validDID(_did) whenNotPaused {
+    ) public onlyDIDController(_did) validDID(_did) whenNotPaused {
         require(_keys.length == _values.length, "Mismatched arrays");
 
         IdentityProfile storage profile = identityProfiles[_did];
@@ -442,7 +440,7 @@ contract DecentralizedIdentity is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Freeze/unfreeze identity
      */
-    function setIdentityFrozen(string memory _did, bool _frozen) external onlyOwner {
+    function setIdentityFrozen(string memory _did, bool _frozen) public onlyOwner {
         IdentityProfile storage profile = identityProfiles[_did];
         require(profile.walletAddress != address(0), "Identity not found");
 
@@ -457,7 +455,7 @@ contract DecentralizedIdentity is Ownable, ReentrancyGuard, Pausable {
         uint256 _maxCredentialsPerDID,
         uint256 _minTrustScore,
         uint256 _verificationCooldown
-    ) external onlyOwner {
+    ) public onlyOwner {
         credentialExpiration = _credentialExpiration;
         maxCredentialsPerDID = _maxCredentialsPerDID;
         minTrustScore = _minTrustScore;
@@ -467,14 +465,14 @@ contract DecentralizedIdentity is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Emergency pause
      */
-    function emergencyPause() external onlyOwner {
+    function emergencyPause() public onlyOwner {
         _pause();
     }
 
     /**
      * @notice Emergency unpause
      */
-    function emergencyUnpause() external onlyOwner {
+    function emergencyUnpause() public onlyOwner {
         _unpause();
     }
 

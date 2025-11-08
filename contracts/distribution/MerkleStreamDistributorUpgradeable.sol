@@ -32,8 +32,7 @@ contract MerkleStreamDistributorUpgradeable is Initializable, AC {
         _grantRole(GOVERNOR_ROLE, governor);
     }
 
-    function createEpoch(bytes32 root, address token, uint64 start, uint64 end, uint256 total)
-        external onlyRole(GOVERNOR_ROLE) returns (uint256 id)
+    function createEpoch(bytes32 root, address token, uint64 start, uint64 end, uint256 total) public onlyRole(GOVERNOR_ROLE) returns (uint256 id)
     {
         require(end > start, "time");
         id = ++epochCount;
@@ -48,7 +47,7 @@ contract MerkleStreamDistributorUpgradeable is Initializable, AC {
         v = (totalAmount * (block.timestamp - e.start)) / (e.end - e.start);
     }
 
-    function claim(uint256 id, uint256 index, address account, uint256 totalAmount, bytes32[] calldata proof) external {
+    function claim(uint256 id, uint256 index, address account, uint256 totalAmount, bytes32[] calldata proof) public {
         Epoch memory e = epochs[id];
         require(e.active && e.root != 0, "epoch");
         bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(index, account, totalAmount))));

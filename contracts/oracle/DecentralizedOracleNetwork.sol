@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title DecentralizedOracleNetwork
@@ -55,7 +55,7 @@ contract DecentralizedOracleNetwork is Ownable, ReentrancyGuard {
     /**
      * @notice Register a new oracle node
      */
-    function registerOracleNode(address nodeAddress, uint256 initialReputation) external onlyOwner {
+    function registerOracleNode(address nodeAddress, uint256 initialReputation) public onlyOwner {
         require(initialReputation >= MIN_REPUTATION_SCORE, "Reputation too low");
         require(initialReputation <= MAX_REPUTATION_SCORE, "Reputation too high");
         require(!nodes[nodeAddress].isActive, "Node already registered");
@@ -75,7 +75,7 @@ contract DecentralizedOracleNetwork is Ownable, ReentrancyGuard {
     /**
      * @notice Authorize an asset for price feeds
      */
-    function authorizeAsset(address asset, bool authorized) external onlyOwner {
+    function authorizeAsset(address asset, bool authorized) public onlyOwner {
         authorizedAssets[asset] = authorized;
     }
 
@@ -87,7 +87,7 @@ contract DecentralizedOracleNetwork is Ownable, ReentrancyGuard {
         uint256 price,
         uint256 confidence,
         uint8 decimalPlaces
-    ) external nonReentrant {
+    ) public nonReentrant {
         require(nodes[msg.sender].isActive, "Node not active");
         require(authorizedAssets[asset], "Asset not authorized");
         require(confidence > 0, "Invalid confidence");
@@ -121,7 +121,7 @@ contract DecentralizedOracleNetwork is Ownable, ReentrancyGuard {
     /**
      * @notice Get latest consensus price for asset
      */
-    function getPrice(address asset) external view returns (
+    function getPrice(address asset) public view returns (
         uint256 price,
         uint256 timestamp,
         uint256 confidence,
@@ -142,7 +142,7 @@ contract DecentralizedOracleNetwork is Ownable, ReentrancyGuard {
     /**
      * @notice Get price from specific node
      */
-    function getNodePrice(address asset, address node) external view returns (
+    function getNodePrice(address asset, address node) public view returns (
         uint256 price,
         uint256 timestamp,
         uint256 confidence
@@ -154,7 +154,7 @@ contract DecentralizedOracleNetwork is Ownable, ReentrancyGuard {
     /**
      * @notice Activate emergency mode for asset (governance only)
      */
-    function activateEmergencyMode(address asset) external onlyOwner {
+    function activateEmergencyMode(address asset) public onlyOwner {
         assets[asset].emergencyMode = true;
         emit EmergencyModeActivated(asset);
     }
@@ -162,7 +162,7 @@ contract DecentralizedOracleNetwork is Ownable, ReentrancyGuard {
     /**
      * @notice Deactivate emergency mode for asset
      */
-    function deactivateEmergencyMode(address asset) external onlyOwner {
+    function deactivateEmergencyMode(address asset) public onlyOwner {
         assets[asset].emergencyMode = false;
         emit EmergencyModeDeactivated(asset);
     }

@@ -2,12 +2,12 @@
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "../common/Types.sol";
 import "../common/Roles.sol";
 import "../common/Errors.sol";
-import "./AIAgentRegistry.sol";
+import "../ai/AIAgentRegistry.sol";
 
 /**
  * @title SWIFTGPIAdapter
@@ -77,9 +77,7 @@ contract SWIFTGPIAdapter is AccessControl, Pausable, ReentrancyGuard {
         address receiver,
         uint256 amount,
         bytes memory data
-    )
-        external
-        whenNotPaused
+    ) public whenNotPaused
         onlyRole(BANK_ROLE)
         returns (bytes32)
     {
@@ -112,9 +110,7 @@ contract SWIFTGPIAdapter is AccessControl, Pausable, ReentrancyGuard {
      * @param messageId Message identifier
      * @param status Processing status
      */
-    function processMessage(bytes32 messageId, bytes32 status)
-        external
-        whenNotPaused
+    function processMessage(bytes32 messageId, bytes32 status) public whenNotPaused
         onlyRole(SWIFT_OPERATOR_ROLE)
     {
         require(messages[messageId].timestamp > 0, "Message not found");
@@ -130,9 +126,7 @@ contract SWIFTGPIAdapter is AccessControl, Pausable, ReentrancyGuard {
      * @notice Authorize a bank
      * @param bank Bank's address
      */
-    function authorizeBank(address bank)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
+    function authorizeBank(address bank) public onlyRole(DEFAULT_ADMIN_ROLE)
     {
         require(!authorizedBanks[bank], "Already authorized");
         authorizedBanks[bank] = true;
@@ -145,9 +139,7 @@ contract SWIFTGPIAdapter is AccessControl, Pausable, ReentrancyGuard {
      * @notice Deauthorize a bank
      * @param bank Bank's address
      */
-    function deauthorizeBank(address bank)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
+    function deauthorizeBank(address bank) public onlyRole(DEFAULT_ADMIN_ROLE)
     {
         require(authorizedBanks[bank], "Not authorized");
         authorizedBanks[bank] = false;
@@ -160,9 +152,7 @@ contract SWIFTGPIAdapter is AccessControl, Pausable, ReentrancyGuard {
      * @notice Get message details
      * @param messageId Message identifier
      */
-    function getMessage(bytes32 messageId)
-        external
-        view
+    function getMessage(bytes32 messageId) public view
         returns (
             bytes32 messageType,
             string memory id,
@@ -193,9 +183,7 @@ contract SWIFTGPIAdapter is AccessControl, Pausable, ReentrancyGuard {
      * @notice Add a new supported message type
      * @param messageType Type of message to support
      */
-    function addMessageType(bytes32 messageType)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
+    function addMessageType(bytes32 messageType) public onlyRole(DEFAULT_ADMIN_ROLE)
     {
         require(!supportedMessageTypes[messageType], "Already supported");
         supportedMessageTypes[messageType] = true;
@@ -205,9 +193,7 @@ contract SWIFTGPIAdapter is AccessControl, Pausable, ReentrancyGuard {
      * @notice Remove a supported message type
      * @param messageType Type of message to remove
      */
-    function removeMessageType(bytes32 messageType)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
+    function removeMessageType(bytes32 messageType) public onlyRole(DEFAULT_ADMIN_ROLE)
     {
         require(messageType != PACS_008 && messageType != PACS_009,
             "Cannot remove core types");
@@ -216,11 +202,11 @@ contract SWIFTGPIAdapter is AccessControl, Pausable, ReentrancyGuard {
     }
 
     // Emergency controls
-    function pause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _pause();
     }
 
-    function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _unpause();
     }
 }

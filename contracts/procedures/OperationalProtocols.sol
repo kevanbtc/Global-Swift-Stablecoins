@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title OperationalProtocols
@@ -175,7 +175,7 @@ contract OperationalProtocols is Ownable, ReentrancyGuard {
         address[] memory _responsibleRoles,
         uint256[] memory _estimatedDurations,
         bool[] memory _isCritical
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         require(_stepIds.length == _stepNames.length, "Array length mismatch");
         require(_stepNames.length == _stepDescriptions.length, "Array length mismatch");
         require(_stepDescriptions.length == _responsibleRoles.length, "Array length mismatch");
@@ -232,9 +232,7 @@ contract OperationalProtocols is Ownable, ReentrancyGuard {
     /**
      * @notice Update protocol status
      */
-    function updateProtocolStatus(bytes32 _protocolId, ProtocolStatus _status)
-        external
-        validProtocol(_protocolId)
+    function updateProtocolStatus(bytes32 _protocolId, ProtocolStatus _status) public validProtocol(_protocolId)
     {
         OperationalProtocol storage protocol = protocols[_protocolId];
         require(protocol.author == msg.sender || msg.sender == owner(), "Not authorized");
@@ -250,7 +248,7 @@ contract OperationalProtocols is Ownable, ReentrancyGuard {
         bytes32 _protocolId,
         SeverityLevel _triggerSeverity,
         string memory _executionReason
-    ) external validProtocol(_protocolId) activeProtocol(_protocolId) returns (bytes32) {
+    ) public validProtocol(_protocolId) activeProtocol(_protocolId) returns (bytes32) {
         bytes32 executionId = keccak256(abi.encodePacked(
             _protocolId,
             msg.sender,
@@ -281,7 +279,7 @@ contract OperationalProtocols is Ownable, ReentrancyGuard {
         bytes32 _stepId,
         bytes32 _evidenceHash,
         string memory _executionNotes
-    ) external {
+    ) public {
         ProtocolExecution storage execution = executions[_executionId];
         require(execution.initiator == msg.sender, "Not execution initiator");
         require(execution.status != ProtocolExecutionStatus.COMPLETED, "Execution completed");
@@ -302,7 +300,7 @@ contract OperationalProtocols is Ownable, ReentrancyGuard {
     /**
      * @notice Complete protocol step
      */
-    function completeStep(bytes32 _executionId, bytes32 _stepId) external {
+    function completeStep(bytes32 _executionId, bytes32 _stepId) public {
         ProtocolExecution storage execution = executions[_executionId];
         OperationalProtocol storage protocol = protocols[execution.protocolId];
         ProtocolStep storage step = protocol.steps[_stepId];
@@ -330,9 +328,9 @@ contract OperationalProtocols is Ownable, ReentrancyGuard {
     /**
      * @notice Approve protocol execution
      */
-    function approveExecution(bytes32 _executionId) external {
+    function approveExecution(bytes32 _executionId) public {
         ProtocolExecution storage execution = executions[_executionId];
-        OperationalProtocol memory protocol = protocols[execution.protocolId];
+        OperationalProtocol storage protocol = protocols[execution.protocolId];
 
         require(protocol.requiresApproval, "Approval not required");
         require(!execution.approvals[msg.sender], "Already approved");
@@ -344,7 +342,7 @@ contract OperationalProtocols is Ownable, ReentrancyGuard {
     /**
      * @notice Escalate protocol execution
      */
-    function escalateExecution(bytes32 _executionId, SeverityLevel _newSeverity) external {
+    function escalateExecution(bytes32 _executionId, SeverityLevel _newSeverity) public {
         ProtocolExecution storage execution = executions[_executionId];
         require(_newSeverity > execution.triggerSeverity, "Cannot de-escalate");
 
@@ -356,7 +354,7 @@ contract OperationalProtocols is Ownable, ReentrancyGuard {
     /**
      * @notice Report incident from protocol execution
      */
-    function reportIncident(bytes32 _executionId, string memory _incidentDetails) external returns (bytes32) {
+    function reportIncident(bytes32 _executionId, string memory _incidentDetails) public returns (bytes32) {
         ProtocolExecution storage execution = executions[_executionId];
         require(!execution.incidentReported, "Incident already reported");
 
@@ -383,7 +381,7 @@ contract OperationalProtocols is Ownable, ReentrancyGuard {
         string memory _escalationMessage,
         bool _autoEscalate,
         uint256 _escalationDelay
-    ) external onlyOwner {
+    ) public onlyOwner {
         bytes32 ruleId = keccak256(abi.encodePacked(
             _triggerLevel,
             _timeoutThreshold,
@@ -403,9 +401,7 @@ contract OperationalProtocols is Ownable, ReentrancyGuard {
     /**
      * @notice Get protocol details
      */
-    function getProtocol(bytes32 _protocolId)
-        external
-        view
+    function getProtocol(bytes32 _protocolId) public view
         returns (
             ProtocolType protocolType,
             string memory name,
@@ -416,7 +412,7 @@ contract OperationalProtocols is Ownable, ReentrancyGuard {
             uint256 successRate
         )
     {
-        OperationalProtocol memory protocol = protocols[_protocolId];
+        OperationalProtocol storage protocol = protocols[_protocolId];
         return (
             protocol.protocolType,
             protocol.name,
@@ -431,9 +427,7 @@ contract OperationalProtocols is Ownable, ReentrancyGuard {
     /**
      * @notice Get protocol step details
      */
-    function getProtocolStep(bytes32 _protocolId, bytes32 _stepId)
-        external
-        view
+    function getProtocolStep(bytes32 _protocolId, bytes32 _stepId) public view
         returns (
             string memory name,
             string memory description,
@@ -459,9 +453,7 @@ contract OperationalProtocols is Ownable, ReentrancyGuard {
     /**
      * @notice Get execution details
      */
-    function getExecution(bytes32 _executionId)
-        external
-        view
+    function getExecution(bytes32 _executionId) public view
         returns (
             bytes32 protocolId,
             SeverityLevel triggerSeverity,
@@ -472,7 +464,7 @@ contract OperationalProtocols is Ownable, ReentrancyGuard {
             uint256 completedStepsCount
         )
     {
-        ProtocolExecution memory execution = executions[_executionId];
+        ProtocolExecution storage execution = executions[_executionId];
         return (
             execution.protocolId,
             execution.triggerSeverity,
@@ -487,9 +479,7 @@ contract OperationalProtocols is Ownable, ReentrancyGuard {
     /**
      * @notice Get escalation rule
      */
-    function getEscalationRule(SeverityLevel _level)
-        external
-        view
+    function getEscalationRule(SeverityLevel _level) public view
         returns (
             uint256 timeoutThreshold,
             address[] memory escalationContacts,
@@ -511,9 +501,7 @@ contract OperationalProtocols is Ownable, ReentrancyGuard {
     /**
      * @notice Get protocols by type
      */
-    function getProtocolsByType(ProtocolType _type)
-        external
-        view
+    function getProtocolsByType(ProtocolType _type) public view
         returns (bytes32[] memory)
     {
         return protocolsByType[_type];
@@ -526,7 +514,7 @@ contract OperationalProtocols is Ownable, ReentrancyGuard {
         uint256 _defaultMaxExecutionTime,
         uint256 _defaultMinApprovals,
         uint256 _escalationCheckInterval
-    ) external onlyOwner {
+    ) public onlyOwner {
         defaultMaxExecutionTime = _defaultMaxExecutionTime;
         defaultMinApprovals = _defaultMinApprovals;
         escalationCheckInterval = _escalationCheckInterval;
@@ -535,9 +523,7 @@ contract OperationalProtocols is Ownable, ReentrancyGuard {
     /**
      * @notice Get global operational statistics
      */
-    function getGlobalStatistics()
-        external
-        view
+    function getGlobalStatistics() public view
         returns (
             uint256 _totalProtocols,
             uint256 _totalExecutions,

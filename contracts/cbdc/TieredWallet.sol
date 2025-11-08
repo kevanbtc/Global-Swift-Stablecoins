@@ -2,7 +2,7 @@
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../common/Types.sol";
 import "../common/Roles.sol";
@@ -216,9 +216,7 @@ contract TieredWallet is AccessControl, Pausable {
      * @param wallet Wallet address
      * @param level New tier level
      */
-    function setWalletTier(address wallet, TierLevel level)
-        external
-        onlyRole(TIER_MANAGER_ROLE)
+    function setWalletTier(address wallet, TierLevel level) public onlyRole(TIER_MANAGER_ROLE)
         whenNotPaused
     {
         require(tiers[level].active, "Tier not active");
@@ -234,9 +232,7 @@ contract TieredWallet is AccessControl, Pausable {
      * @param to Recipient address
      * @param amount Transfer amount
      */
-    function initiateTransaction(address to, uint256 amount)
-        external
-        whenNotPaused
+    function initiateTransaction(address to, uint256 amount) public whenNotPaused
         returns (bytes32)
     {
         WalletInfo storage wallet = wallets[msg.sender];
@@ -297,9 +293,7 @@ contract TieredWallet is AccessControl, Pausable {
      * @notice Approve a pending transaction
      * @param requestId Transaction request ID
      */
-    function approveTransaction(bytes32 requestId)
-        external
-        onlyRole(COMPLIANCE_ROLE)
+    function approveTransaction(bytes32 requestId) public onlyRole(COMPLIANCE_ROLE)
         whenNotPaused
     {
         TransactionRequest storage request = transactionRequests[requestId];
@@ -345,9 +339,7 @@ contract TieredWallet is AccessControl, Pausable {
      * @param wallet Wallet to freeze
      * @param reason Reason for freezing
      */
-    function freezeWallet(address wallet, string calldata reason)
-        external
-        onlyRole(COMPLIANCE_ROLE)
+    function freezeWallet(address wallet, string calldata reason) public onlyRole(COMPLIANCE_ROLE)
     {
         require(!wallets[wallet].frozen, "Already frozen");
         
@@ -360,9 +352,7 @@ contract TieredWallet is AccessControl, Pausable {
      * @notice Unfreeze a wallet
      * @param wallet Wallet to unfreeze
      */
-    function unfreezeWallet(address wallet)
-        external
-        onlyRole(COMPLIANCE_ROLE)
+    function unfreezeWallet(address wallet) public onlyRole(COMPLIANCE_ROLE)
     {
         require(wallets[wallet].frozen, "Not frozen");
         
@@ -375,9 +365,7 @@ contract TieredWallet is AccessControl, Pausable {
      * @notice Add an approved operator for a wallet
      * @param operator Operator address
      */
-    function addOperator(address operator)
-        external
-        whenNotPaused
+    function addOperator(address operator) public whenNotPaused
     {
         require(operator != address(0), "Invalid operator");
         wallets[msg.sender].approvedOperators[operator] = true;
@@ -387,9 +375,7 @@ contract TieredWallet is AccessControl, Pausable {
      * @notice Remove an approved operator for a wallet
      * @param operator Operator address
      */
-    function removeOperator(address operator)
-        external
-    {
+    function removeOperator(address operator) public {
         wallets[msg.sender].approvedOperators[operator] = false;
     }
 
@@ -397,9 +383,7 @@ contract TieredWallet is AccessControl, Pausable {
      * @notice Get wallet information
      * @param wallet Wallet address
      */
-    function getWalletInfo(address wallet)
-        external
-        view
+    function getWalletInfo(address wallet) public view
         returns (
             TierLevel tier,
             uint256 dailyUsed,
@@ -422,9 +406,7 @@ contract TieredWallet is AccessControl, Pausable {
      * @notice Get transaction request details
      * @param requestId Request ID
      */
-    function getTransactionRequest(bytes32 requestId)
-        external
-        view
+    function getTransactionRequest(bytes32 requestId) public view
         returns (
             address from,
             address to,
@@ -452,20 +434,18 @@ contract TieredWallet is AccessControl, Pausable {
      * @param wallet Wallet address
      * @param operator Operator address
      */
-    function isApprovedOperator(address wallet, address operator)
-        external
-        view
+    function isApprovedOperator(address wallet, address operator) public view
         returns (bool)
     {
         return wallets[wallet].approvedOperators[operator];
     }
 
     // Admin functions
-    function pause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _pause();
     }
 
-    function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _unpause();
     }
 }

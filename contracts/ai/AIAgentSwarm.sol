@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title AIAgentSwarm
@@ -71,6 +71,7 @@ contract AIAgentSwarm is Ownable, ReentrancyGuard {
         bool isCompleted;
         bytes result;
         uint256 executionTime;
+        uint256 startTime;  // Track when the task was created or started
     }
 
     struct SwarmIntelligence {
@@ -135,7 +136,7 @@ contract AIAgentSwarm is Ownable, ReentrancyGuard {
         AgentType _agentType,
         address _agentAddress,
         bytes32[] memory _capabilities
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         require(_agentAddress != address(0), "Invalid agent address");
         require(bytes(_agentName).length > 0, "Invalid agent name");
 
@@ -180,7 +181,7 @@ contract AIAgentSwarm is Ownable, ReentrancyGuard {
         TaskPriority _priority,
         uint256 _deadline,
         uint256 _reward
-    ) external payable validAgent(_agentId) agentActive(_agentId) returns (bytes32) {
+    ) public payable validAgent(_agentId) agentActive(_agentId) returns (bytes32) {
         require(msg.value >= _reward, "Insufficient reward payment");
         require(_deadline > block.timestamp, "Invalid deadline");
 
@@ -201,6 +202,7 @@ contract AIAgentSwarm is Ownable, ReentrancyGuard {
         task.deadline = _deadline;
         task.reward = _reward;
         task.requester = msg.sender;
+        task.startTime = block.timestamp;  // Record when the task was assigned
 
         agentTasks[_agentId].push(taskId);
         activeTasks++;
@@ -216,7 +218,7 @@ contract AIAgentSwarm is Ownable, ReentrancyGuard {
         bytes32 _taskId,
         bool _success,
         bytes memory _result
-    ) external validAgent(tasks[_taskId].agentId) {
+    ) public validAgent(tasks[_taskId].agentId) {
         Task storage task = tasks[_taskId];
         require(task.agentId == keccak256(abi.encodePacked(msg.sender)), "Not assigned agent");
         require(!task.isCompleted, "Task already completed");
@@ -224,7 +226,7 @@ contract AIAgentSwarm is Ownable, ReentrancyGuard {
 
         task.isCompleted = true;
         task.result = _result;
-        task.executionTime = block.timestamp - task.lastActivity;
+        task.executionTime = block.timestamp - task.startTime;  // Use startTime instead of lastActivity
 
         AIAgent storage agent = aiAgents[task.agentId];
         agent.lastActivity = block.timestamp;
@@ -255,7 +257,7 @@ contract AIAgentSwarm is Ownable, ReentrancyGuard {
         string memory _topic,
         bytes32[] memory _contributingAgents,
         bytes memory _aggregatedData
-    ) external onlyOwner returns (bytes32) {
+    ) public onlyOwner returns (bytes32) {
         require(_contributingAgents.length > 0, "No contributing agents");
 
         bytes32 intelligenceId = keccak256(abi.encodePacked(
@@ -284,7 +286,7 @@ contract AIAgentSwarm is Ownable, ReentrancyGuard {
         bytes32 _agentId,
         bytes32 _permission,
         bool _granted
-    ) external onlyAgentOperator(_agentId) {
+    ) public onlyAgentOperator(_agentId) {
         aiAgents[_agentId].permissions[_permission] = _granted;
     }
 
@@ -294,7 +296,7 @@ contract AIAgentSwarm is Ownable, ReentrancyGuard {
     function updateAgentStatus(
         bytes32 _agentId,
         AgentStatus _newStatus
-    ) external onlyAgentOperator(_agentId) {
+    ) public onlyAgentOperator(_agentId) {
         aiAgents[_agentId].status = _newStatus;
         emit AgentStatusChanged(_agentId, _newStatus);
     }
@@ -306,7 +308,7 @@ contract AIAgentSwarm is Ownable, ReentrancyGuard {
         bytes32 _agentId,
         bytes32 _metricType,
         uint256 _value
-    ) external {
+    ) public {
         AIAgent storage agent = aiAgents[_agentId];
         require(agent.agentAddress == msg.sender || agent.operator == msg.sender, "Not authorized");
 
@@ -317,9 +319,7 @@ contract AIAgentSwarm is Ownable, ReentrancyGuard {
     /**
      * @notice Get agent details
      */
-    function getAIAgent(bytes32 _agentId)
-        external
-        view
+    function getAIAgent(bytes32 _agentId) public view
         returns (
             string memory agentName,
             AgentType agentType,
@@ -329,7 +329,8 @@ contract AIAgentSwarm is Ownable, ReentrancyGuard {
             uint256 successRate
         )
     {
-        AIAgent memory agent = aiAgents[_agentId];
+        // AIAgent contains nested mappings, must use storage reference
+        AIAgent storage agent = aiAgents[_agentId];
         return (
             agent.agentName,
             agent.agentType,
@@ -343,9 +344,7 @@ contract AIAgentSwarm is Ownable, ReentrancyGuard {
     /**
      * @notice Get task details
      */
-    function getTask(bytes32 _taskId)
-        external
-        view
+    function getTask(bytes32 _taskId) public view
         returns (
             bytes32 agentId,
             string memory taskDescription,
@@ -367,9 +366,7 @@ contract AIAgentSwarm is Ownable, ReentrancyGuard {
     /**
      * @notice Get agents by type
      */
-    function getAgentsByType(AgentType _type)
-        external
-        view
+    function getAgentsByType(AgentType _type) public view
         returns (bytes32[] memory)
     {
         return agentsByType[_type];
@@ -378,9 +375,7 @@ contract AIAgentSwarm is Ownable, ReentrancyGuard {
     /**
      * @notice Get agent tasks
      */
-    function getAgentTasks(bytes32 _agentId)
-        external
-        view
+    function getAgentTasks(bytes32 _agentId) public view
         returns (bytes32[] memory)
     {
         return agentTasks[_agentId];
@@ -389,9 +384,7 @@ contract AIAgentSwarm is Ownable, ReentrancyGuard {
     /**
      * @notice Check agent permission
      */
-    function checkAgentPermission(bytes32 _agentId, bytes32 _permission)
-        external
-        view
+    function checkAgentPermission(bytes32 _agentId, bytes32 _permission) public view
         returns (bool)
     {
         return aiAgents[_agentId].permissions[_permission];
@@ -400,9 +393,7 @@ contract AIAgentSwarm is Ownable, ReentrancyGuard {
     /**
      * @notice Get swarm intelligence
      */
-    function getSwarmIntelligence(bytes32 _intelligenceId)
-        external
-        view
+    function getSwarmIntelligence(bytes32 _intelligenceId) public view
         returns (
             string memory topic,
             uint256 confidenceScore,
@@ -427,7 +418,7 @@ contract AIAgentSwarm is Ownable, ReentrancyGuard {
         uint256 _maxConcurrentTasks,
         uint256 _taskTimeout,
         uint256 _swarmConsensusThreshold
-    ) external onlyOwner {
+    ) public onlyOwner {
         minTrustScore = _minTrustScore;
         maxConcurrentTasks = _maxConcurrentTasks;
         taskTimeout = _taskTimeout;
@@ -437,7 +428,7 @@ contract AIAgentSwarm is Ownable, ReentrancyGuard {
     /**
      * @notice Emergency suspend agent
      */
-    function emergencySuspendAgent(bytes32 _agentId) external onlyOwner {
+    function emergencySuspendAgent(bytes32 _agentId) public onlyOwner {
         aiAgents[_agentId].status = AgentStatus.SUSPENDED;
         emit AgentStatusChanged(_agentId, AgentStatus.SUSPENDED);
     }
@@ -445,9 +436,7 @@ contract AIAgentSwarm is Ownable, ReentrancyGuard {
     /**
      * @notice Get global statistics
      */
-    function getGlobalStatistics()
-        external
-        view
+    function getGlobalStatistics() public view
         returns (
             uint256 _totalAgents,
             uint256 _totalTasks,

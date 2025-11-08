@@ -2,9 +2,8 @@
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
 import "../common/Types.sol";
 import "../common/Roles.sol";
 import "../common/Errors.sol";
@@ -16,7 +15,6 @@ import "../common/Errors.sol";
  */
 contract PrivacyLayer is AccessControl, ReentrancyGuard {
     using ECDSA for bytes32;
-    using Counters for Counters.Counter;
 
     bytes32 public constant PRIVACY_ADMIN_ROLE = keccak256("PRIVACY_ADMIN_ROLE");
     bytes32 public constant MIXER_ROLE = keccak256("MIXER_ROLE");
@@ -58,7 +56,7 @@ contract PrivacyLayer is AccessControl, ReentrancyGuard {
     mapping(bytes32 => Commitment) public commitments;
     mapping(address => mapping(bytes32 => StealthAddress)) public stealthAddresses;
     mapping(bytes32 => ConfidentialTransaction) public transactions;
-    mapping(address => Counters.Counter) private nonces;
+    mapping(address => uint256) private nonces;
     
     uint256 public constant MIN_MIXING_DELAY = 1 hours;
     uint256 public constant MAX_COMMITMENT_AGE = 30 days;
@@ -151,7 +149,7 @@ contract PrivacyLayer is AccessControl, ReentrancyGuard {
             publicAddress: stealthAddr,
             viewKey: viewKey,
             spendKey: spendKey,
-            nonce: nonces[msg.sender].current(),
+            nonce: nonces[msg.sender],
             active: true
         });
         
@@ -286,15 +284,14 @@ contract PrivacyLayer is AccessControl, ReentrancyGuard {
     }
 
     /**
-     * @notice Increment and return nonce for an address
+     * @notice Increment nonce for an account
      * @param account Account address
      */
     function _incrementNonce(address account)
         internal
         returns (uint256)
     {
-        nonces[account].increment();
-        return nonces[account].current();
+        return ++nonces[account];
     }
 
     /**

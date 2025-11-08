@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.19;
 
-import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
-import "../common/Types.sol";
-import "../common/Roles.sol";
-import "../common/Errors.sol";
+import "./common/Types.sol";
+import "./common/Roles.sol";
+import "./common/Errors.sol";
 
 /**
  * @title DNASequencer
  * @notice Sequencer for managing transactions and state transitions
  * @dev Implements sequencing and ordering for transactions
  */
-contract DNASequencer is AccessControl, Pausable {
+contract DNASequencer is AccessControlEnumerable, Pausable {
     using ECDSA for bytes32;
 
     bytes32 public constant SEQUENCER_ROLE = keccak256("SEQUENCER_ROLE");
@@ -87,9 +87,7 @@ contract DNASequencer is AccessControl, Pausable {
      * @notice Submit a transaction for sequencing
      * @param data Transaction data
      */
-    function submitTransaction(bytes memory data)
-        external
-        whenNotPaused
+    function submitTransaction(bytes memory data) public whenNotPaused
         returns (bytes32)
     {
         uint256 nonce = nonces[msg.sender]++;
@@ -120,9 +118,7 @@ contract DNASequencer is AccessControl, Pausable {
      * @param txHashes Transaction hashes to include
      * @param stateRoot State root after batch execution
      */
-    function createBatch(bytes32[] memory txHashes, bytes32 stateRoot)
-        external
-        onlyRole(SEQUENCER_ROLE)
+    function createBatch(bytes32[] memory txHashes, bytes32 stateRoot) public onlyRole(SEQUENCER_ROLE)
         whenNotPaused
     {
         require(txHashes.length >= MIN_BATCH_SIZE, "Batch too small");
@@ -157,9 +153,7 @@ contract DNASequencer is AccessControl, Pausable {
      * @notice Confirm a batch
      * @param batchId Batch identifier
      */
-    function confirmBatch(bytes32 batchId)
-        external
-        onlyRole(SEQUENCER_ROLE)
+    function confirmBatch(bytes32 batchId) public onlyRole(SEQUENCER_ROLE)
         whenNotPaused
     {
         Batch storage batch = batches[batchId];
@@ -177,9 +171,7 @@ contract DNASequencer is AccessControl, Pausable {
      * @notice Execute a batch of transactions
      * @param batchId Batch identifier
      */
-    function executeBatch(bytes32 batchId)
-        external
-        onlyRole(EXECUTOR_ROLE)
+    function executeBatch(bytes32 batchId) public onlyRole(EXECUTOR_ROLE)
         whenNotPaused
     {
         Batch storage batch = batches[batchId];
@@ -210,9 +202,7 @@ contract DNASequencer is AccessControl, Pausable {
      * @notice Get batch details
      * @param batchId Batch identifier
      */
-    function getBatch(bytes32 batchId)
-        external
-        view
+    function getBatch(bytes32 batchId) public view
         returns (
             uint256 id,
             bytes32[] memory txHashes,
@@ -241,9 +231,7 @@ contract DNASequencer is AccessControl, Pausable {
      * @notice Get transaction details
      * @param txHash Transaction hash
      */
-    function getTransaction(bytes32 txHash)
-        external
-        view
+    function getTransaction(bytes32 txHash) public view
         returns (
             address sender,
             bytes memory data,
@@ -265,11 +253,11 @@ contract DNASequencer is AccessControl, Pausable {
     }
 
     // Admin functions
-    function pause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _pause();
     }
 
-    function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _unpause();
     }
 }

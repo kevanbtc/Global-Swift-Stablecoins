@@ -21,15 +21,15 @@ contract NettingPool {
     modifier onlyAdmin() { require(msg.sender == admin, "NP: not admin"); _; }
     constructor(address _admin) { require(_admin != address(0), "NP: admin 0"); admin = _admin; }
 
-    function transferAdmin(address to) external onlyAdmin { require(to != address(0), "NP: 0"); emit AdminTransferred(admin, to); admin = to; }
+    function transferAdmin(address to) public onlyAdmin { require(to != address(0), "NP: 0"); emit AdminTransferred(admin, to); admin = to; }
 
-    function addObligation(address token, address from, address to, uint256 amount) external onlyAdmin {
+    function addObligation(address token, address from, address to, uint256 amount) public onlyAdmin {
         require(amount > 0, "NP: amt 0"); require(from != to, "NP: same");
         obls[token].push(Obligation({from: from, to: to, amount: amount}));
         emit ObligationAdded(token, from, to, amount);
     }
 
-    function settle(address token) external onlyAdmin {
+    function settle(address token) public onlyAdmin {
         Obligation[] storage L = obls[token];
         for (uint256 i=0; i<L.length; i++) {
             IERC20Minimal(token).transferFrom(L[i].from, L[i].to, L[i].amount);

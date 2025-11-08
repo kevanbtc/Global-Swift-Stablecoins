@@ -116,7 +116,7 @@ contract ReserveProofRegistry is
         _disableInitializers();
     }
 
-    function initialize(address admin, address governor) external initializer {
+    function initialize(address admin, address governor) public initializer {
         __AccessControl_init();
         __Pausable_init();
         __ReentrancyGuard_init();
@@ -133,24 +133,24 @@ contract ReserveProofRegistry is
     // --------------------------
     // Admin / Ops
     // --------------------------
-    function pause() external onlyRole(GOVERNOR_ROLE) {
+    function pause() public onlyRole(GOVERNOR_ROLE) {
         _pause();
         emit RegistryPaused(msg.sender);
     }
 
-    function unpause() external onlyRole(GOVERNOR_ROLE) {
+    function unpause() public onlyRole(GOVERNOR_ROLE) {
         _unpause();
         emit RegistryUnpaused(msg.sender);
     }
 
     /// @notice pin a specific auditor address for a given reserveId (optional stronger control)
-    function pinAuditor(bytes32 reserveId, address auditor) external onlyRole(GOVERNOR_ROLE) {
+    function pinAuditor(bytes32 reserveId, address auditor) public onlyRole(GOVERNOR_ROLE) {
         require(auditor != address(0), "bad auditor");
         pinnedAuditor[reserveId] = auditor;
         emit AuditorPinned(reserveId, auditor);
     }
 
-    function unpinAuditor(bytes32 reserveId) external onlyRole(GOVERNOR_ROLE) {
+    function unpinAuditor(bytes32 reserveId) public onlyRole(GOVERNOR_ROLE) {
         delete pinnedAuditor[reserveId];
         emit AuditorUnpinned(reserveId);
     }
@@ -162,9 +162,7 @@ contract ReserveProofRegistry is
      * @notice Submit a signed reserve attestation. Caller must hold REPORTER_ROLE.
      *         The signature must come from an account with AUDITOR_ROLE (and, if pinned, equal pinnedAuditor[reserveId]).
      */
-    function submitReserveAttestation(ReserveAttestation calldata att, bytes calldata signature)
-        external
-        nonReentrant
+    function submitReserveAttestation(ReserveAttestation calldata att, bytes calldata signature) public nonReentrant
         whenNotPaused
         onlyRole(REPORTER_ROLE)
     {
@@ -235,11 +233,11 @@ contract ReserveProofRegistry is
     // --------------------------
     // Views
     // --------------------------
-    function latest(bytes32 reserveId) external view returns (StoredAttestation memory) {
+    function latest(bytes32 reserveId) public view returns (StoredAttestation memory) {
         return _latest[reserveId];
     }
 
-    function domainSeparator() external view returns (bytes32) {
+    function domainSeparator() public view returns (bytes32) {
         return _domainSeparatorV4();
     }
 

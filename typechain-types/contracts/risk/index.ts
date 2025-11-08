@@ -2,3 +2,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { BaselCARModule } from "./BaselCARModule";
+export type { BaselIIIComplianceEngine } from "./BaselIIIComplianceEngine";
+export type { BaselIIIRiskModule } from "./BaselIIIRiskModule";
+export type { PortfolioRiskEngine } from "./PortfolioRiskEngine";

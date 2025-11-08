@@ -17,14 +17,14 @@ contract RailRegistry {
     modifier onlyAdmin(){ require(msg.sender==admin, "REG: not admin"); _; }
     constructor(address _admin){ require(_admin!=address(0), "REG: 0"); admin=_admin; }
 
-    function transferAdmin(address to) external onlyAdmin { require(to!=address(0), "REG: 0"); emit AdminTransferred(admin,to); admin=to; }
+    function transferAdmin(address to) public onlyAdmin { require(to!=address(0), "REG: 0"); emit AdminTransferred(admin,to); admin=to; }
 
-    function set(bytes32 key, address rail) external onlyAdmin {
+    function set(bytes32 key, address rail) public onlyAdmin {
         require(rail!=address(0), "REG: 0 rail");
         IRail.Kind k = IRail(rail).kind();
         rails[key]=rail;
         emit RailSet(key, rail, k);
     }
 
-    function get(bytes32 key) external view returns(address){ return rails[key]; }
+    function get(bytes32 key) public view returns(address){ return rails[key]; }
 }

@@ -2,8 +2,7 @@
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
 import "../common/Types.sol";
 import "../common/Roles.sol";
 import "../common/Errors.sol";
@@ -14,8 +13,6 @@ import "../common/Errors.sol";
  * @dev Implements configurable rate limiting strategies for CBDC transactions
  */
 contract RateLimiter is AccessControl, Pausable {
-    using SafeMath for uint256;
-
     bytes32 public constant RATE_ADMIN_ROLE = keccak256("RATE_ADMIN_ROLE");
     bytes32 public constant MONITOR_ROLE = keccak256("MONITOR_ROLE");
 
@@ -101,9 +98,7 @@ contract RateLimiter is AccessControl, Pausable {
         uint256 windowSize,
         LimitType limitType,
         WindowType windowType
-    )
-        external
-        onlyRole(RATE_ADMIN_ROLE)
+    ) public onlyRole(RATE_ADMIN_ROLE)
     {
         require(limits[limitId].windowSize == 0, "Limit exists");
         require(windowSize > 0, "Invalid window");
@@ -141,9 +136,7 @@ contract RateLimiter is AccessControl, Pausable {
         bytes32 limitId,
         uint256 maxTransactions,
         uint256 maxVolume
-    )
-        external
-        onlyRole(RATE_ADMIN_ROLE)
+    ) public onlyRole(RATE_ADMIN_ROLE)
     {
         RateLimit storage limit = limits[limitId];
         require(limit.windowSize > 0, "Limit not found");
@@ -165,9 +158,7 @@ contract RateLimiter is AccessControl, Pausable {
         bytes32 limitId,
         address account,
         uint256 amount
-    )
-        external
-        whenNotPaused
+    ) public whenNotPaused
         returns (bool allowed)
     {
         RateLimit storage limit = limits[limitId];
@@ -187,16 +178,16 @@ contract RateLimiter is AccessControl, Pausable {
         
         if (allowed && (limit.limitType == LimitType.Volume ||
             limit.limitType == LimitType.Both)) {
-            if (data.volume.add(amount) > limit.maxVolume) {
+            if (data.volume + amount > limit.maxVolume) {
                 allowed = false;
             }
         }
         
         if (allowed) {
-            data.transactionCount = data.transactionCount.add(1);
-            data.volume = data.volume.add(amount);
+            data.transactionCount = data.transactionCount + 1;
+            data.volume = data.volume + amount;
             data.lastUpdate = block.timestamp;
-            globalUsage[limitId] = globalUsage[limitId].add(amount);
+            globalUsage[limitId] = globalUsage[limitId] + amount;
         }
         
         emit TransactionChecked(limitId, account, amount, allowed);
@@ -219,7 +210,7 @@ contract RateLimiter is AccessControl, Pausable {
         }
         
         uint256 windowEnd = limit.windowType == WindowType.Fixed
-            ? data.windowStart.add(limit.windowSize)
+            ? data.windowStart + limit.windowSize
             : block.timestamp;
             
         if (block.timestamp >= windowEnd) {
@@ -238,9 +229,7 @@ contract RateLimiter is AccessControl, Pausable {
      * @param limitId Rate limit identifier
      * @param account Account to query
      */
-    function getUsage(bytes32 limitId, address account)
-        external
-        view
+    function getUsage(bytes32 limitId, address account) public view
         returns (
             uint256 transactionCount,
             uint256 volume,
@@ -261,9 +250,7 @@ contract RateLimiter is AccessControl, Pausable {
      * @notice Get global usage for a rate limit
      * @param limitId Rate limit identifier
      */
-    function getGlobalUsage(bytes32 limitId)
-        external
-        view
+    function getGlobalUsage(bytes32 limitId) public view
         returns (uint256)
     {
         return globalUsage[limitId];
@@ -274,9 +261,7 @@ contract RateLimiter is AccessControl, Pausable {
      * @param limitId Rate limit identifier
      * @param active New active status
      */
-    function setLimitActive(bytes32 limitId, bool active)
-        external
-        onlyRole(RATE_ADMIN_ROLE)
+    function setLimitActive(bytes32 limitId, bool active) public onlyRole(RATE_ADMIN_ROLE)
     {
         RateLimit storage limit = limits[limitId];
         require(limit.windowSize > 0, "Limit not found");
@@ -284,11 +269,11 @@ contract RateLimiter is AccessControl, Pausable {
     }
 
     // Admin functions
-    function pause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _pause();
     }
 
-    function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _unpause();
     }
 }

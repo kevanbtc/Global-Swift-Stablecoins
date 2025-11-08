@@ -21,29 +21,29 @@ contract CCTPExternalRail is IRail {
 
     constructor(address _admin, address _executor, uint32 _domain){ require(_admin!=address(0) && _executor!=address(0), "CCTP: 0"); admin=_admin; executor=_executor; domain=_domain; }
 
-    function setExecutor(address e) external onlyAdmin { require(e!=address(0), "CCTP: 0"); executor=e; emit ExecutorSet(e); }
-    function setDomain(uint32 d) external onlyAdmin { domain = d; emit DomainSet(d); }
+    function setExecutor(address e) public onlyAdmin { require(e!=address(0), "CCTP: 0"); executor=e; emit ExecutorSet(e); }
+    function setDomain(uint32 d) public onlyAdmin { domain = d; emit DomainSet(d); }
 
-    function kind() external pure override returns (Kind){ return Kind.EXTERNAL; }
+    function kind() public pure override returns (Kind){ return Kind.EXTERNAL; }
 
     function transferId(Transfer calldata t) public pure returns (bytes32){ return keccak256(abi.encode("CCTP", t.from, t.to, t.amount, t.metadata)); }
 
-    function prepare(Transfer calldata t) external payable override {
+    function prepare(Transfer calldata t) public payable override {
         bytes32 id = transferId(t);
         require(_status[id] == Status.NONE, "CCTP: exists");
         _status[id] = Status.PREPARED;
         emit RailPrepared(id, t.from, t.to, t.asset, t.amount);
     }
 
-    function markReleased(bytes32 id, Transfer calldata t) external onlyExec {
+    function markReleased(bytes32 id, Transfer calldata t) public onlyExec {
         require(_status[id] == Status.PREPARED, "CCTP: bad state"); _status[id] = Status.RELEASED; emit RailReleased(id, t.to, t.asset, t.amount);
     }
-    function markRefunded(bytes32 id, Transfer calldata t) external onlyExec {
+    function markRefunded(bytes32 id, Transfer calldata t) public onlyExec {
         require(_status[id] == Status.PREPARED, "CCTP: bad state"); _status[id] = Status.REFUNDED; emit RailRefunded(id, t.from, t.asset, t.amount);
     }
 
     // IRail compat (admin paths are disabled in favor of executor markers)
-    function release(bytes32 /*id*/, Transfer calldata /*t*/) external override onlyAdmin { revert("CCTP: use markReleased"); }
-    function refund(bytes32 /*id*/, Transfer calldata /*t*/) external override onlyAdmin { revert("CCTP: use markRefunded"); }
-    function status(bytes32 id) external view override returns (Status){ return _status[id]; }
+    function release(bytes32 /*id*/, Transfer calldata /*t*/) public override onlyAdmin { revert("CCTP: use markReleased"); }
+    function refund(bytes32 /*id*/, Transfer calldata /*t*/) public override onlyAdmin { revert("CCTP: use markRefunded"); }
+    function status(bytes32 id) public view override returns (Status){ return _status[id]; }
 }

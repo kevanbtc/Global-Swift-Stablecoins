@@ -62,12 +62,12 @@ contract TBillInventoryAdapter is AccessControl, EIP712 {
     }
 
     // ---------- wiring ----------
-    function setReserveManager(ReserveVault rm) external onlyRole(ROLE_ADMIN) {
+    function setReserveManager(ReserveVault rm) public onlyRole(ROLE_ADMIN) {
         reserveVault = rm;
         emit ReserveManagerSet(address(rm));
     }
 
-    function setFeed(address feed, bool allowed) external onlyRole(ROLE_ADMIN) {
+    function setFeed(address feed, bool allowed) public onlyRole(ROLE_ADMIN) {
         if (allowed) _grantRole(ROLE_FEED, feed);
         else _revokeRole(ROLE_FEED, feed);
         emit FeedSet(feed, allowed);
@@ -81,7 +81,7 @@ contract TBillInventoryAdapter is AccessControl, EIP712 {
         uint128 faceMinor,
         string calldata brokerRef,
         string calldata meta
-    ) external onlyRole(ROLE_TREASURER) returns (uint256 id) {
+    ) public onlyRole(ROLE_TREASURER) returns (uint256 id) {
         require(maturityDate >= issueDate, "bad dates");
         id = ++lastLotId;
         lots[id] = Lot({
@@ -102,7 +102,7 @@ contract TBillInventoryAdapter is AccessControl, EIP712 {
         uint128 faceMinor,
         string calldata brokerRef,
         string calldata meta
-    ) external onlyRole(ROLE_TREASURER) {
+    ) public onlyRole(ROLE_TREASURER) {
         Lot storage L = lots[id];
         require(L.cusip != bytes9(0), "no lot");
         L.active = active;
@@ -139,7 +139,7 @@ contract TBillInventoryAdapter is AccessControl, EIP712 {
         uint128 pricePer100,
         string calldata source,
         bytes calldata signature
-    ) external returns (address signer) {
+    ) public returns (address signer) {
         Lot storage L = lots[lotId];
         require(L.active, "inactive lot");
 
@@ -162,7 +162,7 @@ contract TBillInventoryAdapter is AccessControl, EIP712 {
     // ---------- reserve sync ----------
     /// @notice Push aggregated TBILL exposure into ReserveVault as one position (or update existing one).
     /// @dev If you prefer 1:1 CUSIP positions, loop and call ReserveVault.addPosition() yourself externally.
-    function syncAllToReserve(bytes32 refKey, uint256 positionIdIfExists, uint64 asOf) external onlyRole(ROLE_TREASURER) {
+    function syncAllToReserve(bytes32 refKey, uint256 positionIdIfExists, uint64 asOf) public onlyRole(ROLE_TREASURER) {
         require(address(reserveVault) != address(0), "no RM");
         // Sum face * pricePer100
         uint256 totalNAV; // USD scaled

@@ -2,8 +2,8 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import {Pausable} from "@openzeppelin/contracts/security/Pausable.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
@@ -159,7 +159,7 @@ contract InstitutionalLendingProtocol is Ownable, ReentrancyGuard, Pausable {
         CollateralType _collateralType,
         address _collateralToken,
         uint256 _collateralAmount
-    ) external whenNotPaused validLoanAmount(_amount) validCollateralRatio(_collateralRatio)
+    ) public whenNotPaused validLoanAmount(_amount) validCollateralRatio(_collateralRatio)
          returns (bytes32) {
 
         require(_duration <= maxLoanDuration, "Loan duration too long");
@@ -222,7 +222,7 @@ contract InstitutionalLendingProtocol is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Fund a pending loan
      */
-    function fundLoan(bytes32 _loanId) external whenNotPaused nonReentrant {
+    function fundLoan(bytes32 _loanId) public whenNotPaused nonReentrant {
         Loan storage loan = loans[_loanId];
         require(loan.status == LoanStatus.PENDING, "Loan not pending");
         require(loan.borrower != msg.sender, "Cannot fund own loan");
@@ -260,9 +260,7 @@ contract InstitutionalLendingProtocol is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Make a loan repayment
      */
-    function repayLoan(bytes32 _loanId, uint256 _amount)
-        external
-        onlyActiveLoan(_loanId)
+    function repayLoan(bytes32 _loanId, uint256 _amount) public onlyActiveLoan(_loanId)
         nonReentrant
     {
         Loan storage loan = loans[_loanId];
@@ -310,7 +308,7 @@ contract InstitutionalLendingProtocol is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Liquidate a defaulted loan
      */
-    function liquidateLoan(bytes32 _loanId) external onlyActiveLoan(_loanId) nonReentrant {
+    function liquidateLoan(bytes32 _loanId) public onlyActiveLoan(_loanId) nonReentrant {
         Loan storage loan = loans[_loanId];
 
         // Check if loan is past due
@@ -347,7 +345,7 @@ contract InstitutionalLendingProtocol is Ownable, ReentrancyGuard, Pausable {
         address _borrower,
         CreditRating _rating,
         uint256 _creditScore
-    ) external onlyOwner {
+    ) public onlyOwner {
         require(_creditScore >= 300 && _creditScore <= 850, "Invalid credit score");
 
         CreditProfile storage profile = creditProfiles[_borrower];
@@ -367,7 +365,7 @@ contract InstitutionalLendingProtocol is Ownable, ReentrancyGuard, Pausable {
         uint256 _slope1,
         uint256 _slope2,
         uint256 _optimalUtilization
-    ) external onlyOwner {
+    ) public onlyOwner {
         lendingPools[_asset] = LendingPool({
             asset: _asset,
             totalSupplied: 0,
@@ -386,7 +384,7 @@ contract InstitutionalLendingProtocol is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Deposit to lending pool
      */
-    function depositToPool(address _asset, uint256 _amount) external whenNotPaused nonReentrant {
+    function depositToPool(address _asset, uint256 _amount) public whenNotPaused nonReentrant {
         require(lendingPools[_asset].isActive, "Pool not active");
 
         IERC20(_asset).safeTransferFrom(msg.sender, address(this), _amount);
@@ -405,7 +403,7 @@ contract InstitutionalLendingProtocol is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Withdraw from lending pool
      */
-    function withdrawFromPool(address _asset, uint256 _amount) external nonReentrant {
+    function withdrawFromPool(address _asset, uint256 _amount) public nonReentrant {
         require(userBalances[msg.sender] >= _amount, "Insufficient balance");
 
         LendingPool storage pool = lendingPools[_asset];
@@ -425,9 +423,7 @@ contract InstitutionalLendingProtocol is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Get loan details
      */
-    function getLoan(bytes32 _loanId)
-        external
-        view
+    function getLoan(bytes32 _loanId) public view
         returns (
             address borrower,
             address lender,
@@ -451,9 +447,7 @@ contract InstitutionalLendingProtocol is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Get credit profile
      */
-    function getCreditProfile(address _borrower)
-        external
-        view
+    function getCreditProfile(address _borrower) public view
         returns (
             CreditRating rating,
             uint256 creditScore,
@@ -481,7 +475,7 @@ contract InstitutionalLendingProtocol is Ownable, ReentrancyGuard, Pausable {
         uint256 _minCollateralRatio,
         uint256 _originationFeeBPS,
         uint256 _lateFeeBPS
-    ) external onlyOwner {
+    ) public onlyOwner {
         minLoanAmount = _minLoanAmount;
         maxLoanAmount = _maxLoanAmount;
         minCollateralRatio = _minCollateralRatio;
@@ -492,14 +486,14 @@ contract InstitutionalLendingProtocol is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Emergency pause
      */
-    function emergencyPause() external onlyOwner {
+    function emergencyPause() public onlyOwner {
         _pause();
     }
 
     /**
      * @notice Emergency unpause
      */
-    function emergencyUnpause() external onlyOwner {
+    function emergencyUnpause() public onlyOwner {
         _unpause();
     }
 

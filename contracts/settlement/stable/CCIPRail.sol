@@ -18,28 +18,28 @@ contract CCIPRail is IRail {
 
     constructor(address _admin, address _executor){ require(_admin!=address(0) && _executor!=address(0), "CCIP: 0"); admin=_admin; executor=_executor; }
 
-    function setExecutor(address e) external onlyAdmin { require(e!=address(0), "CCIP: 0"); executor=e; emit ExecutorSet(e); }
+    function setExecutor(address e) public onlyAdmin { require(e!=address(0), "CCIP: 0"); executor=e; emit ExecutorSet(e); }
 
-    function kind() external pure override returns (Kind){ return Kind.EXTERNAL; }
+    function kind() public pure override returns (Kind){ return Kind.EXTERNAL; }
 
     function transferId(Transfer calldata t) public pure returns (bytes32){ return keccak256(abi.encode("CCIP", t.from, t.to, t.amount, t.metadata)); }
 
-    function prepare(Transfer calldata t) external payable override {
+    function prepare(Transfer calldata t) public payable override {
         bytes32 id = transferId(t);
         require(_status[id] == Status.NONE, "CCIP: exists");
         _status[id] = Status.PREPARED;
         emit RailPrepared(id, t.from, t.to, t.asset, t.amount);
     }
 
-    function markReleased(bytes32 id, Transfer calldata t) external onlyExec {
+    function markReleased(bytes32 id, Transfer calldata t) public onlyExec {
         require(_status[id] == Status.PREPARED, "CCIP: bad state"); _status[id] = Status.RELEASED; emit RailReleased(id, t.to, t.asset, t.amount);
     }
-    function markRefunded(bytes32 id, Transfer calldata t) external onlyExec {
+    function markRefunded(bytes32 id, Transfer calldata t) public onlyExec {
         require(_status[id] == Status.PREPARED, "CCIP: bad state"); _status[id] = Status.REFUNDED; emit RailRefunded(id, t.from, t.asset, t.amount);
     }
 
     // IRail compat (admin paths are disabled in favor of executor markers)
-    function release(bytes32 /*id*/, Transfer calldata /*t*/) external override onlyAdmin { revert("CCIP: use markReleased"); }
-    function refund(bytes32 /*id*/, Transfer calldata /*t*/) external override onlyAdmin { revert("CCIP: use markRefunded"); }
-    function status(bytes32 id) external view override returns (Status){ return _status[id]; }
+    function release(bytes32 /*id*/, Transfer calldata /*t*/) public override onlyAdmin { revert("CCIP: use markReleased"); }
+    function refund(bytes32 /*id*/, Transfer calldata /*t*/) public override onlyAdmin { revert("CCIP: use markRefunded"); }
+    function status(bytes32 id) public view override returns (Status){ return _status[id]; }
 }

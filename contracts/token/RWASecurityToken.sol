@@ -31,21 +31,21 @@ contract RWASecurityToken is ERC20, AccessControl {
     }
 
     // --- Admin
-    function setCompliance(IComplianceRegistry reg) external onlyRole(PolicyRoles.ROLE_ADMIN) {
+    function setCompliance(IComplianceRegistry reg) public onlyRole(PolicyRoles.ROLE_ADMIN) {
         compliance = reg; emit ComplianceSet(address(reg));
     }
 
-    function setPolicyPartition(bytes32 partition) external onlyRole(PolicyRoles.ROLE_ADMIN) {
+    function setPolicyPartition(bytes32 partition) public onlyRole(PolicyRoles.ROLE_ADMIN) {
         policyPartition = partition; emit PolicyPartitionSet(partition);
     }
 
     // --- Mint/Burn
-    function mint(address to, uint256 amount) external onlyRole(PolicyRoles.ROLE_ISSUER) {
+    function mint(address to, uint256 amount) public onlyRole(PolicyRoles.ROLE_ISSUER) {
         require(compliance.isCompliant(to), "non-compliant");
         _mint(to, amount);
     }
 
-    function burn(address from, uint256 amount) external onlyRole(PolicyRoles.ROLE_ISSUER) {
+    function burn(address from, uint256 amount) public onlyRole(PolicyRoles.ROLE_ISSUER) {
         require(compliance.isCompliant(from), "non-compliant");
         _burn(from, amount);
     }

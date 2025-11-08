@@ -11,5 +11,8 @@ import type * as rails from "./rails";
 export type { rails };
 import type * as stable from "./stable";
 export type { stable };
+export type { AtomicCrossAssetSettlement } from "./AtomicCrossAssetSettlement";
+export type { EmergencyCircuitBreaker } from "./EmergencyCircuitBreaker";
 export type { FxPvPRouter } from "./FxPvPRouter";
+export type { QuantumResistantZKSettlement } from "./QuantumResistantZKSettlement";
 export type { SettlementHub2PC } from "./SettlementHub2PC";

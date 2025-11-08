@@ -40,19 +40,19 @@ contract PythQuoteAdapter is IQuoteAdapter, AccessControl {
         emit PythAddressSet(pythAddress);
     }
 
-    function setPyth(address pythAddress) external onlyRole(ADMIN) {
+    function setPyth(address pythAddress) public onlyRole(ADMIN) {
         pyth = IPyth(pythAddress);
         emit PythAddressSet(pythAddress);
     }
 
-    function setPriceId(address instrument, bytes32 priceId, uint64 maxAgeSec) external onlyRole(ADMIN) {
+    function setPriceId(address instrument, bytes32 priceId, uint64 maxAgeSec) public onlyRole(ADMIN) {
         require(instrument != address(0) && priceId != bytes32(0), "bad");
         ids[instrument] = PythMap(priceId, maxAgeSec);
         emit PythSet(instrument, priceId, maxAgeSec);
     }
 
     /// @inheritdoc IQuoteAdapter
-    function quoteInCash(address instrument) external view returns (uint256 price, uint8 decimals, uint64 lastUpdate) {
+    function quoteInCash(address instrument) public view returns (uint256 price, uint8 decimals, uint64 lastUpdate) {
         PythMap memory m = ids[instrument];
         require(m.priceId != bytes32(0), "no_pyth");
         PythPrice memory p = pyth.getPriceNoOlderThan(m.priceId, m.maxAgeSec == 0 ? type(uint).max : m.maxAgeSec);
@@ -84,7 +84,7 @@ contract PythQuoteAdapter is IQuoteAdapter, AccessControl {
     }
 
     /// @inheritdoc IQuoteAdapter
-    function isFresh(address instrument, uint64 maxAgeSec) external view returns (bool) {
+    function isFresh(address instrument, uint64 maxAgeSec) public view returns (bool) {
         PythMap memory m = ids[instrument];
         require(m.priceId != bytes32(0), "no_pyth");
         uint64 age = (m.maxAgeSec == 0 ? maxAgeSec : (maxAgeSec == 0 ? m.maxAgeSec : maxAgeSec));

@@ -2,8 +2,8 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import {Pausable} from "@openzeppelin/contracts/security/Pausable.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
@@ -147,7 +147,7 @@ contract InstitutionalDEX is Ownable, ReentrancyGuard, Pausable {
         uint256 _minOrderSize,
         uint256 _maxOrderSize,
         uint256 _tradingFee
-    ) external onlyOwner returns (bytes32) {
+    ) public onlyOwner returns (bytes32) {
         require(_baseToken != _quoteToken, "Cannot trade token against itself");
 
         bytes32 pairId = keccak256(abi.encodePacked(_baseToken, _quoteToken));
@@ -177,7 +177,7 @@ contract InstitutionalDEX is Ownable, ReentrancyGuard, Pausable {
         uint256 _amount,
         uint256 _price,
         uint256 _slippageTolerance
-    ) external whenNotPaused validTradingPair(_pairId) validOrderSize(_pairId, _amount)
+    ) public whenNotPaused validTradingPair(_pairId) validOrderSize(_pairId, _amount)
          returns (bytes32) {
 
         require(_slippageTolerance <= maxSlippageBPS, "Slippage tolerance too high");
@@ -236,7 +236,7 @@ contract InstitutionalDEX is Ownable, ReentrancyGuard, Pausable {
         TradeType _tradeType,
         uint256 _amount,
         uint256 _slippageTolerance
-    ) external whenNotPaused validTradingPair(_pairId) validOrderSize(_pairId, _amount)
+    ) public whenNotPaused validTradingPair(_pairId) validOrderSize(_pairId, _amount)
          returns (bytes32) {
 
         require(_slippageTolerance <= maxSlippageBPS, "Slippage tolerance too high");
@@ -286,7 +286,7 @@ contract InstitutionalDEX is Ownable, ReentrancyGuard, Pausable {
         bytes32 _pairId,
         TradeType _tradeType,
         uint256 _amount
-    ) external whenNotPaused validTradingPair(_pairId) validOrderSize(_pairId, _amount)
+    ) public whenNotPaused validTradingPair(_pairId) validOrderSize(_pairId, _amount)
          returns (bytes32) {
 
         bytes32 rfqId = keccak256(abi.encodePacked(
@@ -335,7 +335,7 @@ contract InstitutionalDEX is Ownable, ReentrancyGuard, Pausable {
         uint256 _price,
         uint256 _availableAmount,
         bytes memory _signature
-    ) external whenNotPaused returns (bytes32) {
+    ) public whenNotPaused returns (bytes32) {
 
         require(rfqQuotes[_rfqId].marketMaker == address(0), "RFQ already quoted");
 
@@ -357,7 +357,7 @@ contract InstitutionalDEX is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Accept an RFQ quote
      */
-    function acceptRFQQuote(bytes32 _rfqId) external whenNotPaused nonReentrant {
+    function acceptRFQQuote(bytes32 _rfqId) public whenNotPaused nonReentrant {
         RFQQuote memory quote = rfqQuotes[_rfqId];
         require(quote.isActive, "Quote not active");
         require(block.timestamp <= quote.expiryTime, "Quote expired");
@@ -375,7 +375,7 @@ contract InstitutionalDEX is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Cancel an order
      */
-    function cancelOrder(bytes32 _orderId) external {
+    function cancelOrder(bytes32 _orderId) public {
         Order storage order = orders[_orderId];
         require(order.trader == msg.sender, "Not order owner");
         require(order.status == OrderStatus.PENDING, "Order not cancellable");
@@ -388,7 +388,7 @@ contract InstitutionalDEX is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Deposit tokens to trading balance
      */
-    function deposit(address _token, uint256 _amount) external whenNotPaused nonReentrant {
+    function deposit(address _token, uint256 _amount) public whenNotPaused nonReentrant {
         require(_amount > 0, "Invalid amount");
 
         IERC20(_token).safeTransferFrom(msg.sender, address(this), _amount);
@@ -398,7 +398,7 @@ contract InstitutionalDEX is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Withdraw tokens from trading balance
      */
-    function withdraw(address _token, uint256 _amount) external nonReentrant {
+    function withdraw(address _token, uint256 _amount) public nonReentrant {
         require(balances[msg.sender][_token] >= _amount, "Insufficient balance");
 
         balances[msg.sender][_token] -= _amount;
@@ -408,9 +408,7 @@ contract InstitutionalDEX is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Get order details
      */
-    function getOrder(bytes32 _orderId)
-        external
-        view
+    function getOrder(bytes32 _orderId) public view
         returns (
             address trader,
             OrderType orderType,
@@ -434,9 +432,7 @@ contract InstitutionalDEX is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Get trading pair info
      */
-    function getTradingPair(bytes32 _pairId)
-        external
-        view
+    function getTradingPair(bytes32 _pairId) public view
         returns (
             address baseToken,
             address quoteToken,
@@ -463,7 +459,7 @@ contract InstitutionalDEX is Ownable, ReentrancyGuard, Pausable {
         uint256 _maxSlippageBPS,
         uint256 _minOrderSize,
         uint256 _rfqExpiry
-    ) external onlyOwner {
+    ) public onlyOwner {
         tradingFeeBPS = _tradingFeeBPS;
         maxSlippageBPS = _maxSlippageBPS;
         minOrderSize = _minOrderSize;
@@ -473,14 +469,14 @@ contract InstitutionalDEX is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Emergency pause
      */
-    function emergencyPause() external onlyOwner {
+    function emergencyPause() public onlyOwner {
         _pause();
     }
 
     /**
      * @notice Emergency unpause
      */
-    function emergencyUnpause() external onlyOwner {
+    function emergencyUnpause() public onlyOwner {
         _unpause();
     }
 

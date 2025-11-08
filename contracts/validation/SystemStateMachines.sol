@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title SystemStateMachines
@@ -126,7 +126,7 @@ contract SystemStateMachines is Ownable, ReentrancyGuard {
         StateMachineType _machineType,
         bytes32[] memory _initialDataKeys,
         bytes32[] memory _initialDataValues
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         require(_initialDataKeys.length == _initialDataValues.length, "Data array length mismatch");
 
         bytes32 machineId = keccak256(abi.encodePacked(
@@ -169,7 +169,7 @@ contract SystemStateMachines is Ownable, ReentrancyGuard {
         State _toState,
         bytes32[] memory _preconditions,
         bytes32[] memory _postconditions
-    ) external onlyOwner returns (bytes32) {
+    ) public onlyOwner returns (bytes32) {
         bytes32 ruleId = keccak256(abi.encodePacked(
             _machineType,
             _fromState,
@@ -201,7 +201,7 @@ contract SystemStateMachines is Ownable, ReentrancyGuard {
         bytes32 _machineId,
         State _toState,
         bytes32 _evidenceHash
-    ) external payable validMachine(_machineId) activeMachine(_machineId) returns (TransitionResult) {
+    ) public payable validMachine(_machineId) activeMachine(_machineId) returns (TransitionResult) {
         StateMachine storage machine = stateMachines[_machineId];
         State fromState = machine.currentState;
 
@@ -265,9 +265,7 @@ contract SystemStateMachines is Ownable, ReentrancyGuard {
     /**
      * @notice Force rollback state machine
      */
-    function forceRollback(bytes32 _machineId, string memory _reason)
-        external
-        onlyOwner
+    function forceRollback(bytes32 _machineId, string memory _reason) public onlyOwner
         validMachine(_machineId)
         activeMachine(_machineId)
     {
@@ -281,9 +279,7 @@ contract SystemStateMachines is Ownable, ReentrancyGuard {
     /**
      * @notice Update state machine data
      */
-    function updateMachineData(bytes32 _machineId, bytes32 _key, bytes32 _value)
-        external
-        validMachine(_machineId)
+    function updateMachineData(bytes32 _machineId, bytes32 _key, bytes32 _value) public validMachine(_machineId)
         activeMachine(_machineId)
     {
         StateMachine storage machine = stateMachines[_machineId];
@@ -296,9 +292,7 @@ contract SystemStateMachines is Ownable, ReentrancyGuard {
     /**
      * @notice Get machine state history
      */
-    function getMachineStateHistory(bytes32 _machineId)
-        external
-        view
+    function getMachineStateHistory(bytes32 _machineId) public view
         returns (bytes32[] memory)
     {
         return stateMachines[_machineId].stateHistory;
@@ -307,9 +301,7 @@ contract SystemStateMachines is Ownable, ReentrancyGuard {
     /**
      * @notice Get machine data
      */
-    function getMachineData(bytes32 _machineId, bytes32 _key)
-        external
-        view
+    function getMachineData(bytes32 _machineId, bytes32 _key) public view
         returns (bytes32)
     {
         return stateMachines[_machineId].stateData[_key];
@@ -318,9 +310,7 @@ contract SystemStateMachines is Ownable, ReentrancyGuard {
     /**
      * @notice Get validation rules for machine type
      */
-    function getValidationRules(StateMachineType _machineType)
-        external
-        view
+    function getValidationRules(StateMachineType _machineType) public view
         returns (bytes32[] memory)
     {
         return rulesByType[_machineType];
@@ -329,9 +319,7 @@ contract SystemStateMachines is Ownable, ReentrancyGuard {
     /**
      * @notice Get machine details
      */
-    function getMachineDetails(bytes32 _machineId)
-        external
-        view
+    function getMachineDetails(bytes32 _machineId) public view
         returns (
             StateMachineType machineType,
             State currentState,
@@ -341,7 +329,7 @@ contract SystemStateMachines is Ownable, ReentrancyGuard {
             bool isActive
         )
     {
-        StateMachine memory machine = stateMachines[_machineId];
+        StateMachine storage machine = stateMachines[_machineId];
         return (
             machine.machineType,
             machine.currentState,
@@ -355,9 +343,7 @@ contract SystemStateMachines is Ownable, ReentrancyGuard {
     /**
      * @notice Get transition details
      */
-    function getTransitionDetails(bytes32 _transitionId)
-        external
-        view
+    function getTransitionDetails(bytes32 _transitionId) public view
         returns (
             bytes32 machineId,
             State fromState,
@@ -385,7 +371,7 @@ contract SystemStateMachines is Ownable, ReentrancyGuard {
         uint256 _defaultTimeout,
         uint256 _maxStateHistory,
         uint256 _validationFee
-    ) external onlyOwner {
+    ) public onlyOwner {
         defaultTimeout = _defaultTimeout;
         maxStateHistory = _maxStateHistory;
         validationFee = _validationFee;
@@ -394,9 +380,7 @@ contract SystemStateMachines is Ownable, ReentrancyGuard {
     /**
      * @notice Get global state machine statistics
      */
-    function getGlobalStatistics()
-        external
-        view
+    function getGlobalStatistics() public view
         returns (
             uint256 _totalMachines,
             uint256 _totalRules,

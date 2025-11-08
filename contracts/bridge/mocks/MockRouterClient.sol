@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {IRouterClient} from "lib/chainlink/contracts/src/v0.8/shared/interfaces/IRouterClient.sol";
-import {Client} from "lib/chainlink/contracts/src/v0.8/shared/libraries/Client.sol";
+import {IRouterClient} from "@chainlink/contracts-ccip/contracts/interfaces/IRouterClient.sol";
+import {Client} from "@chainlink/contracts-ccip/contracts/libraries/Client.sol";
 
 contract MockRouterClient is IRouterClient {
     uint256 public quotedFee;
@@ -12,18 +12,16 @@ contract MockRouterClient is IRouterClient {
 
     event Sent(bytes32 id, uint64 chain, address receiver);
 
-    function setFee(uint256 fee) external { quotedFee = fee; }
+    function setFee(uint256 fee) public { quotedFee = fee; }
 
-    function getFee(uint64, Client.EVM2AnyMessage calldata) external view returns (uint256) {
+    function getFee(uint64, Client.EVM2AnyMessage calldata) public view returns (uint256) {
         return quotedFee;
     }
 
-    function isChainSupported(uint64) external pure returns (bool) { return true; }
-    function isOfframp(uint64, address) external pure returns (bool) { return true; }
+    function isChainSupported(uint64) public pure returns (bool) { return true; }
+    function isOfframp(uint64, address) public pure returns (bool) { return true; }
 
-    function ccipSend(uint64 destinationChainSelector, Client.EVM2AnyMessage calldata message)
-        external
-        payable
+    function ccipSend(uint64 destinationChainSelector, Client.EVM2AnyMessage calldata message) public payable
         returns (bytes32)
     {
         lastChainSelector = destinationChainSelector;

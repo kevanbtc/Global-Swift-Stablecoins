@@ -55,7 +55,7 @@ contract GoldRWAToken is ERC20, AccessControl {
         bytes32 geologicalSurveyHash,
         bytes32 miningRightsHash,
         address miningCompany
-    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    ) public onlyRole(DEFAULT_ADMIN_ROLE) {
         reserves[reserveId] = GoldReserve({
             mineLocation: mineLocation,
             provenReserves: provenReserves,
@@ -77,7 +77,7 @@ contract GoldRWAToken is ERC20, AccessControl {
         bytes32 reserveId,
         uint256 auditedAmount,
         bytes32 reportHash
-    ) external onlyRole(AUDITOR_ROLE) {
+    ) public onlyRole(AUDITOR_ROLE) {
         require(reserves[reserveId].isActive, "Reserve not active");
         
         audits[reserveId].push(GoldAudit({
@@ -100,7 +100,7 @@ contract GoldRWAToken is ERC20, AccessControl {
         address to,
         uint256 amount,
         bytes32 reserveId
-    ) external onlyRole(MINER_ROLE) {
+    ) public onlyRole(MINER_ROLE) {
         require(reserves[reserveId].isActive, "Reserve not active");
         require(
             reserves[reserveId].provenReserves >= totalSupply() + amount,
@@ -114,21 +114,21 @@ contract GoldRWAToken is ERC20, AccessControl {
     /**
      * @notice Get reserve information
      */
-    function getReserve(bytes32 reserveId) external view returns (GoldReserve memory) {
+    function getReserve(bytes32 reserveId) public view returns (GoldReserve memory) {
         return reserves[reserveId];
     }
     
     /**
      * @notice Get audit history for a reserve
      */
-    function getAuditHistory(bytes32 reserveId, uint256 index) external view returns (GoldAudit memory) {
+    function getAuditHistory(bytes32 reserveId, uint256 index) public view returns (GoldAudit memory) {
         return audits[reserveId][index];
     }
     
     /**
      * @notice Get number of audits for a reserve
      */
-    function getAuditCount(bytes32 reserveId) external view returns (uint256) {
+    function getAuditCount(bytes32 reserveId) public view returns (uint256) {
         return audits[reserveId].length;
     }
 }

@@ -347,7 +347,10 @@ export interface ShareMaturityOracleCatalog extends BaseContract {
   >;
 
   setLots: TypedContractMethod<
-    [instrument: AddressLike, lots: ShareMaturityOracleCatalog.LotInfoStruct[]],
+    [
+      instrument: AddressLike,
+      lotInfos: ShareMaturityOracleCatalog.LotInfoStruct[]
+    ],
     [void],
     "nonpayable"
   >;
@@ -425,7 +428,10 @@ export interface ShareMaturityOracleCatalog extends BaseContract {
   getFunction(
     nameOrSignature: "setLots"
   ): TypedContractMethod<
-    [instrument: AddressLike, lots: ShareMaturityOracleCatalog.LotInfoStruct[]],
+    [
+      instrument: AddressLike,
+      lotInfos: ShareMaturityOracleCatalog.LotInfoStruct[]
+    ],
     [void],
     "nonpayable"
   >;

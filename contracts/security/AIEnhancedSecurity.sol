@@ -2,8 +2,8 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import {Pausable} from "@openzeppelin/contracts/security/Pausable.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 
 /**
  * @title AIEnhancedSecurity
@@ -121,7 +121,7 @@ contract AIEnhancedSecurity is Ownable, ReentrancyGuard, Pausable {
         string memory _modelName,
         string memory _modelType,
         uint256 _accuracy
-    ) external onlyOwner returns (bytes32) {
+    ) public onlyOwner returns (bytes32) {
         require(_accuracy <= 10000, "Invalid accuracy");
 
         bytes32 modelId = keccak256(abi.encodePacked(
@@ -153,7 +153,7 @@ contract AIEnhancedSecurity is Ownable, ReentrancyGuard, Pausable {
         bytes32 _modelId,
         uint256 _newAccuracy,
         uint256 _newVersion
-    ) external {
+    ) public {
         AIModel storage model = aiModels[_modelId];
         require(model.maintainer == msg.sender || owner() == msg.sender, "Not authorized");
         require(_newAccuracy <= 10000, "Invalid accuracy");
@@ -178,7 +178,7 @@ contract AIEnhancedSecurity is Ownable, ReentrancyGuard, Pausable {
         uint256 _amount,
         address _token,
         bytes32 _modelId
-    ) external whenNotPaused returns (bool isAnomalous, ThreatLevel threatLevel) {
+    ) public whenNotPaused returns (bool isAnomalous, ThreatLevel threatLevel) {
         require(aiModels[_modelId].isActive, "Model not active");
 
         // Update behavioral patterns
@@ -205,7 +205,7 @@ contract AIEnhancedSecurity is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Assess account risk profile
      */
-    function assessRiskProfile(address _account) external returns (uint256 riskScore, ThreatLevel level) {
+    function assessRiskProfile(address _account) public returns (uint256 riskScore, ThreatLevel level) {
         RiskProfile storage profile = riskProfiles[_account];
 
         // Only reassess if enough time has passed
@@ -233,7 +233,7 @@ contract AIEnhancedSecurity is Ownable, ReentrancyGuard, Pausable {
         address _account,
         uint256 _duration,
         string memory _reason
-    ) external onlyOwner {
+    ) public onlyOwner {
         _quarantineAccount(_account, _reason);
 
         // Override default quarantine period
@@ -245,7 +245,7 @@ contract AIEnhancedSecurity is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Unquarantine an account
      */
-    function unquarantineAccount(address _account) external onlyOwner {
+    function unquarantineAccount(address _account) public onlyOwner {
         require(riskProfiles[_account].quarantineUntil > 0, "Account not quarantined");
 
         riskProfiles[_account].quarantineUntil = 0;
@@ -257,9 +257,7 @@ contract AIEnhancedSecurity is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Get security event details
      */
-    function getSecurityEvent(bytes32 _eventId)
-        external
-        view
+    function getSecurityEvent(bytes32 _eventId) public view
         returns (
             address targetAddress,
             AnomalyType anomalyType,
@@ -283,9 +281,7 @@ contract AIEnhancedSecurity is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Get risk profile
      */
-    function getRiskProfile(address _account)
-        external
-        view
+    function getRiskProfile(address _account) public view
         returns (
             uint256 riskScore,
             ThreatLevel threatLevel,
@@ -307,9 +303,7 @@ contract AIEnhancedSecurity is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Get behavioral pattern
      */
-    function getBehavioralPattern(address _account)
-        external
-        view
+    function getBehavioralPattern(address _account) public view
         returns (
             uint256 transactionCount,
             uint256 totalVolume,
@@ -334,7 +328,7 @@ contract AIEnhancedSecurity is Ownable, ReentrancyGuard, Pausable {
         uint256 _riskThreshold,
         uint256 _quarantinePeriod,
         uint256 _assessmentInterval
-    ) external onlyOwner {
+    ) public onlyOwner {
         require(_anomalyThreshold <= 10000, "Invalid anomaly threshold");
         require(_riskThreshold <= 1000, "Invalid risk threshold");
 
@@ -349,14 +343,14 @@ contract AIEnhancedSecurity is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Emergency pause
      */
-    function emergencyPause() external onlyOwner {
+    function emergencyPause() public onlyOwner {
         _pause();
     }
 
     /**
      * @notice Emergency unpause
      */
-    function emergencyUnpause() external onlyOwner {
+    function emergencyUnpause() public onlyOwner {
         _unpause();
     }
 

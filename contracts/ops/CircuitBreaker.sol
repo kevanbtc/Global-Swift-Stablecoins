@@ -28,18 +28,18 @@ contract CircuitBreaker is AccessControl {
         _grantRole(ADMIN_ROLE, admin);
     }
 
-    function setConfig(address por_, address nav_, bytes32 reserveId_, bytes32 instrument_) external onlyRole(ADMIN_ROLE) {
+    function setConfig(address por_, address nav_, bytes32 reserveId_, bytes32 instrument_) public onlyRole(ADMIN_ROLE) {
         por = IPorAggregator(por_); nav = INavOracleRouter(nav_);
         reserveId = reserveId_; instrument = instrument_;
         emit ConfigSet(por_, nav_, reserveId_, instrument_);
     }
 
-    function setThresholds(uint64 maxAge, uint256 maxDriftBps, uint256 refNav18) external onlyRole(ADMIN_ROLE) {
+    function setThresholds(uint64 maxAge, uint256 maxDriftBps, uint256 refNav18) public onlyRole(ADMIN_ROLE) {
         maxNavAge = maxAge; maxNavDriftBps = maxDriftBps; referenceNav18 = refNav18;
         emit ThresholdsSet(maxAge, maxDriftBps, refNav18);
     }
 
-    function isHalted() external view returns (bool) {
+    function isHalted() public view returns (bool) {
         if (address(por) != address(0)) {
             (bool ok,,) = por.get(reserveId);
             if (!ok) return true;

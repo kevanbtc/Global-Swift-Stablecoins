@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title UniversalBasicIncome
@@ -118,7 +118,7 @@ contract UniversalBasicIncome is Ownable, ReentrancyGuard {
         bytes32 _kycHash,
         bytes32 _residencyHash,
         bytes32[] memory _socialMetrics
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         require(citizenIdsByWallet[msg.sender].length == 0, "Already registered");
 
         bytes32 citizenId = keccak256(abi.encodePacked(
@@ -157,7 +157,7 @@ contract UniversalBasicIncome is Ownable, ReentrancyGuard {
         bytes32 _citizenId,
         EligibilityStatus _status,
         uint256 _eligibilityScore
-    ) external onlyOwner validCitizen(_citizenId) {
+    ) public onlyOwner validCitizen(_citizenId) {
         CitizenProfile storage citizen = citizenProfiles[_citizenId];
         EligibilityStatus oldStatus = citizen.status;
 
@@ -183,7 +183,7 @@ contract UniversalBasicIncome is Ownable, ReentrancyGuard {
         uint256 _monthlyBudget,
         uint256 _distributionFrequency,
         bytes32 _eligibilityCriteria
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         bytes32 poolId = keccak256(abi.encodePacked(
             _poolName,
             msg.sender,
@@ -212,7 +212,7 @@ contract UniversalBasicIncome is Ownable, ReentrancyGuard {
     /**
      * @notice Fund a distribution pool
      */
-    function fundPool(bytes32 _poolId) external payable validPool(_poolId) {
+    function fundPool(bytes32 _poolId) public payable validPool(_poolId) {
         DistributionPool storage pool = distributionPools[_poolId];
         pool.totalFunds += msg.value;
     }
@@ -220,7 +220,7 @@ contract UniversalBasicIncome is Ownable, ReentrancyGuard {
     /**
      * @notice Claim UBI from a distribution pool
      */
-    function claimUBI(bytes32 _citizenId, bytes32 _poolId) external validCitizen(_citizenId) validPool(_poolId) eligibleCitizen(_citizenId) nonReentrant {
+    function claimUBI(bytes32 _citizenId, bytes32 _poolId) public validCitizen(_citizenId) validPool(_poolId) eligibleCitizen(_citizenId) nonReentrant {
         CitizenProfile storage citizen = citizenProfiles[_citizenId];
         DistributionPool storage pool = distributionPools[_poolId];
 
@@ -260,7 +260,7 @@ contract UniversalBasicIncome is Ownable, ReentrancyGuard {
     /**
      * @notice Distribute UBI to all eligible citizens in a pool
      */
-    function distributeUBI(bytes32 _poolId) external validPool(_poolId) {
+    function distributeUBI(bytes32 _poolId) public validPool(_poolId) {
         DistributionPool storage pool = distributionPools[_poolId];
         require(pool.isActive, "Pool not active");
         require(block.timestamp >= pool.lastDistribution + pool.distributionFrequency, "Too early for distribution");
@@ -296,7 +296,7 @@ contract UniversalBasicIncome is Ownable, ReentrancyGuard {
         bytes32 _citizenId,
         bytes32[] memory _metrics,
         uint256[] memory _values
-    ) external onlyOwner validCitizen(_citizenId) {
+    ) public onlyOwner validCitizen(_citizenId) {
         require(_metrics.length == _values.length, "Array length mismatch");
 
         CitizenProfile storage citizen = citizenProfiles[_citizenId];
@@ -311,9 +311,7 @@ contract UniversalBasicIncome is Ownable, ReentrancyGuard {
     /**
      * @notice Get citizen details
      */
-    function getCitizen(bytes32 _citizenId)
-        external
-        view
+    function getCitizen(bytes32 _citizenId) public view
         returns (
             address wallet,
             EligibilityStatus status,
@@ -322,7 +320,7 @@ contract UniversalBasicIncome is Ownable, ReentrancyGuard {
             bool isActive
         )
     {
-        CitizenProfile memory citizen = citizenProfiles[_citizenId];
+        CitizenProfile storage citizen = citizenProfiles[_citizenId];
         return (
             citizen.wallet,
             citizen.status,
@@ -335,9 +333,7 @@ contract UniversalBasicIncome is Ownable, ReentrancyGuard {
     /**
      * @notice Get distribution pool details
      */
-    function getDistributionPool(bytes32 _poolId)
-        external
-        view
+    function getDistributionPool(bytes32 _poolId) public view
         returns (
             string memory poolName,
             DistributionMethod method,
@@ -361,9 +357,7 @@ contract UniversalBasicIncome is Ownable, ReentrancyGuard {
     /**
      * @notice Get UBI claim details
      */
-    function getUBIClaim(bytes32 _claimId)
-        external
-        view
+    function getUBIClaim(bytes32 _claimId) public view
         returns (
             bytes32 citizenId,
             bytes32 poolId,
@@ -389,7 +383,7 @@ contract UniversalBasicIncome is Ownable, ReentrancyGuard {
         uint256 _baseMonthlyUBI,
         uint256 _minEligibilityScore,
         uint256 _claimCooldown
-    ) external onlyOwner {
+    ) public onlyOwner {
         baseMonthlyUBI = _baseMonthlyUBI;
         minEligibilityScore = _minEligibilityScore;
         claimCooldown = _claimCooldown;
@@ -398,9 +392,7 @@ contract UniversalBasicIncome is Ownable, ReentrancyGuard {
     /**
      * @notice Get global UBI statistics
      */
-    function getGlobalStatistics()
-        external
-        view
+    function getGlobalStatistics() public view
         returns (
             uint256 _totalCitizens,
             uint256 _totalEligibleCitizens,
@@ -414,7 +406,7 @@ contract UniversalBasicIncome is Ownable, ReentrancyGuard {
     // Internal functions
     function _calculateClaimAmount(bytes32 _citizenId, bytes32 _poolId) internal view returns (uint256) {
         DistributionPool memory pool = distributionPools[_poolId];
-        CitizenProfile memory citizen = citizenProfiles[_citizenId];
+        CitizenProfile storage citizen = citizenProfiles[_citizenId];
 
         if (pool.method == DistributionMethod.EQUAL_SHARE) {
             return baseMonthlyUBI;

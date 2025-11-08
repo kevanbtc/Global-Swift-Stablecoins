@@ -29,25 +29,25 @@ contract Iso20022Bridge {
     modifier onlyAdmin() { require(msg.sender == admin, "ISO: not admin"); _; }
     constructor(address _admin) { require(_admin != address(0), "ISO: admin 0"); admin = _admin; }
 
-    function transferAdmin(address to) external onlyAdmin { require(to != address(0), "ISO: 0"); emit AdminTransferred(admin, to); admin = to; }
+    function transferAdmin(address to) public onlyAdmin { require(to != address(0), "ISO: 0"); emit AdminTransferred(admin, to); admin = to; }
 
-    function bind(bytes32 id, bytes16 uetr, bytes32 payloadHash, bytes32 e2eIdHash) external onlyAdmin {
+    function bind(bytes32 id, bytes16 uetr, bytes32 payloadHash, bytes32 e2eIdHash) public onlyAdmin {
         bindings[id] = Binding({uetr: uetr, payloadHash: payloadHash, e2eIdHash: e2eIdHash, boundAt: uint64(block.timestamp)});
         emit IsoBound(id, uetr, payloadHash, e2eIdHash);
     }
 
-    function emitMessage(bytes32 id, bytes16 uetr, string calldata messageType, bytes32 payloadHash) external onlyAdmin {
+    function emitMessage(bytes32 id, bytes16 uetr, string calldata messageType, bytes32 payloadHash) public onlyAdmin {
         // Stateless emission; indexers can correlate to other events by id/uetr
         emit IsoEvent(id, uetr, messageType, payloadHash);
     }
     
     /// @notice Emit SWIFT GPI payment status update
-    function emitGPIStatus(bytes32 id, bytes16 uetr, string calldata status) external onlyAdmin {
+    function emitGPIStatus(bytes32 id, bytes16 uetr, string calldata status) public onlyAdmin {
         emit GPIPaymentStatusUpdate(id, uetr, status, block.timestamp);
     }
     
     /// @notice Emit SWIFT GPI tracker event
-    function emitGPITracker(bytes32 id, bytes16 uetr, string calldata trackerEventCode, bytes32 eventData) external onlyAdmin {
+    function emitGPITracker(bytes32 id, bytes16 uetr, string calldata trackerEventCode, bytes32 eventData) public onlyAdmin {
         emit GPITrackerUpdate(id, uetr, trackerEventCode, eventData);
     }
 }

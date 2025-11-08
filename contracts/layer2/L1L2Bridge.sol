@@ -2,7 +2,7 @@
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../common/Types.sol";
 import "../common/Roles.sol";
@@ -127,9 +127,7 @@ contract L1L2Bridge is AccessControl, Pausable {
         uint256 minAmount,
         uint256 maxAmount,
         uint256 dailyLimit
-    )
-        external
-        onlyRole(BRIDGE_OPERATOR_ROLE)
+    ) public onlyRole(BRIDGE_OPERATOR_ROLE)
     {
         require(token != address(0), "Invalid token");
         require(maxAmount > minAmount, "Invalid limits");
@@ -154,9 +152,7 @@ contract L1L2Bridge is AccessControl, Pausable {
         address token,
         address recipient,
         uint256 amount
-    )
-        external
-        whenNotPaused
+    ) public whenNotPaused
         returns (bytes32)
     {
         TokenConfig storage tokenConfig = supportedTokens[token];
@@ -220,9 +216,7 @@ contract L1L2Bridge is AccessControl, Pausable {
         address token,
         address recipient,
         uint256 amount
-    )
-        external
-        onlyRole(BRIDGE_OPERATOR_ROLE)
+    ) public onlyRole(BRIDGE_OPERATOR_ROLE)
         whenNotPaused
         returns (bytes32)
     {
@@ -262,9 +256,7 @@ contract L1L2Bridge is AccessControl, Pausable {
      * @notice Confirm a transfer
      * @param transferId Transfer identifier
      */
-    function confirmTransfer(bytes32 transferId)
-        external
-        onlyRole(VALIDATOR_ROLE)
+    function confirmTransfer(bytes32 transferId) public onlyRole(VALIDATOR_ROLE)
         whenNotPaused
     {
         Transfer storage transfer = transfers[transferId];
@@ -293,9 +285,7 @@ contract L1L2Bridge is AccessControl, Pausable {
      * @notice Execute a confirmed transfer
      * @param transferId Transfer identifier
      */
-    function executeTransfer(bytes32 transferId)
-        external
-        onlyRole(BRIDGE_OPERATOR_ROLE)
+    function executeTransfer(bytes32 transferId) public onlyRole(BRIDGE_OPERATOR_ROLE)
         whenNotPaused
     {
         Transfer storage transfer = transfers[transferId];
@@ -326,9 +316,7 @@ contract L1L2Bridge is AccessControl, Pausable {
      * @param transferId Transfer identifier
      * @param reason Rejection reason
      */
-    function rejectTransfer(bytes32 transferId, string calldata reason)
-        external
-        onlyRole(BRIDGE_OPERATOR_ROLE)
+    function rejectTransfer(bytes32 transferId, string calldata reason) public onlyRole(BRIDGE_OPERATOR_ROLE)
     {
         Transfer storage transfer = transfers[transferId];
         require(transfer.timestamp > 0, "Transfer not found");
@@ -349,9 +337,7 @@ contract L1L2Bridge is AccessControl, Pausable {
      * @notice Get transfer details
      * @param transferId Transfer identifier
      */
-    function getTransfer(bytes32 transferId)
-        external
-        view
+    function getTransfer(bytes32 transferId) public view
         returns (
             address token,
             address sender,
@@ -381,9 +367,7 @@ contract L1L2Bridge is AccessControl, Pausable {
      * @param transferId Transfer identifier
      * @param validator Validator address
      */
-    function hasValidatorConfirmed(bytes32 transferId, address validator)
-        external
-        view
+    function hasValidatorConfirmed(bytes32 transferId, address validator) public view
         returns (bool)
     {
         Transfer storage transfer = transfers[transferId];
@@ -403,9 +387,7 @@ contract L1L2Bridge is AccessControl, Pausable {
         uint256 maxDeposit,
         uint256 withdrawalDelay,
         uint256 validatorThreshold
-    )
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
+    ) public onlyRole(DEFAULT_ADMIN_ROLE)
     {
         require(maxDeposit > minDeposit, "Invalid deposit limits");
         require(validatorThreshold > 0, "Invalid threshold");
@@ -417,11 +399,11 @@ contract L1L2Bridge is AccessControl, Pausable {
     }
 
     // Admin functions
-    function pause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _pause();
     }
 
-    function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _unpause();
     }
 }

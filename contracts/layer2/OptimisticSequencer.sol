@@ -2,7 +2,7 @@
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "../common/Types.sol";
 import "../common/Roles.sol";
@@ -106,7 +106,7 @@ contract OptimisticSequencer is AccessControl, Pausable {
     /**
      * @notice Deposit bond for sequencing or challenging
      */
-    function depositBond() external payable whenNotPaused {
+    function depositBond() public payable whenNotPaused {
         bonds[msg.sender] += msg.value;
     }
 
@@ -114,7 +114,7 @@ contract OptimisticSequencer is AccessControl, Pausable {
      * @notice Withdraw available bond
      * @param amount Amount to withdraw
      */
-    function withdrawBond(uint256 amount) external whenNotPaused {
+    function withdrawBond(uint256 amount) public whenNotPaused {
         require(bonds[msg.sender] >= amount, "Insufficient bond");
         require(
             !hasUnresolvedChallenges(msg.sender),
@@ -135,9 +135,7 @@ contract OptimisticSequencer is AccessControl, Pausable {
         address to,
         uint256 amount,
         bytes calldata data
-    )
-        external
-        whenNotPaused
+    ) public whenNotPaused
         returns (bytes32)
     {
         uint256 nonce = nonces[msg.sender]++;
@@ -170,9 +168,7 @@ contract OptimisticSequencer is AccessControl, Pausable {
     function submitBatch(
         bytes32[] calldata transactionHashes,
         bytes32 newStateRoot
-    )
-        external
-        onlyRole(SEQUENCER_ROLE)
+    ) public onlyRole(SEQUENCER_ROLE)
         whenNotPaused
     {
         require(
@@ -221,9 +217,7 @@ contract OptimisticSequencer is AccessControl, Pausable {
         uint256 batchId,
         bytes32 assertedStateRoot,
         bytes calldata proof
-    )
-        external
-        onlyRole(CHALLENGER_ROLE)
+    ) public onlyRole(CHALLENGER_ROLE)
         whenNotPaused
     {
         require(
@@ -306,9 +300,7 @@ contract OptimisticSequencer is AccessControl, Pausable {
      * @notice Finalize a batch after challenge period
      * @param batchId Batch identifier
      */
-    function finalizeBatch(uint256 batchId)
-        external
-        whenNotPaused
+    function finalizeBatch(uint256 batchId) public whenNotPaused
     {
         Batch storage batch = batches[batchId];
         require(batch.timestamp > 0, "Batch not found");
@@ -355,9 +347,7 @@ contract OptimisticSequencer is AccessControl, Pausable {
      * @notice Get batch details
      * @param batchId Batch identifier
      */
-    function getBatch(uint256 batchId)
-        external
-        view
+    function getBatch(uint256 batchId) public view
         returns (Batch memory)
     {
         require(batches[batchId].timestamp > 0, "Batch not found");
@@ -368,9 +358,7 @@ contract OptimisticSequencer is AccessControl, Pausable {
      * @notice Get challenge details
      * @param batchId Batch identifier
      */
-    function getChallenge(uint256 batchId)
-        external
-        view
+    function getChallenge(uint256 batchId) public view
         returns (Challenge memory)
     {
         require(challenges[batchId].timestamp > 0, "Challenge not found");
@@ -378,11 +366,11 @@ contract OptimisticSequencer is AccessControl, Pausable {
     }
 
     // Admin functions
-    function pause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _pause();
     }
 
-    function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _unpause();
     }
 }

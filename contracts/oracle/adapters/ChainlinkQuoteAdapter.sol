@@ -5,9 +5,7 @@ import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {IQuoteAdapter} from "../../interfaces/IQuoteAdapter.sol";
 
 interface AggregatorV3Interface {
-    function latestRoundData()
-        external
-        view
+    function latestRoundData() external view
         returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound);
     function decimals() external view returns (uint8);
 }
@@ -33,14 +31,14 @@ contract ChainlinkQuoteAdapter is IQuoteAdapter, AccessControl {
         _grantRole(ADMIN, governor);
     }
 
-    function setFeed(address instrument, address aggregator, uint64 maxAgeSec) external onlyRole(ADMIN) {
+    function setFeed(address instrument, address aggregator, uint64 maxAgeSec) public onlyRole(ADMIN) {
         require(instrument != address(0) && aggregator != address(0), "bad_addr");
         feeds[instrument] = Feed(aggregator, maxAgeSec);
         emit FeedSet(instrument, aggregator, maxAgeSec);
     }
 
     /// @inheritdoc IQuoteAdapter
-    function quoteInCash(address instrument) external view returns (uint256 price, uint8 decimals, uint64 lastUpdate) {
+    function quoteInCash(address instrument) public view returns (uint256 price, uint8 decimals, uint64 lastUpdate) {
         Feed memory f = feeds[instrument];
         require(f.aggregator != address(0), "no_feed");
 
@@ -61,7 +59,7 @@ contract ChainlinkQuoteAdapter is IQuoteAdapter, AccessControl {
     }
 
     /// @inheritdoc IQuoteAdapter
-    function isFresh(address instrument, uint64 maxAgeSec) external view returns (bool) {
+    function isFresh(address instrument, uint64 maxAgeSec) public view returns (bool) {
         Feed memory f = feeds[instrument];
         require(f.aggregator != address(0), "no_feed");
         ( , , , uint256 updatedAt, ) = AggregatorV3Interface(f.aggregator).latestRoundData();

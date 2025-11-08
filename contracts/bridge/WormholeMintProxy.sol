@@ -21,13 +21,13 @@ contract WormholeMintProxy is AccessControl {
         _grantRole(ADMIN_ROLE, admin);
     }
 
-    function setBridge(address bridge) external onlyRole(ADMIN_ROLE) {
+    function setBridge(address bridge) public onlyRole(ADMIN_ROLE) {
         // grant/revoke role explicitly to keep audit trail on-chain
         if (bridge != address(0)) _grantRole(BRIDGE_ROLE, bridge);
         emit BridgeSet(bridge);
     }
 
-    function mint(address token, address to, uint256 amt) external onlyRole(BRIDGE_ROLE) {
+    function mint(address token, address to, uint256 amt) public onlyRole(BRIDGE_ROLE) {
         IMintableERC20(token).mint(to, amt);
         emit MintForwarded(token, to, amt);
     }

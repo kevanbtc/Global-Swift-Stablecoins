@@ -21,13 +21,13 @@ contract ExternalRail is IRail {
 
     constructor(address _admin, address _executor){ require(_admin!=address(0) && _executor!=address(0), "XRAIL: 0"); admin=_admin; executor=_executor; }
 
-    function setExecutor(address e) external onlyAdmin { require(e!=address(0), "XRAIL: 0"); executor=e; emit ExecutorSet(e); }
+    function setExecutor(address e) public onlyAdmin { require(e!=address(0), "XRAIL: 0"); executor=e; emit ExecutorSet(e); }
 
-    function kind() external pure override returns (Kind){ return Kind.EXTERNAL; }
+    function kind() public pure override returns (Kind){ return Kind.EXTERNAL; }
 
     function transferId(Transfer calldata t) public pure returns (bytes32){ return keccak256(abi.encode("XRAIL", t.from, t.to, t.amount, t.metadata)); }
 
-    function prepare(Transfer calldata t) external payable override {
+    function prepare(Transfer calldata t) public payable override {
         bytes32 id = transferId(t);
         require(_status[id] == Status.NONE, "XRAIL: exists");
         // For external rails, on-chain prepare just records intent; off-chain system will perform debit/credit.
@@ -36,15 +36,15 @@ contract ExternalRail is IRail {
     }
 
     // Off-chain executor calls these once the external leg has settled.
-    function markReleased(bytes32 id, Transfer calldata t) external onlyExec {
+    function markReleased(bytes32 id, Transfer calldata t) public onlyExec {
         require(_status[id] == Status.PREPARED, "XRAIL: bad state"); _status[id] = Status.RELEASED; emit RailReleased(id, t.to, t.asset, t.amount);
     }
-    function markRefunded(bytes32 id, Transfer calldata t) external onlyExec {
+    function markRefunded(bytes32 id, Transfer calldata t) public onlyExec {
         require(_status[id] == Status.PREPARED, "XRAIL: bad state"); _status[id] = Status.REFUNDED; emit RailRefunded(id, t.from, t.asset, t.amount);
     }
 
     // IRail compatibility
-    function release(bytes32 id, Transfer calldata t) external override onlyAdmin { revert("XRAIL: use markReleased"); }
-    function refund(bytes32 id, Transfer calldata t) external override onlyAdmin { revert("XRAIL: use markRefunded"); }
-    function status(bytes32 id) external view override returns (Status){ return _status[id]; }
+    function release(bytes32 id, Transfer calldata t) public override onlyAdmin { revert("XRAIL: use markReleased"); }
+    function refund(bytes32 id, Transfer calldata t) public override onlyAdmin { revert("XRAIL: use markRefunded"); }
+    function status(bytes32 id) public view override returns (Status){ return _status[id]; }
 }

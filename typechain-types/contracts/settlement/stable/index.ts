@@ -9,3 +9,4 @@ export type { IReleaseGuard } from "./IReleaseGuard";
 export type { PoRGuard } from "./PoRGuard";
 export type { StablecoinRegistry } from "./StablecoinRegistry";
 export type { StablecoinRouter } from "./StablecoinRouter";
+export type { UnykornStableRail } from "./UnykornStableRail";

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title AlgorithmicVerification
@@ -120,7 +120,7 @@ contract AlgorithmicVerification is Ownable, ReentrancyGuard {
         VerificationAlgorithm _algorithm,
         bytes32 _targetId,
         bytes memory _inputData
-    ) external payable returns (bytes32) {
+    ) public payable returns (bytes32) {
         require(_inputData.length <= maxInputDataSize, "Input data too large");
         require(msg.value >= baseVerificationFee, "Insufficient verification fee");
 
@@ -157,7 +157,7 @@ contract AlgorithmicVerification is Ownable, ReentrancyGuard {
         string memory _modelVersion,
         uint256 _accuracy,
         bytes32 _modelHash
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         bytes32 modelId = keccak256(abi.encodePacked(
             _algorithmType,
             _modelName,
@@ -192,7 +192,7 @@ contract AlgorithmicVerification is Ownable, ReentrancyGuard {
         VerificationResult _result,
         ConfidenceLevel _confidence,
         bytes32 _proofHash
-    ) external validRequest(_requestId) {
+    ) public validRequest(_requestId) {
         VerificationRequest storage request = verificationRequests[_requestId];
         require(!request.isProcessed, "Request already processed");
         require(block.timestamp <= request.deadline, "Request deadline exceeded");
@@ -211,9 +211,7 @@ contract AlgorithmicVerification is Ownable, ReentrancyGuard {
     /**
      * @notice Update algorithm model parameters
      */
-    function updateModelParameters(bytes32 _modelId, bytes32 _key, bytes32 _value)
-        external
-        validModel(_modelId)
+    function updateModelParameters(bytes32 _modelId, bytes32 _key, bytes32 _value) public validModel(_modelId)
     {
         AlgorithmModel storage model = algorithmModels[_modelId];
         require(model.modelProvider == msg.sender, "Not model provider");
@@ -225,9 +223,7 @@ contract AlgorithmicVerification is Ownable, ReentrancyGuard {
     /**
      * @notice Get model parameter
      */
-    function getModelParameter(bytes32 _modelId, bytes32 _key)
-        external
-        view
+    function getModelParameter(bytes32 _modelId, bytes32 _key) public view
         returns (bytes32)
     {
         return algorithmModels[_modelId].parameters[_key];
@@ -236,9 +232,7 @@ contract AlgorithmicVerification is Ownable, ReentrancyGuard {
     /**
      * @notice Get verification request details
      */
-    function getVerificationRequest(bytes32 _requestId)
-        external
-        view
+    function getVerificationRequest(bytes32 _requestId) public view
         returns (
             VerificationAlgorithm algorithm,
             address requester,
@@ -264,9 +258,7 @@ contract AlgorithmicVerification is Ownable, ReentrancyGuard {
     /**
      * @notice Get algorithm model details
      */
-    function getAlgorithmModel(bytes32 _modelId)
-        external
-        view
+    function getAlgorithmModel(bytes32 _modelId) public view
         returns (
             VerificationAlgorithm algorithmType,
             string memory modelName,
@@ -276,7 +268,7 @@ contract AlgorithmicVerification is Ownable, ReentrancyGuard {
             bool isActive
         )
     {
-        AlgorithmModel memory model = algorithmModels[_modelId];
+        AlgorithmModel storage model = algorithmModels[_modelId];
         return (
             model.algorithmType,
             model.modelName,
@@ -290,9 +282,7 @@ contract AlgorithmicVerification is Ownable, ReentrancyGuard {
     /**
      * @notice Get algorithm metrics
      */
-    function getAlgorithmMetrics(VerificationAlgorithm _algorithm)
-        external
-        view
+    function getAlgorithmMetrics(VerificationAlgorithm _algorithm) public view
         returns (
             uint256 totalRequests,
             uint256 successfulVerifications,
@@ -314,9 +304,7 @@ contract AlgorithmicVerification is Ownable, ReentrancyGuard {
     /**
      * @notice Get models by algorithm type
      */
-    function getModelsByAlgorithm(VerificationAlgorithm _algorithm)
-        external
-        view
+    function getModelsByAlgorithm(VerificationAlgorithm _algorithm) public view
         returns (bytes32[] memory)
     {
         return modelsByAlgorithm[_algorithm];
@@ -325,9 +313,7 @@ contract AlgorithmicVerification is Ownable, ReentrancyGuard {
     /**
      * @notice Get requests by requester
      */
-    function getRequestsByRequester(address _requester)
-        external
-        view
+    function getRequestsByRequester(address _requester) public view
         returns (bytes32[] memory)
     {
         return requestsByRequester[_requester];
@@ -341,7 +327,7 @@ contract AlgorithmicVerification is Ownable, ReentrancyGuard {
         bytes32 _leaf,
         bytes32[] memory _proof,
         uint256 _index
-    ) external pure returns (bool) {
+    ) public pure returns (bool) {
         bytes32 computedHash = _leaf;
 
         for (uint256 i = 0; i < _proof.length; i++) {
@@ -363,7 +349,7 @@ contract AlgorithmicVerification is Ownable, ReentrancyGuard {
         uint256[] memory _dataPoints,
         uint256 _expectedValue,
         uint256 _tolerance
-    ) external pure returns (ConfidenceLevel) {
+    ) public pure returns (ConfidenceLevel) {
         if (_dataPoints.length == 0) return ConfidenceLevel.LOW;
 
         uint256 sum = 0;
@@ -409,7 +395,7 @@ contract AlgorithmicVerification is Ownable, ReentrancyGuard {
         uint256 _maxProcessingTime,
         uint256 _minConfidenceThreshold,
         uint256 _maxInputDataSize
-    ) external onlyOwner {
+    ) public onlyOwner {
         baseVerificationFee = _baseVerificationFee;
         maxProcessingTime = _maxProcessingTime;
         minConfidenceThreshold = _minConfidenceThreshold;
@@ -419,9 +405,7 @@ contract AlgorithmicVerification is Ownable, ReentrancyGuard {
     /**
      * @notice Get global verification statistics
      */
-    function getGlobalStatistics()
-        external
-        view
+    function getGlobalStatistics() public view
         returns (
             uint256 _totalRequests,
             uint256 _totalModels,

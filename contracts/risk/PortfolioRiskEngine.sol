@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 
 /**
@@ -101,7 +101,7 @@ contract PortfolioRiskEngine is Ownable, ReentrancyGuard {
     /**
      * @notice Create a new portfolio for risk tracking
      */
-    function createPortfolio(address portfolio) external onlyOwner {
+    function createPortfolio(address portfolio) public onlyOwner {
         require(portfolio != address(0), "Invalid portfolio address");
 
         // Check if portfolio already exists
@@ -123,7 +123,7 @@ contract PortfolioRiskEngine is Ownable, ReentrancyGuard {
         uint256 entryPrice,
         uint256 volatility,
         int256 correlation
-    ) external onlyOwner {
+    ) public onlyOwner {
         require(quantity > 0, "Quantity must be > 0");
         require(entryPrice > 0, "Entry price must be > 0");
 
@@ -149,7 +149,7 @@ contract PortfolioRiskEngine is Ownable, ReentrancyGuard {
         uint256 positionIndex,
         uint256 newQuantity,
         uint256 currentPrice
-    ) external onlyOwner {
+    ) public onlyOwner {
         require(positionIndex < portfolioPositions[portfolio].length, "Invalid position index");
         require(currentPrice > 0, "Current price must be > 0");
 
@@ -164,7 +164,7 @@ contract PortfolioRiskEngine is Ownable, ReentrancyGuard {
     /**
      * @notice Calculate comprehensive risk metrics for a portfolio
      */
-    function calculateRiskMetrics(address portfolio) external returns (RiskMetrics memory) {
+    function calculateRiskMetrics(address portfolio) public returns (RiskMetrics memory) {
         PortfolioPosition[] memory positions = portfolioPositions[portfolio];
         require(positions.length > 0, "Portfolio has no positions");
 
@@ -219,7 +219,7 @@ contract PortfolioRiskEngine is Ownable, ReentrancyGuard {
     function executeStressTest(
         address portfolio,
         string memory scenarioName
-    ) external returns (uint256 loss) {
+    ) public returns (uint256 loss) {
         StressScenario[] memory scenarios = stressScenarios[portfolio];
         StressScenario memory scenario;
 
@@ -260,7 +260,7 @@ contract PortfolioRiskEngine is Ownable, ReentrancyGuard {
         address portfolio,
         int256 dailyReturn,
         uint256 portfolioValue
-    ) external onlyOwner {
+    ) public onlyOwner {
         HistoricalReturn memory histReturn = HistoricalReturn({
             dailyReturn: dailyReturn,
             timestamp: block.timestamp,
@@ -278,7 +278,7 @@ contract PortfolioRiskEngine is Ownable, ReentrancyGuard {
         string memory name,
         int256[] memory assetShocks,
         uint256 probability
-    ) external onlyOwner {
+    ) public onlyOwner {
         require(probability <= BASIS_POINTS, "Invalid probability");
 
         StressScenario memory scenario = StressScenario({
@@ -294,9 +294,7 @@ contract PortfolioRiskEngine is Ownable, ReentrancyGuard {
     /**
      * @notice Get portfolio positions
      */
-    function getPortfolioPositions(address portfolio)
-        external
-        view
+    function getPortfolioPositions(address portfolio) public view
         returns (PortfolioPosition[] memory)
     {
         return portfolioPositions[portfolio];
@@ -305,9 +303,7 @@ contract PortfolioRiskEngine is Ownable, ReentrancyGuard {
     /**
      * @notice Get risk metrics
      */
-    function getRiskMetrics(address portfolio)
-        external
-        view
+    function getRiskMetrics(address portfolio) public view
         returns (RiskMetrics memory)
     {
         return portfolioRiskMetrics[portfolio];
@@ -320,7 +316,7 @@ contract PortfolioRiskEngine is Ownable, ReentrancyGuard {
         uint256 _var95Threshold,
         uint256 _maxDrawdownThreshold,
         uint256 _volatilityThreshold
-    ) external onlyOwner {
+    ) public onlyOwner {
         var95Threshold = _var95Threshold;
         maxDrawdownThreshold = _maxDrawdownThreshold;
         volatilityThreshold = _volatilityThreshold;

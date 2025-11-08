@@ -25,7 +25,7 @@ contract StablecoinRegistry {
 
     constructor(address _admin){ require(_admin!=address(0), "SCREG: 0"); admin = _admin; }
 
-    function transferAdmin(address to) external onlyAdmin { require(to!=address(0), "SCREG: 0"); emit AdminTransferred(admin,to); admin = to; }
+    function transferAdmin(address to) public onlyAdmin { require(to!=address(0), "SCREG: 0"); emit AdminTransferred(admin,to); admin = to; }
 
     function setStablecoin(
         address token,
@@ -36,7 +36,7 @@ contract StablecoinRegistry {
         bytes32 defaultRailKey,
         bytes32 cctpRailKey,
         bytes32 ccipRailKey
-    ) external onlyAdmin {
+    ) public onlyAdmin {
         Meta memory m = Meta({
             supported: supported,
             reserveId: reserveId,
@@ -50,5 +50,5 @@ contract StablecoinRegistry {
         emit StablecoinSet(token, m);
     }
 
-    function get(address token) external view returns (Meta memory){ return _meta[token]; }
+    function get(address token) public view returns (Meta memory){ return _meta[token]; }
 }

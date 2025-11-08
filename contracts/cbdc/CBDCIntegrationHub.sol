@@ -2,8 +2,8 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import {Pausable} from "@openzeppelin/contracts/security/Pausable.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 
 /**
  * @title CBDCIntegrationHub
@@ -146,7 +146,7 @@ contract CBDCIntegrationHub is Ownable, ReentrancyGuard, Pausable {
         bool _requiresKYC,
         string memory _jurisdiction,
         bytes32 _regulatoryApprovalHash
-    ) external onlyOwner {
+    ) public onlyOwner {
         require(_cbdcContract != address(0), "Invalid CBDC contract");
         require(_minTransferAmount < _maxTransferAmount, "Invalid amount limits");
 
@@ -177,17 +177,16 @@ contract CBDCIntegrationHub is Ownable, ReentrancyGuard, Pausable {
         CBDCType _cbdcType,
         address _bridgeAddress,
         uint256 _maxDailyVolume
-    ) external onlyOwner {
+    ) public onlyOwner {
         require(cbdcConfigs[_cbdcType].status == CBDCStatus.ACTIVE, "CBDC not configured");
 
-        cbdcBridges[_cbdcType] = CBDCBridge({
-            bridgeAddress: _bridgeAddress,
-            supportedCBDC: _cbdcType,
-            isActive: true,
-            maxDailyVolume: _maxDailyVolume,
-            currentDailyVolume: 0,
-            lastVolumeReset: block.timestamp
-        });
+        CBDCBridge storage bridge = cbdcBridges[_cbdcType];
+        bridge.bridgeAddress = _bridgeAddress;
+        bridge.supportedCBDC = _cbdcType;
+        bridge.isActive = true;
+        bridge.maxDailyVolume = _maxDailyVolume;
+        bridge.currentDailyVolume = 0;
+        bridge.lastVolumeReset = block.timestamp;
 
         emit BridgeAuthorized(_cbdcType, _bridgeAddress);
     }
@@ -201,7 +200,7 @@ contract CBDCIntegrationHub is Ownable, ReentrancyGuard, Pausable {
         address _receiver,
         uint256 _amount,
         InteroperabilityMode _mode
-    ) external whenNotPaused validCBDC(_fromCBDC) validCBDC(_toCBDC)
+    ) public whenNotPaused validCBDC(_fromCBDC) validCBDC(_toCBDC)
               withinLimits(msg.sender, _fromCBDC, _amount) returns (bytes32) {
 
         require(_receiver != address(0), "Invalid receiver");
@@ -267,7 +266,7 @@ contract CBDCIntegrationHub is Ownable, ReentrancyGuard, Pausable {
     function completeCrossBorderTransfer(
         bytes32 _transferId,
         bytes32 _destTxHash
-    ) external onlyOwner {
+    ) public onlyOwner {
         CrossBorderTransfer storage transfer = crossBorderTransfers[_transferId];
         require(!transfer.isCompleted, "Transfer already completed");
         require(bytes(transfer.failureReason).length == 0, "Transfer failed");
@@ -288,7 +287,7 @@ contract CBDCIntegrationHub is Ownable, ReentrancyGuard, Pausable {
     function failCrossBorderTransfer(
         bytes32 _transferId,
         string memory _reason
-    ) external onlyOwner {
+    ) public onlyOwner {
         CrossBorderTransfer storage transfer = crossBorderTransfers[_transferId];
         require(!transfer.isCompleted, "Transfer already completed");
 
@@ -301,16 +300,14 @@ contract CBDCIntegrationHub is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Get exchange rate between two CBDCs
      */
-    function getExchangeRate(CBDCType _fromCBDC, CBDCType _toCBDC) external view returns (uint256) {
+    function getExchangeRate(CBDCType _fromCBDC, CBDCType _toCBDC) public view returns (uint256) {
         return _getExchangeRate(_fromCBDC, _toCBDC);
     }
 
     /**
      * @notice Get cross-border transfer details
      */
-    function getCrossBorderTransfer(bytes32 _transferId)
-        external
-        view
+    function getCrossBorderTransfer(bytes32 _transferId) public view
         returns (
             address sender,
             address receiver,
@@ -345,7 +342,7 @@ contract CBDCIntegrationHub is Ownable, ReentrancyGuard, Pausable {
         uint256 _minCrossBorderAmount,
         uint256 _maxCrossBorderAmount,
         uint256 _maxGlobalDailyVolume
-    ) external onlyOwner {
+    ) public onlyOwner {
         require(_crossBorderFeeBPS <= 1000, "Fee too high"); // Max 10%
         require(_minCrossBorderAmount < _maxCrossBorderAmount, "Invalid amount limits");
 
@@ -358,7 +355,7 @@ contract CBDCIntegrationHub is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Reset daily limits (called by automation)
      */
-    function resetDailyLimits() external onlyOwner {
+    function resetDailyLimits() public onlyOwner {
         // Reset all CBDC daily limits
         for (uint256 i = 0; i <= uint256(CBDCType.OTHER); i++) {
             CBDCType cbdcType = CBDCType(i);
@@ -383,14 +380,14 @@ contract CBDCIntegrationHub is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Emergency pause
      */
-    function emergencyPause() external onlyOwner {
+    function emergencyPause() public onlyOwner {
         _pause();
     }
 
     /**
      * @notice Emergency unpause
      */
-    function emergencyUnpause() external onlyOwner {
+    function emergencyUnpause() public onlyOwner {
         _unpause();
     }
 

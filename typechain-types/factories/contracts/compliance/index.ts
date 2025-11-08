@@ -4,7 +4,12 @@
 export * as complianceModuleRbacSol from "./ComplianceModuleRBAC.sol";
 export * as policyEngineUpgradeableSol from "./PolicyEngineUpgradeable.sol";
 export { AccessRegistryUpgradeable__factory } from "./AccessRegistryUpgradeable__factory";
+export { AdvancedSanctionsEngine__factory } from "./AdvancedSanctionsEngine__factory";
 export { ComplianceRegistryUpgradeable__factory } from "./ComplianceRegistryUpgradeable__factory";
+export { CrossBorderCompliance__factory } from "./CrossBorderCompliance__factory";
 export { KYCRegistry__factory } from "./KYCRegistry__factory";
+export { RegulatoryReporting__factory } from "./RegulatoryReporting__factory";
 export { RoleIds__factory } from "./RoleIds__factory";
 export { SanctionsOracleDenylist__factory } from "./SanctionsOracleDenylist__factory";
+export { TransactionMonitoring__factory } from "./TransactionMonitoring__factory";
+export { TravelRuleEngine__factory } from "./TravelRuleEngine__factory";

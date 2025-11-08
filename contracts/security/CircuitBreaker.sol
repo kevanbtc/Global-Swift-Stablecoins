@@ -2,8 +2,7 @@
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/utils/math/Math.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "../common/Types.sol";
 import "../common/Roles.sol";
 import "../common/Errors.sol";
@@ -14,7 +13,6 @@ import "../common/Errors.sol";
  * @dev Implements multi-level circuit breakers with automated and manual triggers
  */
 contract CircuitBreaker is AccessControl, ReentrancyGuard {
-
     bytes32 public constant BREAKER_ADMIN_ROLE = keccak256("BREAKER_ADMIN_ROLE");
     bytes32 public constant ORACLE_ROLE = keccak256("ORACLE_ROLE");
     bytes32 public constant VALIDATOR_ROLE = keccak256("VALIDATOR_ROLE");
@@ -230,7 +228,7 @@ contract CircuitBreaker is AccessControl, ReentrancyGuard {
         require(!circuit.validatorVotes[msg.sender], "Already voted");
         
         circuit.validatorVotes[msg.sender] = true;
-        circuit.voteCount = circuit.voteCount.add(1);
+        circuit.voteCount = circuit.voteCount + 1;
         
         emit ValidatorVoteSubmitted(
             circuitId,
@@ -330,7 +328,7 @@ contract CircuitBreaker is AccessControl, ReentrancyGuard {
     {
         Circuit storage circuit = circuits[circuitId];
         require(
-            block.timestamp >= circuit.lastStateChange.add(circuit.cooldownPeriod),
+            block.timestamp >= circuit.lastStateChange + circuit.cooldownPeriod,
             "Cooldown active"
         );
         

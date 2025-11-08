@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title ArbitrageEngine
@@ -139,7 +139,7 @@ contract ArbitrageEngine is Ownable, ReentrancyGuard {
         uint256 _maxGasPrice,
         uint256 _maxTradeSize,
         bytes32 _riskParameters
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         bytes32 strategyId = keccak256(abi.encodePacked(
             _strategyName,
             msg.sender,
@@ -171,7 +171,7 @@ contract ArbitrageEngine is Ownable, ReentrancyGuard {
         address _tokenC,
         address[] memory _exchanges,
         uint256[] memory _amounts
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         require(_exchanges.length >= 3, "Need at least 3 exchanges");
         require(_amounts.length == 3, "Need 3 amounts");
 
@@ -222,7 +222,7 @@ contract ArbitrageEngine is Ownable, ReentrancyGuard {
         address _tokenB,
         address[] memory _exchanges,
         uint256 _amount
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         require(_exchanges.length >= 2, "Need at least 2 exchanges");
 
         uint256[] memory buyPrices = new uint256[](_exchanges.length);
@@ -279,7 +279,7 @@ contract ArbitrageEngine is Ownable, ReentrancyGuard {
     function executeArbitrage(
         bytes32 _opportunityId,
         bytes32 _strategyId
-    ) external validOpportunity(_opportunityId) validStrategy(_strategyId) nonReentrant {
+    ) public validOpportunity(_opportunityId) validStrategy(_strategyId) nonReentrant {
         ArbitrageOpportunity storage opportunity = arbitrageOpportunities[_opportunityId];
         ArbitrageStrategy memory strategy = arbitrageStrategies[_strategyId];
 
@@ -334,7 +334,7 @@ contract ArbitrageEngine is Ownable, ReentrancyGuard {
         uint256 _price,
         uint256 _liquidity,
         uint256 _fee
-    ) external {
+    ) public {
         bytes32 marketId = keccak256(abi.encodePacked(_tokenA, _tokenB, _exchange));
 
         MarketData storage data = marketData[marketId];
@@ -355,9 +355,7 @@ contract ArbitrageEngine is Ownable, ReentrancyGuard {
     /**
      * @notice Get arbitrage opportunity details
      */
-    function getArbitrageOpportunity(bytes32 _opportunityId)
-        external
-        view
+    function getArbitrageOpportunity(bytes32 _opportunityId) public view
         returns (
             ArbitrageType arbType,
             address[] memory tokens,
@@ -381,9 +379,7 @@ contract ArbitrageEngine is Ownable, ReentrancyGuard {
     /**
      * @notice Get arbitrage strategy details
      */
-    function getArbitrageStrategy(bytes32 _strategyId)
-        external
-        view
+    function getArbitrageStrategy(bytes32 _strategyId) public view
         returns (
             string memory strategyName,
             address owner,
@@ -405,9 +401,7 @@ contract ArbitrageEngine is Ownable, ReentrancyGuard {
     /**
      * @notice Get arbitrage execution details
      */
-    function getArbitrageExecution(bytes32 _executionId)
-        external
-        view
+    function getArbitrageExecution(bytes32 _executionId) public view
         returns (
             bytes32 opportunityId,
             uint256 actualProfit,
@@ -429,9 +423,7 @@ contract ArbitrageEngine is Ownable, ReentrancyGuard {
     /**
      * @notice Get market data
      */
-    function getMarketData(address _tokenA, address _tokenB, address _exchange)
-        external
-        view
+    function getMarketData(address _tokenA, address _tokenB, address _exchange) public view
         returns (
             uint256 price,
             uint256 liquidity,
@@ -459,7 +451,7 @@ contract ArbitrageEngine is Ownable, ReentrancyGuard {
         uint256 _maxSlippageTolerance,
         uint256 _opportunityTimeout,
         uint256 _gasPriceLimit
-    ) external onlyOwner {
+    ) public onlyOwner {
         minProfitThreshold = _minProfitThreshold;
         maxSlippageTolerance = _maxSlippageTolerance;
         opportunityTimeout = _opportunityTimeout;
@@ -469,9 +461,7 @@ contract ArbitrageEngine is Ownable, ReentrancyGuard {
     /**
      * @notice Get global arbitrage statistics
      */
-    function getGlobalStatistics()
-        external
-        view
+    function getGlobalStatistics() public view
         returns (
             uint256 _totalOpportunities,
             uint256 _totalExecutions,

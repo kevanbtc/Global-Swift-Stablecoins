@@ -2,8 +2,8 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import {Pausable} from "@openzeppelin/contracts/security/Pausable.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 
 /**
  * @title ISO20022MessageHandler
@@ -106,7 +106,7 @@ contract ISO20022MessageHandler is Ownable, ReentrancyGuard, Pausable {
         uint256 _amount,
         string memory _currency,
         string memory _messageData
-    ) external whenNotPaused validMessageType(_type) returns (bytes32) {
+    ) public whenNotPaused validMessageType(_type) returns (bytes32) {
         require(bytes(_messageData).length <= maxMessageSize, "Message too large");
         require(_amount > 0, "Invalid amount");
         require(bytes(_currency).length == 3, "Invalid currency code");
@@ -151,7 +151,7 @@ contract ISO20022MessageHandler is Ownable, ReentrancyGuard, Pausable {
         bytes32 _messageId,
         bool _isValid,
         string[] memory _errors
-    ) external onlyValidator whenNotPaused {
+    ) public onlyValidator whenNotPaused {
         ISO20022Message storage message = messages[_messageId];
         require(message.timestamp > 0, "Message not found");
         require(message.status == MessageStatus.RECEIVED, "Message not in validatable state");
@@ -183,7 +183,7 @@ contract ISO20022MessageHandler is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Process a validated message
      */
-    function processMessage(bytes32 _messageId) external onlyValidator whenNotPaused {
+    function processMessage(bytes32 _messageId) public onlyValidator whenNotPaused {
         ISO20022Message storage message = messages[_messageId];
         ValidationResult memory validation = validations[_messageId];
 
@@ -211,7 +211,7 @@ contract ISO20022MessageHandler is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Mark message as settled
      */
-    function settleMessage(bytes32 _messageId) external onlyValidator whenNotPaused {
+    function settleMessage(bytes32 _messageId) public onlyValidator whenNotPaused {
         ISO20022Message storage message = messages[_messageId];
         require(message.timestamp > 0, "Message not found");
         require(message.status == MessageStatus.PROCESSED, "Message not processed");
@@ -227,9 +227,7 @@ contract ISO20022MessageHandler is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Get message details
      */
-    function getMessage(bytes32 _messageId)
-        external
-        view
+    function getMessage(bytes32 _messageId) public view
         returns (
             MessageType msgType,
             MessageStatus status,
@@ -257,9 +255,7 @@ contract ISO20022MessageHandler is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Get validation result
      */
-    function getValidation(bytes32 _messageId)
-        external
-        view
+    function getValidation(bytes32 _messageId) public view
         returns (
             bool isValid,
             string[] memory errors,
@@ -279,7 +275,7 @@ contract ISO20022MessageHandler is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Authorize or revoke validator
      */
-    function setValidator(address _validator, bool _authorized) external onlyOwner {
+    function setValidator(address _validator, bool _authorized) public onlyOwner {
         authorizedValidators[_validator] = _authorized;
         emit ValidatorAuthorized(_validator, _authorized);
     }
@@ -287,7 +283,7 @@ contract ISO20022MessageHandler is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Enable or disable message type support
      */
-    function setMessageTypeSupport(MessageType _type, bool _supported) external onlyOwner {
+    function setMessageTypeSupport(MessageType _type, bool _supported) public onlyOwner {
         supportedTypes[_type] = _supported;
         emit MessageTypeSupported(_type, _supported);
     }
@@ -299,7 +295,7 @@ contract ISO20022MessageHandler is Ownable, ReentrancyGuard, Pausable {
         uint256 _maxMessageSize,
         uint256 _validationTimeout,
         uint256 _settlementTimeout
-    ) external onlyOwner {
+    ) public onlyOwner {
         require(_maxMessageSize > 0, "Invalid max message size");
         require(_validationTimeout > 0, "Invalid validation timeout");
         require(_settlementTimeout > 0, "Invalid settlement timeout");
@@ -312,14 +308,14 @@ contract ISO20022MessageHandler is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Emergency pause
      */
-    function emergencyPause() external onlyOwner {
+    function emergencyPause() public onlyOwner {
         _pause();
     }
 
     /**
      * @notice Emergency unpause
      */
-    function emergencyUnpause() external onlyOwner {
+    function emergencyUnpause() public onlyOwner {
         _unpause();
     }
 

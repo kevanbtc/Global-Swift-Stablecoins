@@ -44,8 +44,8 @@ contract InsurancePolicyNFT is ERC721, AccessControl, Pausable {
         _grantRole(PolicyRoles.ROLE_GUARDIAN, admin);
     }
 
-    function pause() external onlyRole(PolicyRoles.ROLE_GUARDIAN) { _pause(); }
-    function unpause() external onlyRole(PolicyRoles.ROLE_GUARDIAN) { _unpause(); }
+    function pause() public onlyRole(PolicyRoles.ROLE_GUARDIAN) { _pause(); }
+    function unpause() public onlyRole(PolicyRoles.ROLE_GUARDIAN) { _unpause(); }
 
     function issue(
         address to,
@@ -53,7 +53,7 @@ contract InsurancePolicyNFT is ERC721, AccessControl, Pausable {
         uint256 premium,
         uint64 startDate,
         uint64 endDate
-    ) external onlyRole(PolicyRoles.ROLE_ISSUER) whenNotPaused returns (uint256 tokenId) {
+    ) public onlyRole(PolicyRoles.ROLE_ISSUER) whenNotPaused returns (uint256 tokenId) {
         require(startDate < endDate, "bad dates");
         tokenId = ++_id;
         policies[tokenId] = Policy(coverage, premium, startDate, endDate, true);
@@ -65,7 +65,7 @@ contract InsurancePolicyNFT is ERC721, AccessControl, Pausable {
         uint256 tokenId,
         uint256 amount,
         string calldata evidence
-    ) external whenNotPaused {
+    ) public whenNotPaused {
         // ensure token exists and get owner
         address owner;
         try this.ownerOf(tokenId) returns (address o) { owner = o; } catch { revert("no policy"); }
@@ -92,7 +92,7 @@ contract InsurancePolicyNFT is ERC721, AccessControl, Pausable {
         uint256 claimIdx,
         ClaimStatus status,
         uint256 paidAmount
-    ) external onlyRole(PolicyRoles.ROLE_ADMIN) whenNotPaused {
+    ) public onlyRole(PolicyRoles.ROLE_ADMIN) whenNotPaused {
         Policy storage policy = policies[tokenId];
         require(policy.active, "not active");
         require(claimIdx < claims[tokenId].length, "bad claim index");
@@ -112,12 +112,12 @@ contract InsurancePolicyNFT is ERC721, AccessControl, Pausable {
         emit ClaimStatusChanged(tokenId, claimIdx, status);
     }
 
-    function setPolicyStatus(uint256 tokenId, bool active) external onlyRole(PolicyRoles.ROLE_ADMIN) {
+    function setPolicyStatus(uint256 tokenId, bool active) public onlyRole(PolicyRoles.ROLE_ADMIN) {
         policies[tokenId].active = active;
         emit PolicyStatusChanged(tokenId, active);
     }
 
-    function availableCoverage(uint256 tokenId) external view returns (uint256) {
+    function availableCoverage(uint256 tokenId) public view returns (uint256) {
         return policies[tokenId].coverage - totalClaimed[tokenId];
     }
 

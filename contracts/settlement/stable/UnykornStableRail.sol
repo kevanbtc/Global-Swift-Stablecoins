@@ -4,7 +4,7 @@ pragma solidity ^0.8.24;
 import {IRail} from "../rails/IRail.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 /// @title UnykornStableRail
@@ -43,37 +43,37 @@ contract UnykornStableRail is IRail, Ownable, ReentrancyGuard {
     }
     
     /// @notice Activate Besu privacy group
-    function activatePrivacyGroup(bytes32 groupId) external onlyOwner {
+    function activatePrivacyGroup(bytes32 groupId) public onlyOwner {
         activePrivacyGroups[groupId] = true;
         emit PrivacyGroupActivated(groupId);
     }
     
     /// @notice Update PoR oracle
-    function setPoROracle(address newOracle) external onlyOwner {
+    function setPoROracle(address newOracle) public onlyOwner {
         address oldOracle = porOracle;
         porOracle = newOracle;
         emit PoROracleUpdated(oldOracle, newOracle);
     }
     
     /// @notice Update compliance registry
-    function setComplianceRegistry(address newRegistry) external onlyOwner {
+    function setComplianceRegistry(address newRegistry) public onlyOwner {
         address oldRegistry = complianceRegistry;
         complianceRegistry = newRegistry;
         emit ComplianceRegistryUpdated(oldRegistry, newRegistry);
     }
     
     /// @notice Returns the rail kind
-    function kind() external pure override returns (Kind) {
+    function kind() public pure override returns (Kind) {
         return Kind.ERC20;
     }
     
     /// @notice Generate transfer ID
-    function transferId(Transfer calldata t) external pure override returns (bytes32) {
+    function transferId(Transfer calldata t) public pure override returns (bytes32) {
         return keccak256(abi.encode(t.asset, t.from, t.to, t.amount, t.metadata));
     }
     
     /// @notice Prepare uUSD transfer with privacy group support
-    function prepare(Transfer calldata xfer) external payable override nonReentrant {
+    function prepare(Transfer calldata xfer) public payable override nonReentrant {
         require(xfer.asset == uUSD, "USR: Not uUSD");
         require(xfer.amount > 0, "USR: Zero amount");
         
@@ -103,7 +103,7 @@ contract UnykornStableRail is IRail, Ownable, ReentrancyGuard {
     }
     
     /// @notice Release uUSD transfer after PoR check
-    function release(bytes32 id, Transfer calldata t) external override nonReentrant {
+    function release(bytes32 id, Transfer calldata t) public override nonReentrant {
         require(transferStatus[id] == Status.PREPARED, "USR: Not prepared");
         
         Transfer memory xfer = transfers[id];
@@ -121,7 +121,7 @@ contract UnykornStableRail is IRail, Ownable, ReentrancyGuard {
     }
     
     /// @notice Refund uUSD transfer
-    function refund(bytes32 id, Transfer calldata t) external override nonReentrant {
+    function refund(bytes32 id, Transfer calldata t) public override nonReentrant {
         require(transferStatus[id] == Status.PREPARED, "USR: Not prepared");
         
         Transfer memory xfer = transfers[id];
@@ -134,7 +134,7 @@ contract UnykornStableRail is IRail, Ownable, ReentrancyGuard {
     }
     
     /// @notice Get transfer status
-    function status(bytes32 id) external view override returns (Status) {
+    function status(bytes32 id) public view override returns (Status) {
         return transferStatus[id];
     }
 }

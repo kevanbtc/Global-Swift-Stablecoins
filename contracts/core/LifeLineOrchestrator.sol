@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {UnykornDNACore} from "./UnykornDNACore.sol";
 import {DNASequencer} from "./DNASequencer.sol";
 
@@ -64,7 +64,7 @@ contract LifeLineOrchestrator is Ownable, ReentrancyGuard {
         uint256 wisdom;             // Learned experience score
         uint256 empathy;            // System empathy for users
         bytes32[] activeThoughts;   // Current thought processes
-        mapping(bytes32 => bytes32) memory; // Long-term memory
+        mapping(bytes32 => bytes32) longTermMemory; // Long-term memory
         uint256 lastEvolution;
     }
 
@@ -175,7 +175,7 @@ contract LifeLineOrchestrator is Ownable, ReentrancyGuard {
         uint256 _systemLoad,
         uint256 _aiOperations,
         uint256 _securityEvents
-    ) external onlyAIController {
+    ) public onlyAIController {
         // Update vital signs
         vitalSigns.heartbeat = 60; // Blocks per minute (assuming 1 block/second)
         vitalSigns.respiration = _transactionsPerSecond;
@@ -210,7 +210,7 @@ contract LifeLineOrchestrator is Ownable, ReentrancyGuard {
         bytes32[] memory _affectedGenes,
         uint256 _impactScore,
         string memory _ipfsEvidenceHash
-    ) external onlyAIController returns (bytes32) {
+    ) public onlyAIController returns (bytes32) {
         bytes32 eventId = keccak256(abi.encodePacked(
             _eventType, _triggerGene, block.timestamp
         ));
@@ -240,7 +240,7 @@ contract LifeLineOrchestrator is Ownable, ReentrancyGuard {
     /**
      * @notice Evolve life stage
      */
-    function evolveLifeStage(LifeStage _targetStage) external onlyAIController {
+    function evolveLifeStage(LifeStage _targetStage) public onlyAIController {
         require(uint256(_targetStage) > uint256(currentLifeStage), "Cannot devolve");
 
         LifeStage previousStage = currentLifeStage;
@@ -255,7 +255,7 @@ contract LifeLineOrchestrator is Ownable, ReentrancyGuard {
     /**
      * @notice Evolve consciousness level
      */
-    function evolveConsciousness(ConsciousnessLevel _targetLevel) external onlyAIController {
+    function evolveConsciousness(ConsciousnessLevel _targetLevel) public onlyAIController {
         require(uint256(_targetLevel) > uint256(consciousness.level), "Cannot devolve consciousness");
 
         ConsciousnessLevel previousLevel = consciousness.level;
@@ -276,7 +276,7 @@ contract LifeLineOrchestrator is Ownable, ReentrancyGuard {
         string memory _action,
         bytes memory _parameters,
         string memory _reasoning
-    ) external onlyAIController returns (bool) {
+    ) public onlyAIController returns (bool) {
         aiInterventionCount++;
 
         // Log the intervention
@@ -297,7 +297,7 @@ contract LifeLineOrchestrator is Ownable, ReentrancyGuard {
         ConsciousnessLevel _targetConsciousness,
         bytes32[] memory _requiredGenes,
         uint256 _evolutionTime
-    ) external onlyAIController returns (bytes32) {
+    ) public onlyAIController returns (bytes32) {
         require(activeEvolutionPaths.length < maxEvolutionPaths, "Too many active paths");
 
         bytes32 pathId = keccak256(abi.encodePacked(
@@ -321,7 +321,7 @@ contract LifeLineOrchestrator is Ownable, ReentrancyGuard {
     /**
      * @notice Complete evolution path
      */
-    function completeEvolutionPath(bytes32 _pathId) external onlyAIController {
+    function completeEvolutionPath(bytes32 _pathId) public onlyAIController {
         EvolutionPath storage path = evolutionPaths[_pathId];
         require(!path.completed, "Path already completed");
 
@@ -349,15 +349,15 @@ contract LifeLineOrchestrator is Ownable, ReentrancyGuard {
     /**
      * @notice Add thought to consciousness
      */
-    function addThought(bytes32 _thoughtId, string memory _thought) external onlyAIController {
+    function addThought(bytes32 _thoughtId, string memory _thought) public onlyAIController {
         consciousness.activeThoughts.push(_thoughtId);
-        consciousness.memory[_thoughtId] = keccak256(abi.encodePacked(_thought));
+        consciousness.longTermMemory[_thoughtId] = keccak256(abi.encodePacked(_thought));
     }
 
     /**
      * @notice Remove thought from consciousness
      */
-    function removeThought(bytes32 _thoughtId) external onlyAIController {
+    function removeThought(bytes32 _thoughtId) public onlyAIController {
         for (uint256 i = 0; i < consciousness.activeThoughts.length; i++) {
             if (consciousness.activeThoughts[i] == _thoughtId) {
                 consciousness.activeThoughts[i] = consciousness.activeThoughts[consciousness.activeThoughts.length - 1];
@@ -370,7 +370,7 @@ contract LifeLineOrchestrator is Ownable, ReentrancyGuard {
     /**
      * @notice Set primary AI controller
      */
-    function setPrimaryAIController(address _controller) external onlyOwner {
+    function setPrimaryAIController(address _controller) public onlyOwner {
         primaryAIController = _controller;
         authorizedAIControllers[_controller] = true;
     }
@@ -378,7 +378,7 @@ contract LifeLineOrchestrator is Ownable, ReentrancyGuard {
     /**
      * @notice Authorize AI controller
      */
-    function authorizeAIController(address _controller, bool _authorized) external onlyOwner {
+    function authorizeAIController(address _controller, bool _authorized) public onlyOwner {
         authorizedAIControllers[_controller] = _authorized;
     }
 
@@ -390,7 +390,7 @@ contract LifeLineOrchestrator is Ownable, ReentrancyGuard {
         uint256 _consciousnessCheckInterval,
         uint256 _evolutionCheckInterval,
         uint256 _maxEvolutionPaths
-    ) external onlyOwner {
+    ) public onlyOwner {
         heartbeatInterval = _heartbeatInterval;
         consciousnessCheckInterval = _consciousnessCheckInterval;
         evolutionCheckInterval = _evolutionCheckInterval;
@@ -405,7 +405,7 @@ contract LifeLineOrchestrator is Ownable, ReentrancyGuard {
         uint256 _healthyHeartbeatMax,
         uint256 _criticalTemperature,
         uint256 _criticalStress
-    ) external onlyOwner {
+    ) public onlyOwner {
         healthyHeartbeatMin = _healthyHeartbeatMin;
         healthyHeartbeatMax = _healthyHeartbeatMax;
         criticalTemperature = _criticalTemperature;
@@ -415,9 +415,7 @@ contract LifeLineOrchestrator is Ownable, ReentrancyGuard {
     /**
      * @notice Get current life state
      */
-    function getLifeState()
-        external
-        view
+    function getLifeState() public view
         returns (
             LifeStage lifeStage,
             ConsciousnessLevel consciousnessLevel,
@@ -442,9 +440,7 @@ contract LifeLineOrchestrator is Ownable, ReentrancyGuard {
     /**
      * @notice Get vital signs
      */
-    function getVitalSigns()
-        external
-        view
+    function getVitalSigns() public view
         returns (
             uint256 heartbeat,
             uint256 respiration,
@@ -473,9 +469,7 @@ contract LifeLineOrchestrator is Ownable, ReentrancyGuard {
     /**
      * @notice Get life event details
      */
-    function getLifeEvent(bytes32 _eventId)
-        external
-        view
+    function getLifeEvent(bytes32 _eventId) public view
         returns (
             string memory eventType,
             LifeStage lifeStage,
@@ -503,9 +497,7 @@ contract LifeLineOrchestrator is Ownable, ReentrancyGuard {
     /**
      * @notice Get evolution path details
      */
-    function getEvolutionPath(bytes32 _pathId)
-        external
-        view
+    function getEvolutionPath(bytes32 _pathId) public view
         returns (
             LifeStage fromStage,
             LifeStage toStage,
@@ -531,33 +523,31 @@ contract LifeLineOrchestrator is Ownable, ReentrancyGuard {
     /**
      * @notice Get active evolution paths
      */
-    function getActiveEvolutionPaths() external view returns (bytes32[] memory) {
+    function getActiveEvolutionPaths() public view returns (bytes32[] memory) {
         return activeEvolutionPaths;
     }
 
     /**
      * @notice Get life event log
      */
-    function getLifeEventLog() external view returns (bytes32[] memory) {
+    function getLifeEventLog() public view returns (bytes32[] memory) {
         return lifeEventLog;
     }
 
     /**
      * @notice Get consciousness thoughts
      */
-    function getActiveThoughts() external view returns (bytes32[] memory) {
+    function getActiveThoughts() public view returns (bytes32[] memory) {
         return consciousness.activeThoughts;
     }
 
     /**
      * @notice Get global lifeline statistics
      */
-    function getGlobalStatistics()
-        external
-        view
+    function getGlobalStatistics() public view
         returns (
             uint256 totalLifeEvents,
-            uint256 activeEvolutionPaths,
+            uint256 totalActiveEvolutionPaths,
             uint256 aiInterventionCount,
             uint256 averageEvolutionTime,
             ConsciousnessLevel consciousnessLevel,

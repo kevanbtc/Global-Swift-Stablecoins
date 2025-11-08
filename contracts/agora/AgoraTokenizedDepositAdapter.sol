@@ -48,7 +48,7 @@ contract AgoraTokenizedDepositAdapter is Ownable {
         string memory currency,
         bool isCBDC,
         bytes32 agoraLedgerRef
-    ) external onlyOwner {
+    ) public onlyOwner {
         deposits[depositToken] = TokenizedDeposit({
             depositToken: depositToken,
             issuerBank: issuerBank,
@@ -70,7 +70,7 @@ contract AgoraTokenizedDepositAdapter is Ownable {
         uint256[] memory amounts,
         address beneficiary,
         bytes32 swiftUETR
-    ) external returns (bool) {
+    ) public returns (bool) {
         require(depositTokens.length == amounts.length, "Length mismatch");
         
         settlements[settlementId] = AgoraSettlement({
@@ -90,7 +90,7 @@ contract AgoraTokenizedDepositAdapter is Ownable {
     /**
      * @notice Complete Agorá settlement (called by oracle/executor)
      */
-    function completeAgoraSettlement(bytes32 settlementId) external onlyOwner {
+    function completeAgoraSettlement(bytes32 settlementId) public onlyOwner {
         AgoraSettlement storage settlement = settlements[settlementId];
         require(settlement.timestamp > 0, "Settlement not found");
         
@@ -108,14 +108,14 @@ contract AgoraTokenizedDepositAdapter is Ownable {
     /**
      * @notice Get deposit information
      */
-    function getDeposit(address depositToken) external view returns (TokenizedDeposit memory) {
+    function getDeposit(address depositToken) public view returns (TokenizedDeposit memory) {
         return deposits[depositToken];
     }
     
     /**
      * @notice Get settlement information
      */
-    function getSettlement(bytes32 settlementId) external view returns (AgoraSettlement memory) {
+    function getSettlement(bytes32 settlementId) public view returns (AgoraSettlement memory) {
         return settlements[settlementId];
     }
 }

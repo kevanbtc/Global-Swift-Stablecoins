@@ -2,7 +2,7 @@
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
 import "../common/Types.sol";
 import "../common/Roles.sol";
 import "../common/Errors.sol";
@@ -115,9 +115,7 @@ contract NetworkHealth is AccessControl, Pausable {
      * @notice Register a new node for health monitoring
      * @param node Node address to register
      */
-    function registerNode(address node)
-        external
-        onlyRole(HEALTH_REPORTER_ROLE)
+    function registerNode(address node) public onlyRole(HEALTH_REPORTER_ROLE)
         whenNotPaused
     {
         require(nodeHealth[node].lastHeartbeat == 0, "Node already registered");
@@ -151,9 +149,7 @@ contract NetworkHealth is AccessControl, Pausable {
         address node,
         HealthStatus status,
         uint256 responseTime
-    )
-        external
-        onlyRole(HEALTH_REPORTER_ROLE)
+    ) public onlyRole(HEALTH_REPORTER_ROLE)
         whenNotPaused
     {
         NodeHealth storage health = nodeHealth[node];
@@ -182,9 +178,7 @@ contract NetworkHealth is AccessControl, Pausable {
         address node,
         string memory errorMessage,
         AlertSeverity severity
-    )
-        external
-        onlyRole(HEALTH_REPORTER_ROLE)
+    ) public onlyRole(HEALTH_REPORTER_ROLE)
         whenNotPaused
     {
         NodeHealth storage health = nodeHealth[node];
@@ -218,9 +212,7 @@ contract NetworkHealth is AccessControl, Pausable {
      * @notice Acknowledge an alert
      * @param alertId Alert identifier
      */
-    function acknowledgeAlert(uint256 alertId)
-        external
-        onlyRole(ALERT_MANAGER_ROLE)
+    function acknowledgeAlert(uint256 alertId) public onlyRole(ALERT_MANAGER_ROLE)
         whenNotPaused
     {
         Alert storage alert = alerts[alertId];
@@ -286,9 +278,7 @@ contract NetworkHealth is AccessControl, Pausable {
      * @notice Get detailed node health information
      * @param node Node address
      */
-    function getNodeHealth(address node)
-        external
-        view
+    function getNodeHealth(address node) public view
         returns (NodeHealth memory)
     {
         require(nodeHealth[node].lastHeartbeat > 0, "Node not registered");
@@ -298,9 +288,7 @@ contract NetworkHealth is AccessControl, Pausable {
     /**
      * @notice Get all active alerts
      */
-    function getActiveAlerts()
-        external
-        view
+    function getActiveAlerts() public view
         returns (Alert[] memory)
     {
         Alert[] memory activeAlerts = new Alert[](activeAlertCount);
@@ -319,9 +307,7 @@ contract NetworkHealth is AccessControl, Pausable {
     /**
      * @notice Get network health summary
      */
-    function getNetworkHealthSummary()
-        external
-        view
+    function getNetworkHealthSummary() public view
         returns (
             HealthStatus status,
             uint256 activeNodes,
@@ -340,11 +326,11 @@ contract NetworkHealth is AccessControl, Pausable {
     }
 
     // Admin functions
-    function pause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _pause();
     }
 
-    function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _unpause();
     }
 }

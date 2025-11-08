@@ -51,7 +51,7 @@ contract BankAccountProofOracle is AccessControl, EIP712 {
         _grantRole(ROLE_SIGNER, admin);
     }
 
-    function setSigner(address s, bool allowed) external onlyRole(ROLE_ADMIN) {
+    function setSigner(address s, bool allowed) public onlyRole(ROLE_ADMIN) {
         if (allowed) _grantRole(ROLE_SIGNER, s);
         else _revokeRole(ROLE_SIGNER, s);
         emit SignerSet(s, allowed);
@@ -91,7 +91,7 @@ contract BankAccountProofOracle is AccessControl, EIP712 {
         bytes32 docHash,
         string calldata docURI,
         bytes calldata signature
-    ) external onlyRole(ROLE_PUBLISHER) returns (uint256 id) {
+    ) public onlyRole(ROLE_PUBLISHER) returns (uint256 id) {
         bytes32 digest = _hashProof(bankName, accountRef, ccy, statementDate, asOf, closingBalanceMinor, docHash, docURI);
         address signer = ECDSA.recover(digest, signature);
         require(hasRole(ROLE_SIGNER, signer), "unauthorized signer");
@@ -118,14 +118,14 @@ contract BankAccountProofOracle is AccessControl, EIP712 {
         emit ProofSubmitted(id, bankName, accountRef, ccy, closingBalanceMinor, signer, docHash, docURI);
     }
 
-    function revoke(uint256 id) external onlyRole(ROLE_ADMIN) {
+    function revoke(uint256 id) public onlyRole(ROLE_ADMIN) {
         Proof storage p = proofs[id];
         require(!p.revoked, "already revoked");
         p.revoked = true;
         emit ProofRevoked(id);
     }
 
-    function latestFor(string calldata accountRef, uint64 statementDate) external view returns (uint256 id, Proof memory p) {
+    function latestFor(string calldata accountRef, uint64 statementDate) public view returns (uint256 id, Proof memory p) {
         bytes32 key = keccak256(abi.encodePacked(accountRef, ":", statementDate));
         id = latestVersionId[key];
         p = proofs[id];

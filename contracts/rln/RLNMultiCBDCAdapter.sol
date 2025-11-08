@@ -45,7 +45,7 @@ contract RLNMultiCBDCAdapter is Ownable {
         string memory jurisdiction,
         string memory currencyCode,
         address centralBank
-    ) external onlyOwner {
+    ) public onlyOwner {
         cbdcs[tokenAddress] = CBDCToken({
             tokenAddress: tokenAddress,
             jurisdiction: jurisdiction,
@@ -66,7 +66,7 @@ contract RLNMultiCBDCAdapter is Ownable {
         uint256[] memory amounts,
         address[] memory participants,
         uint256 fxRate
-    ) external returns (bool) {
+    ) public returns (bool) {
         require(cbdcTokens.length == amounts.length, "Length mismatch");
         require(cbdcTokens.length >= 2, "Need at least 2 CBDCs");
         
@@ -87,7 +87,7 @@ contract RLNMultiCBDCAdapter is Ownable {
     /**
      * @notice Complete RLN settlement (called by oracle/executor)
      */
-    function completeRLNSettlement(bytes32 settlementId) external onlyOwner {
+    function completeRLNSettlement(bytes32 settlementId) public onlyOwner {
         RLNSettlement storage settlement = settlements[settlementId];
         require(!settlement.isCompleted, "Already completed");
         require(settlement.timestamp > 0, "Settlement not found");
@@ -99,21 +99,21 @@ contract RLNMultiCBDCAdapter is Ownable {
     /**
      * @notice Deactivate a CBDC token
      */
-    function deactivateCBDC(address tokenAddress) external onlyOwner {
+    function deactivateCBDC(address tokenAddress) public onlyOwner {
         cbdcs[tokenAddress].isActive = false;
     }
     
     /**
      * @notice Get CBDC information
      */
-    function getCBDC(address tokenAddress) external view returns (CBDCToken memory) {
+    function getCBDC(address tokenAddress) public view returns (CBDCToken memory) {
         return cbdcs[tokenAddress];
     }
     
     /**
      * @notice Get settlement information
      */
-    function getSettlement(bytes32 settlementId) external view returns (RLNSettlement memory) {
+    function getSettlement(bytes32 settlementId) public view returns (RLNSettlement memory) {
         return settlements[settlementId];
     }
 }

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title MultiSigWallet
@@ -127,7 +127,7 @@ contract MultiSigWallet is Ownable, ReentrancyGuard {
         address _to,
         uint256 _value,
         bytes memory _data
-    ) external onlySigner returns (uint256) {
+    ) public onlySigner returns (uint256) {
         require(_to != address(0), "Invalid destination");
 
         uint256 txId = transactionCount++;
@@ -154,9 +154,7 @@ contract MultiSigWallet is Ownable, ReentrancyGuard {
     /**
      * @notice Confirm a pending transaction
      */
-    function confirmTransaction(uint256 _txId)
-        external
-        onlySigner
+    function confirmTransaction(uint256 _txId) public onlySigner
         notExecuted(_txId)
         notConfirmed(_txId)
     {
@@ -166,9 +164,7 @@ contract MultiSigWallet is Ownable, ReentrancyGuard {
     /**
      * @notice Execute a confirmed transaction
      */
-    function executeTransaction(uint256 _txId)
-        external
-        onlySigner
+    function executeTransaction(uint256 _txId) public onlySigner
         notExecuted(_txId)
         nonReentrant
     {
@@ -195,7 +191,7 @@ contract MultiSigWallet is Ownable, ReentrancyGuard {
     /**
      * @notice Cancel a pending transaction
      */
-    function cancelTransaction(uint256 _txId) external onlyOwner notExecuted(_txId) {
+    function cancelTransaction(uint256 _txId) public onlyOwner notExecuted(_txId) {
         _removePendingTransaction(_txId);
         emit TransactionCancelled(_txId);
     }
@@ -203,9 +199,7 @@ contract MultiSigWallet is Ownable, ReentrancyGuard {
     /**
      * @notice Emergency execution (bypasses timelock)
      */
-    function emergencyExecute(uint256 _txId)
-        external
-        onlySigner
+    function emergencyExecute(uint256 _txId) public onlySigner
         notExecuted(_txId)
         nonReentrant
     {
@@ -233,7 +227,7 @@ contract MultiSigWallet is Ownable, ReentrancyGuard {
     /**
      * @notice Activate emergency mode
      */
-    function activateEmergencyMode() external onlySigner {
+    function activateEmergencyMode() public onlySigner {
         require(!emergencyMode, "Emergency mode already active");
 
         emergencyMode = true;
@@ -246,7 +240,7 @@ contract MultiSigWallet is Ownable, ReentrancyGuard {
     /**
      * @notice Deactivate emergency mode
      */
-    function deactivateEmergencyMode() external onlyOwner {
+    function deactivateEmergencyMode() public onlyOwner {
         require(emergencyMode, "Emergency mode not active");
 
         emergencyMode = false;
@@ -263,7 +257,7 @@ contract MultiSigWallet is Ownable, ReentrancyGuard {
         address _signer,
         uint256 _weight,
         string memory _role
-    ) external onlyOwner {
+    ) public onlyOwner {
         require(_signer != address(0), "Invalid signer address");
         require(!signers[_signer].isActive, "Signer already exists");
         require(totalSigners < MAX_SIGNERS, "Maximum signers reached");
@@ -285,7 +279,7 @@ contract MultiSigWallet is Ownable, ReentrancyGuard {
     /**
      * @notice Remove a signer
      */
-    function removeSigner(address _signer) external onlyOwner {
+    function removeSigner(address _signer) public onlyOwner {
         require(signers[_signer].isActive, "Signer not active");
         require(totalSigners > requiredConfirmations, "Cannot remove required signer");
 
@@ -302,7 +296,7 @@ contract MultiSigWallet is Ownable, ReentrancyGuard {
     function updateSettings(
         uint256 _requiredConfirmations,
         uint256 _timelockPeriod
-    ) external onlyOwner {
+    ) public onlyOwner {
         require(_requiredConfirmations > 0 && _requiredConfirmations <= totalSigners, "Invalid confirmation requirement");
         require(_timelockPeriod >= MIN_TIMELOCK && _timelockPeriod <= MAX_TIMELOCK, "Invalid timelock period");
 
@@ -314,9 +308,7 @@ contract MultiSigWallet is Ownable, ReentrancyGuard {
     /**
      * @notice Get transaction details
      */
-    function getTransaction(uint256 _txId)
-        external
-        view
+    function getTransaction(uint256 _txId) public view
         returns (
             address to,
             uint256 value,
@@ -340,30 +332,28 @@ contract MultiSigWallet is Ownable, ReentrancyGuard {
     /**
      * @notice Get pending transactions
      */
-    function getPendingTransactions() external view returns (uint256[] memory) {
+    function getPendingTransactions() public view returns (uint256[] memory) {
         return pendingTransactions;
     }
 
     /**
      * @notice Check if transaction is confirmed
      */
-    function isConfirmed(uint256 _txId) external view returns (bool) {
+    function isConfirmed(uint256 _txId) public view returns (bool) {
         return _isConfirmed(_txId);
     }
 
     /**
      * @notice Check if transaction can be executed
      */
-    function canExecute(uint256 _txId) external view returns (bool) {
+    function canExecute(uint256 _txId) public view returns (bool) {
         return _canExecute(_txId);
     }
 
     /**
      * @notice Get signer information
      */
-    function getSignerInfo(address _signer)
-        external
-        view
+    function getSignerInfo(address _signer) public view
         returns (bool isActive, uint256 weight, string memory role, uint256 lastActivity)
     {
         Signer memory signer = signers[_signer];

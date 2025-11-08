@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title UnykornDNACore
@@ -42,10 +42,10 @@ contract UnykornDNACore is Ownable, ReentrancyGuard {
         DNAStrand strand;
         DNAHelix helix;
         DNABasePair basePair;
-        string name;
-        string description;
+        bytes32 nameHash;
+        bytes32 descriptionHash;
         address contractAddress;
-        string ipfsHash;           // IPFS hash of contract code/metadata
+        // string ipfsHash;           // IPFS hash of contract code/metadata - moved to ipfsHashes mapping
         bytes32 parentGene;        // Parent gene in inheritance chain
         bytes32[] childGenes;      // Child genes in inheritance chain
         uint256 expressionLevel;   // Activity level (0-100)
@@ -57,7 +57,7 @@ contract UnykornDNACore is Ownable, ReentrancyGuard {
     struct DNAChromosome {
         bytes32 chromosomeId;
         DNAStrand strand;
-        string name;
+        bytes32 nameHash;
         bytes32[] genes;
         uint256 geneCount;
         uint256 totalExpression;
@@ -68,7 +68,7 @@ contract UnykornDNACore is Ownable, ReentrancyGuard {
 
     struct DNANucleus {
         bytes32 nucleusId;
-        string organismName;       // "Unykorn Layer 1"
+        bytes32 organismNameHash;       // "Unykorn Layer 1"
         DNAChromosome[8] chromosomes; // One per strand
         uint256 totalGenes;
         uint256 activeGenes;
@@ -82,19 +82,19 @@ contract UnykornDNACore is Ownable, ReentrancyGuard {
     struct AICommand {
         bytes32 commandId;
         address aiAgent;
-        string command;
+        bytes32 commandHash;
         bytes parameters;
         uint256 timestamp;
         bool executed;
         bytes32 resultHash;
-        string ipfsResultHash;
+        bytes32 ipfsResultHash;
     }
 
     struct ReplicationEvent {
         bytes32 eventId;
         DNAStrand strand;
         DNAHelix helix;
-        string eventType;
+        bytes32 eventTypeHash;
         bytes32 sourceGene;
         bytes32 targetGene;
         uint256 timestamp;
@@ -156,7 +156,7 @@ contract UnykornDNACore is Ownable, ReentrancyGuard {
     function _initializeDNACore() internal {
         // Initialize nucleus
         nucleus.nucleusId = keccak256(abi.encodePacked("UnykornDNACore", block.timestamp));
-        nucleus.organismName = "Unykorn Layer 1";
+        nucleus.organismNameHash = keccak256(abi.encodePacked("Unykorn Layer 1"));
         nucleus.isAlive = true;
         nucleus.lastHeartbeat = block.timestamp;
         nucleus.authorizedOperators[msg.sender] = true;
@@ -175,49 +175,49 @@ contract UnykornDNACore is Ownable, ReentrancyGuard {
         // Governance Strand
         nucleus.chromosomes[uint256(DNAStrand.GOVERNANCE_STRAND)].chromosomeId =
             keccak256(abi.encodePacked("GovernanceChromosome", block.timestamp));
-        nucleus.chromosomes[uint256(DNAStrand.GOVERNANCE_STRAND)].name = "Governance Chromosome";
+        nucleus.chromosomes[uint256(DNAStrand.GOVERNANCE_STRAND)].nameHash = keccak256(abi.encodePacked("Governance Chromosome"));
         nucleus.chromosomes[uint256(DNAStrand.GOVERNANCE_STRAND)].strand = DNAStrand.GOVERNANCE_STRAND;
 
         // Security Strand
         nucleus.chromosomes[uint256(DNAStrand.SECURITY_STRAND)].chromosomeId =
             keccak256(abi.encodePacked("SecurityChromosome", block.timestamp));
-        nucleus.chromosomes[uint256(DNAStrand.SECURITY_STRAND)].name = "Security Chromosome";
+        nucleus.chromosomes[uint256(DNAStrand.SECURITY_STRAND)].nameHash = keccak256(abi.encodePacked("Security Chromosome"));
         nucleus.chromosomes[uint256(DNAStrand.SECURITY_STRAND)].strand = DNAStrand.SECURITY_STRAND;
 
         // Financial Strand
         nucleus.chromosomes[uint256(DNAStrand.FINANCIAL_STRAND)].chromosomeId =
             keccak256(abi.encodePacked("FinancialChromosome", block.timestamp));
-        nucleus.chromosomes[uint256(DNAStrand.FINANCIAL_STRAND)].name = "Financial Chromosome";
+        nucleus.chromosomes[uint256(DNAStrand.FINANCIAL_STRAND)].nameHash = keccak256(abi.encodePacked("Financial Chromosome"));
         nucleus.chromosomes[uint256(DNAStrand.FINANCIAL_STRAND)].strand = DNAStrand.FINANCIAL_STRAND;
 
         // Compliance Strand
         nucleus.chromosomes[uint256(DNAStrand.COMPLIANCE_STRAND)].chromosomeId =
             keccak256(abi.encodePacked("ComplianceChromosome", block.timestamp));
-        nucleus.chromosomes[uint256(DNAStrand.COMPLIANCE_STRAND)].name = "Compliance Chromosome";
+        nucleus.chromosomes[uint256(DNAStrand.COMPLIANCE_STRAND)].nameHash = keccak256(abi.encodePacked("Compliance Chromosome"));
         nucleus.chromosomes[uint256(DNAStrand.COMPLIANCE_STRAND)].strand = DNAStrand.COMPLIANCE_STRAND;
 
         // Settlement Strand
         nucleus.chromosomes[uint256(DNAStrand.SETTLEMENT_STRAND)].chromosomeId =
             keccak256(abi.encodePacked("SettlementChromosome", block.timestamp));
-        nucleus.chromosomes[uint256(DNAStrand.SETTLEMENT_STRAND)].name = "Settlement Chromosome";
+        nucleus.chromosomes[uint256(DNAStrand.SETTLEMENT_STRAND)].nameHash = keccak256(abi.encodePacked("Settlement Chromosome"));
         nucleus.chromosomes[uint256(DNAStrand.SETTLEMENT_STRAND)].strand = DNAStrand.SETTLEMENT_STRAND;
 
         // Oracle Strand
         nucleus.chromosomes[uint256(DNAStrand.ORACLE_STRAND)].chromosomeId =
             keccak256(abi.encodePacked("OracleChromosome", block.timestamp));
-        nucleus.chromosomes[uint256(DNAStrand.ORACLE_STRAND)].name = "Oracle Chromosome";
+        nucleus.chromosomes[uint256(DNAStrand.ORACLE_STRAND)].nameHash = keccak256(abi.encodePacked("Oracle Chromosome"));
         nucleus.chromosomes[uint256(DNAStrand.ORACLE_STRAND)].strand = DNAStrand.ORACLE_STRAND;
 
         // Token Strand
         nucleus.chromosomes[uint256(DNAStrand.TOKEN_STRAND)].chromosomeId =
             keccak256(abi.encodePacked("TokenChromosome", block.timestamp));
-        nucleus.chromosomes[uint256(DNAStrand.TOKEN_STRAND)].name = "Token Chromosome";
+        nucleus.chromosomes[uint256(DNAStrand.TOKEN_STRAND)].nameHash = keccak256(abi.encodePacked("Token Chromosome"));
         nucleus.chromosomes[uint256(DNAStrand.TOKEN_STRAND)].strand = DNAStrand.TOKEN_STRAND;
 
         // Infrastructure Strand
         nucleus.chromosomes[uint256(DNAStrand.INFRASTRUCTURE_STRAND)].chromosomeId =
             keccak256(abi.encodePacked("InfrastructureChromosome", block.timestamp));
-        nucleus.chromosomes[uint256(DNAStrand.INFRASTRUCTURE_STRAND)].name = "Infrastructure Chromosome";
+        nucleus.chromosomes[uint256(DNAStrand.INFRASTRUCTURE_STRAND)].nameHash = keccak256(abi.encodePacked("Infrastructure Chromosome"));
         nucleus.chromosomes[uint256(DNAStrand.INFRASTRUCTURE_STRAND)].strand = DNAStrand.INFRASTRUCTURE_STRAND;
     }
 
@@ -228,14 +228,14 @@ contract UnykornDNACore is Ownable, ReentrancyGuard {
         DNAStrand _strand,
         DNAHelix _helix,
         DNABasePair _basePair,
-        string memory _name,
-        string memory _description,
+        bytes32 _nameHash,
+        bytes32 _descriptionHash,
         address _contractAddress,
-        string memory _ipfsHash,
+        string memory _ipfsHash, // IPFS hash of contract code/metadata
         bytes32 _parentGene
-    ) external onlyOwner returns (bytes32) {
+    ) public onlyOwner returns (bytes32) {
         bytes32 geneId = keccak256(abi.encodePacked(
-            _strand, _helix, _name, _contractAddress, block.timestamp
+            _strand, _helix, _nameHash, _contractAddress, block.timestamp
         ));
 
         DNAGene storage gene = genes[geneId];
@@ -243,10 +243,10 @@ contract UnykornDNACore is Ownable, ReentrancyGuard {
         gene.strand = _strand;
         gene.helix = _helix;
         gene.basePair = _basePair;
-        gene.name = _name;
-        gene.description = _description;
+        gene.nameHash = _nameHash;
+        gene.descriptionHash = _descriptionHash;
         gene.contractAddress = _contractAddress;
-        gene.ipfsHash = _ipfsHash;
+        // gene.ipfsHash = _ipfsHash; // Stored in ipfsHashes mapping
         gene.parentGene = _parentGene;
         gene.isActive = true;
         gene.lastReplication = block.timestamp;
@@ -274,9 +274,7 @@ contract UnykornDNACore is Ownable, ReentrancyGuard {
     /**
      * @notice Activate/deactivate a gene
      */
-    function setGeneActivity(bytes32 _geneId, bool _active, string memory _reason)
-        external
-        onlyOwner
+    function setGeneActivity(bytes32 _geneId, bool _active, string memory _reason) public onlyOwner
         validGene(_geneId)
     {
         genes[_geneId].isActive = _active;
@@ -293,7 +291,7 @@ contract UnykornDNACore is Ownable, ReentrancyGuard {
     /**
      * @notice Start chromosome replication
      */
-    function startReplication(DNAStrand _strand) external onlyOwner {
+    function startReplication(DNAStrand _strand) public onlyOwner {
         DNAChromosome storage chromosome = nucleus.chromosomes[uint256(_strand)];
         require(!chromosome.isReplicating, "Already replicating");
 
@@ -308,9 +306,7 @@ contract UnykornDNACore is Ownable, ReentrancyGuard {
     /**
      * @notice Complete chromosome replication
      */
-    function completeReplication(DNAStrand _strand, string memory _ipfsMetadataHash)
-        external
-        onlyOwner
+    function completeReplication(DNAStrand _strand, string memory _ipfsMetadataHash) public onlyOwner
     {
         DNAChromosome storage chromosome = nucleus.chromosomes[uint256(_strand)];
         require(chromosome.isReplicating, "Not replicating");
@@ -326,23 +322,23 @@ contract UnykornDNACore is Ownable, ReentrancyGuard {
      * @notice Execute AI command
      */
     function executeAICommand(
-        string memory _command,
+        bytes32 _commandHash,
         bytes memory _parameters,
-        string memory _ipfsResultHash
-    ) external onlyAIAgent returns (bytes32) {
+        bytes32 _ipfsResultHash
+    ) public onlyAIAgent returns (bytes32) {
         bytes32 commandId = keccak256(abi.encodePacked(
-            msg.sender, _command, block.timestamp
+            msg.sender, _commandHash, block.timestamp
         ));
 
         AICommand storage aiCommand = aiCommands[commandId];
         aiCommand.commandId = commandId;
         aiCommand.aiAgent = msg.sender;
-        aiCommand.command = _command;
+        aiCommand.commandHash = _commandHash;
         aiCommand.parameters = _parameters;
         aiCommand.timestamp = block.timestamp;
         aiCommand.executed = true;
         aiCommand.ipfsResultHash = _ipfsResultHash;
-        aiCommand.resultHash = keccak256(abi.encodePacked(_ipfsResultHash));
+        aiCommand.resultHash = _ipfsResultHash; // resultHash is already a bytes32, no need to hash again
 
         aiCommandCount++;
 
@@ -353,7 +349,7 @@ contract UnykornDNACore is Ownable, ReentrancyGuard {
     /**
      * @notice System heartbeat - called by AI agents
      */
-    function systemHeartbeat(bool _healthy, string memory _statusReport) external onlyAIAgent {
+    function systemHeartbeat(bool _healthy, string memory _statusReport) public onlyAIAgent {
         nucleus.lastHeartbeat = block.timestamp;
 
         if (!_healthy && !emergencyMode) {
@@ -369,7 +365,7 @@ contract UnykornDNACore is Ownable, ReentrancyGuard {
     /**
      * @notice Update genome IPFS hash
      */
-    function updateGenomeHash(string memory _newGenomeHash) external onlyOwner {
+    function updateGenomeHash(string memory _newGenomeHash) public onlyOwner {
         genomeIpfsHash = _newGenomeHash;
         nucleus.ipfsGenomeHash = keccak256(abi.encodePacked(_newGenomeHash));
 
@@ -379,9 +375,7 @@ contract UnykornDNACore is Ownable, ReentrancyGuard {
     /**
      * @notice Set genetic marker on a gene
      */
-    function setGeneticMarker(bytes32 _geneId, bytes32 _key, bytes32 _value)
-        external
-        onlyOwner
+    function setGeneticMarker(bytes32 _geneId, bytes32 _key, bytes32 _value) public onlyOwner
         validGene(_geneId)
     {
         genes[_geneId].geneticMarkers[_key] = _value;
@@ -390,14 +384,14 @@ contract UnykornDNACore is Ownable, ReentrancyGuard {
     /**
      * @notice Authorize AI agent
      */
-    function authorizeAIAgent(address _agent, bool _authorized) external onlyOwner {
+    function authorizeAIAgent(address _agent, bool _authorized) public onlyOwner {
         authorizedAIAgents[_agent] = _authorized;
     }
 
     /**
      * @notice Set AI swarm coordinator
      */
-    function setAISwarmCoordinator(address _coordinator) external onlyOwner {
+    function setAISwarmCoordinator(address _coordinator) public onlyOwner {
         aiSwarmCoordinator = _coordinator;
         authorizedAIAgents[_coordinator] = true;
     }
@@ -405,13 +399,11 @@ contract UnykornDNACore is Ownable, ReentrancyGuard {
     /**
      * @notice Get gene details
      */
-    function getGene(bytes32 _geneId)
-        external
-        view
+    function getGene(bytes32 _geneId) public view
         returns (
             DNAStrand strand,
             DNAHelix helix,
-            string memory name,
+            bytes32 nameHash,
             address contractAddress,
             bool isActive,
             uint256 expressionLevel,
@@ -419,11 +411,11 @@ contract UnykornDNACore is Ownable, ReentrancyGuard {
             uint256 childCount
         )
     {
-        DNAGene memory gene = genes[_geneId];
+        DNAGene storage gene = genes[_geneId];
         return (
             gene.strand,
             gene.helix,
-            gene.name,
+            gene.nameHash,
             gene.contractAddress,
             gene.isActive,
             gene.expressionLevel,
@@ -435,11 +427,9 @@ contract UnykornDNACore is Ownable, ReentrancyGuard {
     /**
      * @notice Get chromosome details
      */
-    function getChromosome(DNAStrand _strand)
-        external
-        view
+    function getChromosome(DNAStrand _strand) public view
         returns (
-            string memory name,
+            bytes32 nameHash,
             uint256 geneCount,
             uint256 totalExpression,
             bool isReplicating,
@@ -448,7 +438,7 @@ contract UnykornDNACore is Ownable, ReentrancyGuard {
     {
         DNAChromosome memory chromosome = nucleus.chromosomes[uint256(_strand)];
         return (
-            chromosome.name,
+            chromosome.nameHash,
             chromosome.geneCount,
             chromosome.totalExpression,
             chromosome.isReplicating,
@@ -459,11 +449,9 @@ contract UnykornDNACore is Ownable, ReentrancyGuard {
     /**
      * @notice Get nucleus status
      */
-    function getNucleusStatus()
-        external
-        view
+    function getNucleusStatus() public view
         returns (
-            string memory organismName,
+            bytes32 organismNameHash,
             uint256 totalGenes,
             uint256 activeGenes,
             bool isAlive,
@@ -473,7 +461,7 @@ contract UnykornDNACore is Ownable, ReentrancyGuard {
         )
     {
         return (
-            nucleus.organismName,
+            nucleus.organismNameHash,
             nucleus.totalGenes,
             nucleus.activeGenes,
             nucleus.isAlive,
@@ -486,21 +474,19 @@ contract UnykornDNACore is Ownable, ReentrancyGuard {
     /**
      * @notice Get AI command details
      */
-    function getAICommand(bytes32 _commandId)
-        external
-        view
+    function getAICommand(bytes32 _commandId) public view
         returns (
             address aiAgent,
-            string memory command,
+            bytes32 commandHash,
             uint256 timestamp,
             bool executed,
-            string memory ipfsResultHash
+            bytes32 ipfsResultHash
         )
     {
         AICommand memory cmd = aiCommands[_commandId];
         return (
             cmd.aiAgent,
-            cmd.command,
+            cmd.commandHash,
             cmd.timestamp,
             cmd.executed,
             cmd.ipfsResultHash
@@ -510,9 +496,7 @@ contract UnykornDNACore is Ownable, ReentrancyGuard {
     /**
      * @notice Get genetic marker
      */
-    function getGeneticMarker(bytes32 _geneId, bytes32 _key)
-        external
-        view
+    function getGeneticMarker(bytes32 _geneId, bytes32 _key) public view
         returns (bytes32)
     {
         return genes[_geneId].geneticMarkers[_key];
@@ -521,9 +505,7 @@ contract UnykornDNACore is Ownable, ReentrancyGuard {
     /**
      * @notice Get chromosome genes
      */
-    function getChromosomeGenes(DNAStrand _strand)
-        external
-        view
+    function getChromosomeGenes(DNAStrand _strand) public view
         returns (bytes32[] memory)
     {
         return nucleus.chromosomes[uint256(_strand)].genes;
@@ -532,9 +514,7 @@ contract UnykornDNACore is Ownable, ReentrancyGuard {
     /**
      * @notice Get gene children
      */
-    function getGeneChildren(bytes32 _geneId)
-        external
-        view
+    function getGeneChildren(bytes32 _geneId) public view
         returns (bytes32[] memory)
     {
         return genes[_geneId].childGenes;
@@ -543,7 +523,7 @@ contract UnykornDNACore is Ownable, ReentrancyGuard {
     /**
      * @notice Emergency system shutdown
      */
-    function emergencyShutdown(string memory _reason) external onlyOwner {
+    function emergencyShutdown(string memory _reason) public onlyOwner {
         nucleus.isAlive = false;
         emergencyMode = true;
 
@@ -553,7 +533,7 @@ contract UnykornDNACore is Ownable, ReentrancyGuard {
     /**
      * @notice Emergency system restart
      */
-    function emergencyRestart() external onlyOwner {
+    function emergencyRestart() public onlyOwner {
         require(!nucleus.isAlive, "System already alive");
 
         nucleus.isAlive = true;

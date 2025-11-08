@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title CarbonFootprintTracker
@@ -147,7 +147,7 @@ contract CarbonFootprintTracker is Ownable, ReentrancyGuard {
         string memory _entityName,
         uint256 _measurementFrequency,
         CarbonStandard _reportingStandard
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         require(_measurementFrequency >= minMeasurementFrequency, "Frequency too short");
         require(_measurementFrequency <= maxMeasurementFrequency, "Frequency too long");
 
@@ -183,7 +183,7 @@ contract CarbonFootprintTracker is Ownable, ReentrancyGuard {
         uint256 _scope3Emissions,
         uint256 _biogenicEmissions,
         bytes32 _verificationHash
-    ) external validEntity(_entityId) {
+    ) public validEntity(_entityId) {
         CarbonFootprint storage footprint = carbonFootprints[_entityId];
         require(msg.sender == footprint.entityAddress, "Not entity owner");
         require(block.timestamp >= footprint.lastMeasurement + footprint.measurementFrequency, "Too early for measurement");
@@ -211,7 +211,7 @@ contract CarbonFootprintTracker is Ownable, ReentrancyGuard {
         CarbonStandard _standard,
         uint256 _pricePerTonne,
         bytes32 _provenanceHash
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         require(_tonnesCO2 > 0, "Invalid offset amount");
 
         bytes32 offsetId = keccak256(abi.encodePacked(
@@ -246,7 +246,7 @@ contract CarbonFootprintTracker is Ownable, ReentrancyGuard {
     /**
      * @notice Transfer carbon offset ownership
      */
-    function transferCarbonOffset(bytes32 _offsetId, address _to) external validOffset(_offsetId) {
+    function transferCarbonOffset(bytes32 _offsetId, address _to) public validOffset(_offsetId) {
         CarbonOffset storage offset = carbonOffsets[_offsetId];
         require(offset.currentOwner == msg.sender, "Not offset owner");
         require(!offset.isRetired, "Offset already retired");
@@ -265,7 +265,7 @@ contract CarbonFootprintTracker is Ownable, ReentrancyGuard {
     /**
      * @notice Retire carbon offsets (permanent removal from circulation)
      */
-    function retireCarbonOffset(bytes32 _offsetId, uint256 _tonnesToRetire) external validOffset(_offsetId) {
+    function retireCarbonOffset(bytes32 _offsetId, uint256 _tonnesToRetire) public validOffset(_offsetId) {
         CarbonOffset storage offset = carbonOffsets[_offsetId];
         require(offset.currentOwner == msg.sender, "Not offset owner");
         require(!offset.isRetired, "Offset already retired");
@@ -292,7 +292,7 @@ contract CarbonFootprintTracker is Ownable, ReentrancyGuard {
         bytes32[] memory _metrics,
         uint256[] memory _metricScores,
         bytes32 _assessmentHash
-    ) external onlyOwner validEntity(_entityId) {
+    ) public onlyOwner validEntity(_entityId) {
         require(_metrics.length == _metricScores.length, "Array length mismatch");
         require(_environmentalScore <= 1000 && _socialScore <= 1000 && _governanceScore <= 1000, "Invalid scores");
 
@@ -330,7 +330,7 @@ contract CarbonFootprintTracker is Ownable, ReentrancyGuard {
         bool _isGreenBond,
         bool _isSocialBond,
         bool _isSustainabilityBond
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         require(_faceValue > 0, "Invalid face value");
         require(_maturity > block.timestamp, "Invalid maturity");
         require(_greenAllocation <= 10000, "Invalid green allocation");
@@ -365,9 +365,7 @@ contract CarbonFootprintTracker is Ownable, ReentrancyGuard {
     /**
      * @notice Get carbon footprint details
      */
-    function getCarbonFootprint(bytes32 _entityId)
-        external
-        view
+    function getCarbonFootprint(bytes32 _entityId) public view
         returns (
             string memory entityName,
             uint256 totalEmissions,
@@ -391,9 +389,7 @@ contract CarbonFootprintTracker is Ownable, ReentrancyGuard {
     /**
      * @notice Get carbon offset details
      */
-    function getCarbonOffset(bytes32 _offsetId)
-        external
-        view
+    function getCarbonOffset(bytes32 _offsetId) public view
         returns (
             uint256 tonnesCO2,
             uint256 vintage,
@@ -415,9 +411,7 @@ contract CarbonFootprintTracker is Ownable, ReentrancyGuard {
     /**
      * @notice Get ESG score details
      */
-    function getESGScore(bytes32 _entityId)
-        external
-        view
+    function getESGScore(bytes32 _entityId) public view
         returns (
             uint256 environmentalScore,
             uint256 socialScore,
@@ -426,7 +420,7 @@ contract CarbonFootprintTracker is Ownable, ReentrancyGuard {
             ESG_Rating rating
         )
     {
-        ESG_Score memory esgScore = esgScores[_entityId];
+        ESG_Score storage esgScore = esgScores[_entityId];
         return (
             esgScore.environmentalScore,
             esgScore.socialScore,
@@ -439,9 +433,7 @@ contract CarbonFootprintTracker is Ownable, ReentrancyGuard {
     /**
      * @notice Get sustainability bond details
      */
-    function getSustainabilityBond(bytes32 _bondId)
-        external
-        view
+    function getSustainabilityBond(bytes32 _bondId) public view
         returns (
             string memory bondName,
             uint256 faceValue,
@@ -471,7 +463,7 @@ contract CarbonFootprintTracker is Ownable, ReentrancyGuard {
         uint256 _minMeasurementFrequency,
         uint256 _verificationValidityPeriod,
         uint256 _carbonPriceFloor
-    ) external onlyOwner {
+    ) public onlyOwner {
         minMeasurementFrequency = _minMeasurementFrequency;
         verificationValidityPeriod = _verificationValidityPeriod;
         carbonPriceFloor = _carbonPriceFloor;
@@ -480,9 +472,7 @@ contract CarbonFootprintTracker is Ownable, ReentrancyGuard {
     /**
      * @notice Get global carbon statistics
      */
-    function getGlobalStatistics()
-        external
-        view
+    function getGlobalStatistics() public view
         returns (
             uint256 _totalTrackedEntities,
             uint256 _totalCarbonOffsets,

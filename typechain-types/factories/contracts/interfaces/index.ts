@@ -5,6 +5,8 @@ export * as externalInterfacesSol from "./ExternalInterfaces.sol";
 export { IAttestationOracle__factory } from "./IAttestationOracle__factory";
 export { IComplianceRegistry__factory } from "./IComplianceRegistry__factory";
 export { IComplianceRegistryV2__factory } from "./IComplianceRegistryV2__factory";
+export { IPriceOracle__factory } from "./IPriceOracle__factory";
 export { IProofOfReserves__factory } from "./IProofOfReserves__factory";
 export { IQuoteAdapter__factory } from "./IQuoteAdapter__factory";
+export { IReserveManager__factory } from "./IReserveManager__factory";
 export { IShareMaturityOracle__factory } from "./IShareMaturityOracle__factory";

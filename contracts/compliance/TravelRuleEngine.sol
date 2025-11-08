@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 
 import {Types} from "../common/Types.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /// @title TravelRuleEngine
 /// @notice SR-level FATF Travel Rule enforcement for VASPs (Virtual Asset Service Providers).
@@ -57,7 +57,7 @@ contract TravelRuleEngine is Ownable, ReentrancyGuard {
         string calldata name,
         string calldata jurisdiction,
         bytes32 licenseHash
-    ) external onlyOwner {
+    ) public onlyOwner {
         require(vasp != address(0), "TRE: 0");
         require(!isVASP[vasp], "TRE: Already registered");
         
@@ -74,14 +74,14 @@ contract TravelRuleEngine is Ownable, ReentrancyGuard {
     }
     
     /// @notice Deactivate VASP
-    function deactivateVASP(address vasp) external onlyOwner {
+    function deactivateVASP(address vasp) public onlyOwner {
         require(isVASP[vasp], "TRE: Not registered");
         vasps[vasp].active = false;
         emit VASPDeactivated(vasp);
     }
     
     /// @notice Update travel rule threshold
-    function setTravelRuleThreshold(uint256 newThreshold) external onlyOwner {
+    function setTravelRuleThreshold(uint256 newThreshold) public onlyOwner {
         uint256 oldThreshold = travelRuleThreshold;
         travelRuleThreshold = newThreshold;
         emit TravelRuleThresholdUpdated(oldThreshold, newThreshold);
@@ -96,7 +96,7 @@ contract TravelRuleEngine is Ownable, ReentrancyGuard {
         string calldata beneficiaryInfo,
         uint256 amount,
         string calldata currency
-    ) external nonReentrant {
+    ) public nonReentrant {
         require(isVASP[msg.sender], "TRE: Not VASP");
         require(vasps[msg.sender].active, "TRE: VASP inactive");
         require(amount >= travelRuleThreshold, "TRE: Below threshold");
@@ -117,17 +117,17 @@ contract TravelRuleEngine is Ownable, ReentrancyGuard {
     }
     
     /// @notice Check if transaction requires travel rule reporting
-    function requiresTravelRule(uint256 amount) external view returns (bool) {
+    function requiresTravelRule(uint256 amount) public view returns (bool) {
         return amount >= travelRuleThreshold;
     }
     
     /// @notice Verify transaction has been reported
-    function isReported(bytes32 txHash) external view returns (bool) {
+    function isReported(bytes32 txHash) public view returns (bool) {
         return travelRuleReports[txHash].reported;
     }
     
     /// @notice Get travel rule data for transaction
-    function getTravelRuleData(bytes32 txHash) external view returns (TravelRuleData memory) {
+    function getTravelRuleData(bytes32 txHash) public view returns (TravelRuleData memory) {
         return travelRuleReports[txHash];
     }
     
@@ -137,7 +137,7 @@ contract TravelRuleEngine is Ownable, ReentrancyGuard {
         address originator,
         address beneficiary,
         uint256 amount
-    ) external view returns (bool compliant, string memory reason) {
+    ) public view returns (bool compliant, string memory reason) {
         // Check if amount requires reporting
         if (amount < travelRuleThreshold) {
             return (true, "Below threshold");

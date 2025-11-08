@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {UnykornDNACore} from "./UnykornDNACore.sol";
 
 /**
@@ -38,7 +38,7 @@ contract ChainInfrastructure is Ownable, ReentrancyGuard {
     struct ChainConfig {
         ChainMode mode;
         uint256 chainId;
-        string chainName;
+        bytes32 chainNameHash;
         address genesisValidator;
         uint256 blockTime;           // seconds
         uint256 gasLimit;
@@ -51,17 +51,17 @@ contract ChainInfrastructure is Ownable, ReentrancyGuard {
     struct NodeConfig {
         NodeType nodeType;
         address nodeAddress;
-        string endpoint;
+        bytes32 endpointHash;
         PrivacyLevel privacyLevel;
         bool isActive;
         uint256 stakeAmount;
         bytes32 publicKey;
-        string ipfsConfigHash;
+        bytes32 ipfsConfigHash;
     }
 
     struct PrivacyGroup {
         bytes32 groupId;
-        string name;
+        bytes32 nameHash;
         PrivacyLevel privacyLevel;
         address[] members;
         bytes32[] privateContracts;
@@ -71,7 +71,7 @@ contract ChainInfrastructure is Ownable, ReentrancyGuard {
     }
 
     struct ExplorerConfig {
-        string explorerUrl;
+        bytes32 explorerUrlHash;
         address explorerContract;
         PrivacyLevel publicDataLevel;
         bool realTimeUpdates;
@@ -88,7 +88,7 @@ contract ChainInfrastructure is Ownable, ReentrancyGuard {
         bytes32 merkleRoot;
         bytes32[] proofPath;
         bool isValid;
-        string verificationMethod;
+        bytes32 verificationMethodHash;
         bytes32 ipfsEvidenceHash;
     }
 
@@ -116,10 +116,10 @@ contract ChainInfrastructure is Ownable, ReentrancyGuard {
     // Events
     event ChainLaunched(uint256 chainId, ChainMode mode, uint256 timestamp);
     event NodeRegistered(address indexed nodeAddress, NodeType nodeType);
-    event PrivacyGroupCreated(bytes32 indexed groupId, string name, PrivacyLevel level);
+    event PrivacyGroupCreated(bytes32 indexed groupId, bytes32 nameHash, PrivacyLevel level);
     event ContractPrivacySet(address indexed contractAddress, PrivacyLevel level);
     event VerificationProofSubmitted(bytes32 indexed proofId, bytes32 targetHash, bool isValid);
-    event ExplorerUpdated(string explorerUrl, PrivacyLevel publicDataLevel);
+    event ExplorerUpdated(bytes32 explorerUrlHash, PrivacyLevel publicDataLevel);
 
     modifier onlyGenesisValidator() {
         require(msg.sender == chainConfig.genesisValidator, "Not genesis validator");
@@ -133,14 +133,14 @@ contract ChainInfrastructure is Ownable, ReentrancyGuard {
 
     constructor(
         uint256 _chainId,
-        string memory _chainName,
+        bytes32 _chainNameHash,
         ChainMode _mode,
         bool _privacyEnabled
     ) Ownable(msg.sender) {
         chainConfig = ChainConfig({
             mode: _mode,
             chainId: _chainId,
-            chainName: _chainName,
+            chainNameHash: _chainNameHash,
             genesisValidator: msg.sender,
             blockTime: 2,              // 2 seconds like Ethereum
             gasLimit: 30_000_000,      // 30M gas limit
@@ -157,21 +157,21 @@ contract ChainInfrastructure is Ownable, ReentrancyGuard {
     function launchChain(
         address _dnaCore,
         string memory _genesisData,
-        string memory _explorerUrl
-    ) external onlyGenesisValidator {
+        bytes32 _explorerUrlHash
+    ) public onlyGenesisValidator {
         require(chainConfig.launchTimestamp == 0, "Chain already launched");
 
         chainConfig.launchTimestamp = block.timestamp;
         chainConfig.genesisHash = keccak256(abi.encodePacked(
             chainConfig.chainId,
-            chainConfig.chainName,
+            chainConfig.chainNameHash,
             _dnaCore,
             _genesisData,
             block.timestamp
         ));
 
         // Initialize explorer
-        explorerConfig.explorerUrl = _explorerUrl;
+        explorerConfig.explorerUrlHash = _explorerUrlHash;
         explorerConfig.explorerContract = address(this);
         explorerConfig.publicDataLevel = chainConfig.mode == ChainMode.PUBLIC ?
             PrivacyLevel.PUBLIC : PrivacyLevel.RESTRICTED;
@@ -190,29 +190,29 @@ contract ChainInfrastructure is Ownable, ReentrancyGuard {
     function registerNode(
         address _nodeAddress,
         NodeType _nodeType,
-        string memory _endpoint,
+        bytes32 _endpointHash,
         bytes32 _publicKey,
-        string memory _ipfsConfigHash
-    ) external onlyOwner {
-        _registerNode(_nodeAddress, _nodeType, _endpoint, _publicKey, _ipfsConfigHash);
+        bytes32 _ipfsConfigHash
+    ) public onlyOwner {
+        _registerNode(_nodeAddress, _nodeType, _endpointHash, _publicKey, _ipfsConfigHash);
     }
 
     /**
      * @notice Create a privacy group for confidential operations
      */
     function createPrivacyGroup(
-        string memory _name,
+        bytes32 _nameHash,
         PrivacyLevel _privacyLevel,
         address[] memory _members,
         string memory _ipfsMetadataHash
-    ) external onlyOwner returns (bytes32) {
+    ) public onlyOwner returns (bytes32) {
         bytes32 groupId = keccak256(abi.encodePacked(
-            _name, _privacyLevel, _members.length, block.timestamp
+            _nameHash, _privacyLevel, _members.length, block.timestamp
         ));
 
         PrivacyGroup storage group = privacyGroups[groupId];
         group.groupId = groupId;
-        group.name = _name;
+        group.nameHash = _nameHash;
         group.privacyLevel = _privacyLevel;
         group.members = _members;
         group.isActive = true;
@@ -225,7 +225,7 @@ contract ChainInfrastructure is Ownable, ReentrancyGuard {
 
         activeGroups.push(groupId);
 
-        emit PrivacyGroupCreated(groupId, _name, _privacyLevel);
+        emit PrivacyGroupCreated(groupId, _nameHash, _privacyLevel);
         return groupId;
     }
 
@@ -235,7 +235,7 @@ contract ChainInfrastructure is Ownable, ReentrancyGuard {
     function addContractToPrivacyGroup(
         bytes32 _groupId,
         address _contractAddress
-    ) external onlyOwner validPrivacyGroup(_groupId) {
+    ) public onlyOwner validPrivacyGroup(_groupId) {
         PrivacyGroup storage group = privacyGroups[_groupId];
         group.privateContracts.push(bytes32(uint256(uint160(_contractAddress))));
 
@@ -248,7 +248,7 @@ contract ChainInfrastructure is Ownable, ReentrancyGuard {
     function setContractPrivacy(
         address _contractAddress,
         PrivacyLevel _privacyLevel
-    ) external onlyOwner {
+    ) public onlyOwner {
         bytes32 contractId = bytes32(uint256(uint160(_contractAddress)));
         contractPrivacy[contractId] = _privacyLevel;
 
@@ -267,9 +267,9 @@ contract ChainInfrastructure is Ownable, ReentrancyGuard {
         bytes32 _targetHash,
         bytes32 _merkleRoot,
         bytes32[] memory _proofPath,
-        string memory _verificationMethod,
+        bytes32 _verificationMethodHash,
         string memory _ipfsEvidenceHash
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         bytes32 proofId = keccak256(abi.encodePacked(
             _targetHash, msg.sender, block.timestamp
         ));
@@ -285,7 +285,7 @@ contract ChainInfrastructure is Ownable, ReentrancyGuard {
         proof.merkleRoot = _merkleRoot;
         proof.proofPath = _proofPath;
         proof.isValid = isValid;
-        proof.verificationMethod = _verificationMethod;
+        proof.verificationMethodHash = _verificationMethodHash;
         proof.ipfsEvidenceHash = keccak256(abi.encodePacked(_ipfsEvidenceHash));
 
         proofHistory.push(proofId);
@@ -297,30 +297,30 @@ contract ChainInfrastructure is Ownable, ReentrancyGuard {
     /**
      * @notice Get chain information for explorer
      */
-    function getChainInfo() external view returns (
+    function getChainInfo() public view returns (
         uint256 chainId,
-        string memory chainName,
+        bytes32 chainNameHash,
         ChainMode mode,
         uint256 blockTime,
         uint256 validatorCount,
         bool privacyEnabled,
-        string memory explorerUrl
+        bytes32 explorerUrlHash
     ) {
         return (
             chainConfig.chainId,
-            chainConfig.chainName,
+            chainConfig.chainNameHash,
             chainConfig.mode,
             chainConfig.blockTime,
             activeNodes.length,
             chainConfig.privacyEnabled,
-            explorerConfig.explorerUrl
+            explorerConfig.explorerUrlHash
         );
     }
 
     /**
      * @notice Get public contract list for explorer
      */
-    function getPublicContracts() external view returns (
+    function getPublicContracts() public view returns (
         address[] memory contracts,
         string[] memory names,
         PrivacyLevel[] memory privacyLevels
@@ -355,20 +355,18 @@ contract ChainInfrastructure is Ownable, ReentrancyGuard {
     /**
      * @notice Check if address can view private data
      */
-    function canViewPrivateData(address _viewer, bytes32 _groupId) external view returns (bool) {
+    function canViewPrivateData(address _viewer, bytes32 _groupId) public view returns (bool) {
         if (chainConfig.mode == ChainMode.PUBLIC) return true;
         if (contractPrivacy[_groupId] == PrivacyLevel.PUBLIC) return true;
 
-        PrivacyGroup memory group = privacyGroups[_groupId];
+        PrivacyGroup storage group = privacyGroups[_groupId];
         return group.authorizedViewers[_viewer];
     }
 
     /**
      * @notice Get privacy group members
      */
-    function getPrivacyGroupMembers(bytes32 _groupId)
-        external
-        view
+    function getPrivacyGroupMembers(bytes32 _groupId) public view
         validPrivacyGroup(_groupId)
         returns (address[] memory)
     {
@@ -378,15 +376,13 @@ contract ChainInfrastructure is Ownable, ReentrancyGuard {
     /**
      * @notice Get verification proof details
      */
-    function getVerificationProof(bytes32 _proofId)
-        external
-        view
+    function getVerificationProof(bytes32 _proofId) public view
         returns (
             bytes32 targetHash,
             address verifier,
             uint256 timestamp,
             bool isValid,
-            string memory verificationMethod
+            bytes32 verificationMethodHash
         )
     {
         VerificationProof memory proof = verificationProofs[_proofId];
@@ -395,7 +391,7 @@ contract ChainInfrastructure is Ownable, ReentrancyGuard {
             proof.verifier,
             proof.timestamp,
             proof.isValid,
-            proof.verificationMethod
+            proof.verificationMethodHash
         );
     }
 
@@ -403,23 +399,23 @@ contract ChainInfrastructure is Ownable, ReentrancyGuard {
      * @notice Update explorer configuration
      */
     function updateExplorerConfig(
-        string memory _explorerUrl,
+        bytes32 _explorerUrlHash,
         PrivacyLevel _publicDataLevel,
         uint256 _updateInterval
-    ) external onlyOwner {
-        explorerConfig.explorerUrl = _explorerUrl;
+    ) public onlyOwner {
+        explorerConfig.explorerUrlHash = _explorerUrlHash;
         explorerConfig.publicDataLevel = _publicDataLevel;
         explorerConfig.updateInterval = _updateInterval;
 
-        emit ExplorerUpdated(_explorerUrl, _publicDataLevel);
+        emit ExplorerUpdated(_explorerUrlHash, _publicDataLevel);
     }
 
     /**
      * @notice Get infrastructure statistics
      */
-    function getInfrastructureStats() external view returns (
+    function getInfrastructureStats() public view returns (
         uint256 totalNodes,
-        uint256 activeGroups,
+        uint256 totalActiveGroups,
         uint256 totalProofs,
         uint256 publicContracts,
         ChainMode mode,
@@ -446,18 +442,18 @@ contract ChainInfrastructure is Ownable, ReentrancyGuard {
     function _registerNode(
         address _nodeAddress,
         NodeType _nodeType,
-        string memory _endpoint,
+        bytes32 _endpointHash,
         bytes32 _publicKey,
-        string memory _ipfsConfigHash
+        bytes32 _ipfsConfigHash
     ) internal {
         NodeConfig storage node = nodeConfigs[_nodeAddress];
         node.nodeType = _nodeType;
         node.nodeAddress = _nodeAddress;
-        node.endpoint = _endpoint;
+        node.endpointHash = _endpointHash;
         node.privacyLevel = _nodeType == NodeType.PRIVATE ? PrivacyLevel.PRIVATE : PrivacyLevel.PUBLIC;
         node.isActive = true;
         node.publicKey = _publicKey;
-        node.ipfsConfigHash = keccak256(abi.encodePacked(_ipfsConfigHash));
+        node.ipfsConfigHash = _ipfsConfigHash;
 
         activeNodes.push(_nodeAddress);
         nodesByType[_nodeType].push(_nodeAddress);
@@ -466,7 +462,7 @@ contract ChainInfrastructure is Ownable, ReentrancyGuard {
     }
 
     function _registerNode(address _nodeAddress, NodeType _nodeType, PrivacyLevel _privacyLevel) internal {
-        _registerNode(_nodeAddress, _nodeType, "", bytes32(0), "");
+        _registerNode(_nodeAddress, _nodeType, bytes32(0), bytes32(0), bytes32(0));
     }
 
     function _verifyMerkleProof(

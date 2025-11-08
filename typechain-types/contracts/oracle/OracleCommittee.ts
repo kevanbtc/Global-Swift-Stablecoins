@@ -41,14 +41,22 @@ export declare namespace OracleCommittee {
     pxMinor: BigNumberish;
     asOf: BigNumberish;
     source: string;
+    besuGroup: BytesLike;
   };
 
   export type QuoteStructOutput = [
     symbol: string,
     pxMinor: bigint,
     asOf: bigint,
-    source: string
-  ] & { symbol: string; pxMinor: bigint; asOf: bigint; source: string };
+    source: string,
+    besuGroup: string
+  ] & {
+    symbol: string;
+    pxMinor: bigint;
+    asOf: bigint;
+    source: string;
+    besuGroup: string;
+  };
 }
 
 export interface OracleCommitteeInterface extends Interface {
@@ -450,11 +458,12 @@ export interface OracleCommittee extends BaseContract {
   latestBySymbol: TypedContractMethod<
     [arg0: BytesLike],
     [
-      [string, bigint, bigint, string] & {
+      [string, bigint, bigint, string, string] & {
         symbol: string;
         pxMinor: bigint;
         asOf: bigint;
         source: string;
+        besuGroup: string;
       }
     ],
     "view"
@@ -575,11 +584,12 @@ export interface OracleCommittee extends BaseContract {
   ): TypedContractMethod<
     [arg0: BytesLike],
     [
-      [string, bigint, bigint, string] & {
+      [string, bigint, bigint, string, string] & {
         symbol: string;
         pxMinor: bigint;
         asOf: bigint;
         source: string;
+        besuGroup: string;
       }
     ],
     "view"

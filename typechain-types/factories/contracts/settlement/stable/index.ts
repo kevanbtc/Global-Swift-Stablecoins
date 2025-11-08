@@ -8,3 +8,4 @@ export { IReleaseGuard__factory } from "./IReleaseGuard__factory";
 export { PoRGuard__factory } from "./PoRGuard__factory";
 export { StablecoinRegistry__factory } from "./StablecoinRegistry__factory";
 export { StablecoinRouter__factory } from "./StablecoinRouter__factory";
+export { UnykornStableRail__factory } from "./UnykornStableRail__factory";

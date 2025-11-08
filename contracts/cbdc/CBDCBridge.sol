@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.19;
 
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
-import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
+import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
 import "../common/Types.sol";
 import "../common/Roles.sol";
 import "../common/Errors.sol";
@@ -126,9 +126,7 @@ contract CBDCBridge is AccessControl, ReentrancyGuard, Pausable {
         uint256 maxTransfer,
         address[] calldata validators,
         uint256 requiredValidations
-    )
-        external
-        onlyRole(BRIDGE_ADMIN_ROLE)
+    ) public onlyRole(BRIDGE_ADMIN_ROLE)
     {
         require(bytes(name).length > 0, "Invalid name");
         require(tokenContract != address(0), "Invalid token contract");
@@ -163,9 +161,7 @@ contract CBDCBridge is AccessControl, ReentrancyGuard, Pausable {
         string calldata sourceCBDC,
         address destinationContract,
         bool supported
-    )
-        external
-        onlyRole(BRIDGE_ADMIN_ROLE)
+    ) public onlyRole(BRIDGE_ADMIN_ROLE)
     {
         require(bytes(sourceCBDC).length > 0, "Invalid CBDC");
         require(destinationContract != address(0), "Invalid destination");
@@ -186,9 +182,7 @@ contract CBDCBridge is AccessControl, ReentrancyGuard, Pausable {
         string calldata sourceCBDC,
         string calldata targetCBDC,
         address oracle
-    )
-        external
-        onlyRole(BRIDGE_ADMIN_ROLE)
+    ) public onlyRole(BRIDGE_ADMIN_ROLE)
     {
         require(bytes(sourceCBDC).length > 0, "Invalid source");
         require(bytes(targetCBDC).length > 0, "Invalid target");
@@ -209,9 +203,7 @@ contract CBDCBridge is AccessControl, ReentrancyGuard, Pausable {
         uint256 amount,
         string calldata targetCBDC,
         string calldata metadataURI
-    )
-        external
-        nonReentrant
+    ) public nonReentrant
         whenNotPaused
         returns (bytes32)
     {
@@ -269,9 +261,7 @@ contract CBDCBridge is AccessControl, ReentrancyGuard, Pausable {
      * @param transferId Transfer identifier
      * @param approved Whether the transfer is approved
      */
-    function validateTransfer(bytes32 transferId, bool approved)
-        external
-        onlyRole(VALIDATOR_ROLE)
+    function validateTransfer(bytes32 transferId, bool approved) public onlyRole(VALIDATOR_ROLE)
         whenNotPaused
     {
         Transfer storage transfer = transfers[transferId];
@@ -333,7 +323,7 @@ contract CBDCBridge is AccessControl, ReentrancyGuard, Pausable {
      * @notice Process the actual transfer
      * @param transferId Transfer identifier
      */
-    function _processTransfer(bytes32 transferId) external {
+    function _processTransfer(bytes32 transferId) public {
         require(msg.sender == address(this), "Internal call only");
         
         Transfer storage transfer = transfers[transferId];
@@ -400,17 +390,15 @@ contract CBDCBridge is AccessControl, ReentrancyGuard, Pausable {
     }
 
     // Admin functions
-    function pause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _pause();
     }
 
-    function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _unpause();
     }
 
-    function setValidationTimeout(uint256 timeout)
-        external
-        onlyRole(BRIDGE_ADMIN_ROLE)
+    function setValidationTimeout(uint256 timeout) public onlyRole(BRIDGE_ADMIN_ROLE)
     {
         validationTimeout = timeout;
     }

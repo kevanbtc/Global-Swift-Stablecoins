@@ -48,7 +48,7 @@ contract SettlementHub2PC {
         Leg calldata A,
         Leg calldata B,
         uint64 deadline
-    ) external onlyAdmin {
+    ) public onlyAdmin {
         require(deals[id].createdAt == 0, "HUB: id exists");
         deals[id] = Deal({
             state: State.Open,
@@ -81,7 +81,7 @@ contract SettlementHub2PC {
         emit LegPrepared(id, 1, d.B.railKey, tid);
     }
 
-    function finalize(bytes32 id) external onlyAdmin {
+    function finalize(bytes32 id) public onlyAdmin {
         Deal storage d = deals[id]; require(d.createdAt!=0, "HUB: unknown");
         require(d.state == State.PreparedBoth, "HUB: not prepared");
         require(block.timestamp <= d.deadline, "HUB: expired");
@@ -92,7 +92,7 @@ contract SettlementHub2PC {
         emit Finalized(id);
     }
 
-    function cancel(bytes32 id) external {
+    function cancel(bytes32 id) public {
         Deal storage d = deals[id]; require(d.createdAt!=0, "HUB: unknown");
         bool can = (msg.sender==admin) || (block.timestamp > d.deadline);
         require(can, "HUB: no auth");

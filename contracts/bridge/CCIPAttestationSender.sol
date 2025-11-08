@@ -3,9 +3,9 @@ pragma solidity ^0.8.24;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import {IRouterClient} from "lib/chainlink/contracts/src/v0.8/shared/interfaces/IRouterClient.sol";
-import {IAny2EVMMessageReceiver} from "lib/chainlink/contracts/src/v0.8/shared/interfaces/IAny2EVMMessageReceiver.sol";
-import {Client} from "lib/chainlink/contracts/src/v0.8/shared/libraries/Client.sol";
+import {IRouterClient} from "@chainlink/contracts-ccip/contracts/interfaces/IRouterClient.sol";
+import {IAny2EVMMessageReceiver} from "@chainlink/contracts-ccip/contracts/interfaces/IAny2EVMMessageReceiver.sol";
+import {Client} from "@chainlink/contracts-ccip/contracts/libraries/Client.sol";
 
 /// @title CCIP Attestation Sender
 /// @notice Sends cross-chain attestations via Chainlink CCIP
@@ -52,27 +52,21 @@ contract CCIPAttestationSender is AccessControl, ReentrancyGuard {
     }
 
     /// @notice Sets whether a chain is supported for sending attestations
-    function setSupportedChain(uint64 chainSelector, bool supported) 
-        external 
-        onlyRole(DEFAULT_ADMIN_ROLE) 
+    function setSupportedChain(uint64 chainSelector, bool supported) public onlyRole(DEFAULT_ADMIN_ROLE) 
     {
         supportedChains[chainSelector] = supported;
         emit ChainSupported(chainSelector, supported);
     }
 
     /// @notice Allow or block a specific receiver for a chain
-    function setAllowedReceiver(uint64 chainSelector, address receiver, bool allowed)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
+    function setAllowedReceiver(uint64 chainSelector, address receiver, bool allowed) public onlyRole(DEFAULT_ADMIN_ROLE)
     {
         allowedReceivers[chainSelector][receiver] = allowed;
         emit ReceiverAllowed(chainSelector, receiver, allowed);
     }
 
     /// @notice Configure simple global rate limit for a destination chain
-    function setRateLimit(uint64 chainSelector, uint64 windowSeconds, uint32 limit)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
+    function setRateLimit(uint64 chainSelector, uint64 windowSeconds, uint32 limit) public onlyRole(DEFAULT_ADMIN_ROLE)
     {
         rateCfg[chainSelector] = RateCfg({windowSeconds: windowSeconds, limit: limit});
         emit RateLimitSet(chainSelector, windowSeconds, limit);
@@ -98,9 +92,7 @@ contract CCIPAttestationSender is AccessControl, ReentrancyGuard {
         bytes32 schemaId,
         bytes32 attestationId,
         bytes calldata data
-    ) 
-        external 
-        payable 
+    ) public payable 
         onlyRole(ATTESTOR_ROLE) 
         nonReentrant 
     {
@@ -123,7 +115,7 @@ contract CCIPAttestationSender is AccessControl, ReentrancyGuard {
             data: ccipMessage,
             tokenAmounts: new Client.EVMTokenAmount[](0),
             extraArgs: Client._argsToBytes(
-                Client.EVMExtraArgsV1({gasLimit: 200_000, strict: false})
+                Client.EVMExtraArgsV1({gasLimit: 200_000})
             ),
             feeToken: address(0)  // Use native gas token
         });
@@ -155,7 +147,7 @@ contract CCIPAttestationSender is AccessControl, ReentrancyGuard {
         uint64 destinationChainSelector,
         address receiver,
         AttestationMessage memory message
-    ) external view returns (uint256) {
+    ) public view returns (uint256) {
         require(supportedChains[destinationChainSelector], "Unsupported chain");
         
         bytes memory ccipMessage = abi.encode(message);
@@ -165,7 +157,7 @@ contract CCIPAttestationSender is AccessControl, ReentrancyGuard {
             data: ccipMessage,
             tokenAmounts: new Client.EVMTokenAmount[](0),
             extraArgs: Client._argsToBytes(
-                Client.EVMExtraArgsV1({gasLimit: 200_000, strict: false})
+                Client.EVMExtraArgsV1({gasLimit: 200_000})
             ),
             feeToken: address(0)
         });

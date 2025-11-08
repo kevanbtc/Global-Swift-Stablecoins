@@ -49,11 +49,11 @@ contract ERC1644Controller is AccessControl {
         registry = ICourtOrderRegistry(registry_);
     }
 
-    function grantController(address who) external onlyRole(GOVERNOR_ROLE) {
+    function grantController(address who) public onlyRole(GOVERNOR_ROLE) {
         _grantRole(CONTROLLER_ROLE, who);
     }
 
-    function forceTransfer(bytes32 orderId) external onlyRole(CONTROLLER_ROLE) {
+    function forceTransfer(bytes32 orderId) public onlyRole(CONTROLLER_ROLE) {
         ICourtOrderRegistry.Order memory o = registry.orders(orderId);
         require(registry.isActive(orderId), "inactive");
         require(o.action == ICourtOrderRegistry.Action.FORCE_TRANSFER, "not transfer");
@@ -62,7 +62,7 @@ contract ERC1644Controller is AccessControl {
         emit Forced(o.token, o.subject, o.to, o.amount, orderId);
     }
 
-    function forceRedeem(bytes32 orderId) external onlyRole(CONTROLLER_ROLE) {
+    function forceRedeem(bytes32 orderId) public onlyRole(CONTROLLER_ROLE) {
         ICourtOrderRegistry.Order memory o = registry.orders(orderId);
         require(registry.isActive(orderId), "inactive");
         require(o.action == ICourtOrderRegistry.Action.FORCE_REDEEM, "not redeem");

@@ -36,28 +36,27 @@ contract NAVEventOracleUpgradeable is Initializable, AC {
         _grantRole(GOVERNOR_ROLE, governor);
     }
 
-    function setFallback(address agg) external onlyRole(GOVERNOR_ROLE) {
+    function setFallback(address agg) public onlyRole(GOVERNOR_ROLE) {
         etfFallback = agg;
         etfDecimals = IAggregatorV3(agg).decimals();
         emit FallbackSet(agg, etfDecimals);
     }
 
-    function setPosition(bytes32 id, bytes32 assetId, int256 qty, address adapter)
-        external onlyRole(UPDATER_ROLE)
+    function setPosition(bytes32 id, bytes32 assetId, int256 qty, address adapter) public onlyRole(UPDATER_ROLE)
     {
         if (positions[id].assetId == 0) ids.push(id);
         positions[id] = Position({assetId: assetId, qty: qty, adapter: adapter});
         emit PositionSet(id, assetId, qty, adapter);
     }
 
-    function applyDelta(bytes32 id, int256 delta) external onlyRole(UPDATER_ROLE) {
+    function applyDelta(bytes32 id, int256 delta) public onlyRole(UPDATER_ROLE) {
         Position storage p = positions[id];
         require(p.assetId != 0, "pos");
         p.qty += delta;
         emit PositionDelta(id, delta);
     }
 
-    function nav1e18() external view returns (uint256 nav, uint64 asOf) {
+    function nav1e18() public view returns (uint256 nav, uint64 asOf) {
         uint64 minTs = type(uint64).max;
         for (uint256 i = 0; i < ids.length; i++) {
             Position memory p = positions[ids[i]];

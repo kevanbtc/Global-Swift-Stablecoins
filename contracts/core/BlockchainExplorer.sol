@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {ChainInfrastructure} from "./ChainInfrastructure.sol";
 
 /**
@@ -132,7 +132,7 @@ contract BlockchainExplorer is Ownable, ReentrancyGuard {
         string memory _version,
         string[] memory _tags,
         string memory _ipfsMetadataHash
-    ) external onlyOwner {
+    ) public onlyOwner {
         ContractMetadata storage metadata = contractMetadata[_contractAddress];
         metadata.contractAddress = _contractAddress;
         metadata.name = _name;
@@ -144,7 +144,8 @@ contract BlockchainExplorer is Ownable, ReentrancyGuard {
         metadata.tags = _tags;
 
         // Get privacy level from chain infrastructure
-        (, , ChainInfrastructure.PrivacyLevel privacyLevel) = chainInfra.getChainInfo();
+        bytes32 contractId = bytes32(uint256(uint160(_contractAddress)));
+        ChainInfrastructure.PrivacyLevel privacyLevel = chainInfra.contractPrivacy(contractId);
         metadata.privacyLevel = privacyLevel;
 
         emit ContractIndexed(_contractAddress, _name, privacyLevel);
@@ -158,7 +159,7 @@ contract BlockchainExplorer is Ownable, ReentrancyGuard {
         bytes32[] memory _filters,
         ExplorerView _viewLevel,
         string memory _ipfsResultHash
-    ) external validAccess(msg.sender, _viewLevel) canAccessCategory(msg.sender, _category) returns (bytes32) {
+    ) public validAccess(msg.sender, _viewLevel) canAccessCategory(msg.sender, _category) returns (bytes32) {
         bytes32 queryId = keccak256(abi.encodePacked(
             msg.sender, _category, _filters.length, block.timestamp
         ));
@@ -201,7 +202,7 @@ contract BlockchainExplorer is Ownable, ReentrancyGuard {
         uint256 _transfers24h,
         uint256 _volume24h,
         string memory _ipfsAnalyticsHash
-    ) external onlyOwner {
+    ) public onlyOwner {
         TokenAnalytics storage analytics = tokenAnalytics[_tokenAddress];
         analytics.tokenAddress = _tokenAddress;
         analytics.name = _name;
@@ -213,7 +214,8 @@ contract BlockchainExplorer is Ownable, ReentrancyGuard {
         analytics.ipfsAnalyticsHash = keccak256(abi.encodePacked(_ipfsAnalyticsHash));
 
         // Get privacy level
-        (, , ChainInfrastructure.PrivacyLevel privacyLevel) = chainInfra.getChainInfo();
+        bytes32 tokenId = bytes32(uint256(uint160(_tokenAddress)));
+        ChainInfrastructure.PrivacyLevel privacyLevel = chainInfra.contractPrivacy(tokenId);
         analytics.privacyLevel = privacyLevel;
 
         emit AnalyticsUpdated(_tokenAddress, _holders, _volume24h);
@@ -222,7 +224,7 @@ contract BlockchainExplorer is Ownable, ReentrancyGuard {
     /**
      * @notice Set user access level
      */
-    function setUserAccessLevel(address _user, ExplorerView _level) external onlyOwner {
+    function setUserAccessLevel(address _user, ExplorerView _level) public onlyOwner {
         userAccessLevel[_user] = _level;
         emit AccessLevelChanged(_user, _level);
     }
@@ -230,16 +232,14 @@ contract BlockchainExplorer is Ownable, ReentrancyGuard {
     /**
      * @notice Grant category access
      */
-    function grantCategoryAccess(address _user, DataCategory _category, bool _access) external onlyOwner {
+    function grantCategoryAccess(address _user, DataCategory _category, bool _access) public onlyOwner {
         categoryAccess[_user][_category] = _access;
     }
 
     /**
      * @notice Get contract information
      */
-    function getContractInfo(address _contractAddress)
-        external
-        view
+    function getContractInfo(address _contractAddress) public view
         returns (
             string memory name,
             string memory description,
@@ -250,7 +250,7 @@ contract BlockchainExplorer is Ownable, ReentrancyGuard {
             string[] memory tags
         )
     {
-        ContractMetadata memory metadata = contractMetadata[_contractAddress];
+        ContractMetadata storage metadata = contractMetadata[_contractAddress];
         return (
             metadata.name,
             metadata.description,
@@ -265,9 +265,7 @@ contract BlockchainExplorer is Ownable, ReentrancyGuard {
     /**
      * @notice Get query results
      */
-    function getQueryResults(bytes32 _queryId)
-        external
-        view
+    function getQueryResults(bytes32 _queryId) public view
         returns (
             DataCategory category,
             uint256 resultCount,
@@ -289,9 +287,7 @@ contract BlockchainExplorer is Ownable, ReentrancyGuard {
     /**
      * @notice Get token analytics
      */
-    function getTokenAnalytics(address _tokenAddress)
-        external
-        view
+    function getTokenAnalytics(address _tokenAddress) public view
         returns (
             string memory name,
             string memory symbol,
@@ -317,9 +313,7 @@ contract BlockchainExplorer is Ownable, ReentrancyGuard {
     /**
      * @notice Get public contract list
      */
-    function getPublicContracts(uint256 _offset, uint256 _limit)
-        external
-        view
+    function getPublicContracts(uint256 _offset, uint256 _limit) public view
         returns (address[] memory contracts, string[] memory names)
     {
         // This would iterate through indexed contracts and filter by privacy level
@@ -339,9 +333,7 @@ contract BlockchainExplorer is Ownable, ReentrancyGuard {
     /**
      * @notice Get recent transactions
      */
-    function getRecentTransactions(uint256 _limit)
-        external
-        view
+    function getRecentTransactions(uint256 _limit) public view
         returns (bytes32[] memory txHashes, address[] memory from, address[] memory to, uint256[] memory values)
     {
         // Simplified - would query actual blockchain data
@@ -364,9 +356,7 @@ contract BlockchainExplorer is Ownable, ReentrancyGuard {
     /**
      * @notice Search contracts by tag
      */
-    function searchContractsByTag(string memory _tag, uint256 _limit)
-        external
-        view
+    function searchContractsByTag(string memory _tag, uint256 _limit) public view
         returns (address[] memory contracts, string[] memory names)
     {
         // Simplified search implementation
@@ -384,9 +374,7 @@ contract BlockchainExplorer is Ownable, ReentrancyGuard {
     /**
      * @notice Get explorer statistics
      */
-    function getExplorerStats()
-        external
-        view
+    function getExplorerStats() public view
         returns (
             uint256 totalQueries,
             uint256 indexedContracts,
@@ -412,16 +400,14 @@ contract BlockchainExplorer is Ownable, ReentrancyGuard {
         address _contractAddress,
         string memory _key,
         bytes32 _value
-    ) external onlyOwner {
+    ) public onlyOwner {
         contractMetadata[_contractAddress].attributes[_key] = _value;
     }
 
     /**
      * @notice Get contract attribute
      */
-    function getContractAttribute(address _contractAddress, string memory _key)
-        external
-        view
+    function getContractAttribute(address _contractAddress, string memory _key) public view
         returns (bytes32)
     {
         return contractMetadata[_contractAddress].attributes[_key];
@@ -434,7 +420,7 @@ contract BlockchainExplorer is Ownable, ReentrancyGuard {
         uint256 _queryCacheTime,
         uint256 _maxQueryResults,
         uint256 _analyticsUpdateInterval
-    ) external onlyOwner {
+    ) public onlyOwner {
         queryCacheTime = _queryCacheTime;
         maxQueryResults = _maxQueryResults;
         analyticsUpdateInterval = _analyticsUpdateInterval;

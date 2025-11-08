@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title ImplementationProcedures
@@ -154,7 +154,7 @@ contract ImplementationProcedures is Ownable, ReentrancyGuard {
         string[] memory _itemInstructions,
         uint256[] memory _estimatedTimes,
         bool[] memory _isRequired
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         require(_checklistItemIds.length == _itemDescriptions.length, "Array length mismatch");
         require(_itemDescriptions.length == _itemInstructions.length, "Array length mismatch");
         require(_itemInstructions.length == _estimatedTimes.length, "Array length mismatch");
@@ -204,9 +204,7 @@ contract ImplementationProcedures is Ownable, ReentrancyGuard {
     /**
      * @notice Update procedure status
      */
-    function updateProcedureStatus(bytes32 _procedureId, ProcedureStatus _status)
-        external
-        validProcedure(_procedureId)
+    function updateProcedureStatus(bytes32 _procedureId, ProcedureStatus _status) public validProcedure(_procedureId)
     {
         Procedure storage procedure = procedures[_procedureId];
         require(procedure.author == msg.sender || msg.sender == owner(), "Not authorized");
@@ -218,9 +216,7 @@ contract ImplementationProcedures is Ownable, ReentrancyGuard {
     /**
      * @notice Start procedure execution
      */
-    function startExecution(bytes32 _procedureId, bool _requiresApproval)
-        external
-        validProcedure(_procedureId)
+    function startExecution(bytes32 _procedureId, bool _requiresApproval) public validProcedure(_procedureId)
         activeProcedure(_procedureId)
         returns (bytes32)
     {
@@ -252,7 +248,7 @@ contract ImplementationProcedures is Ownable, ReentrancyGuard {
         bytes32 _itemId,
         string memory _evidence,
         uint256 _actualTime
-    ) external {
+    ) public {
         ProcedureExecution storage execution = executions[_executionId];
         require(execution.executor == msg.sender, "Not executor");
         require(execution.status == ExecutionStatus.IN_PROGRESS, "Execution not in progress");
@@ -275,7 +271,7 @@ contract ImplementationProcedures is Ownable, ReentrancyGuard {
     /**
      * @notice Approve procedure execution
      */
-    function approveExecution(bytes32 _executionId) external {
+    function approveExecution(bytes32 _executionId) public {
         ProcedureExecution storage execution = executions[_executionId];
         require(execution.requiresApproval, "Approval not required");
         require(!execution.approvals[msg.sender], "Already approved");
@@ -287,7 +283,7 @@ contract ImplementationProcedures is Ownable, ReentrancyGuard {
     /**
      * @notice Complete procedure execution
      */
-    function completeExecution(bytes32 _executionId, string memory _notes) external {
+    function completeExecution(bytes32 _executionId, string memory _notes) public {
         ProcedureExecution storage execution = executions[_executionId];
         require(execution.executor == msg.sender, "Not executor");
         require(execution.status == ExecutionStatus.IN_PROGRESS, "Execution not in progress");
@@ -326,7 +322,7 @@ contract ImplementationProcedures is Ownable, ReentrancyGuard {
     /**
      * @notice Rollback procedure execution
      */
-    function rollbackExecution(bytes32 _executionId, string memory _reason) external {
+    function rollbackExecution(bytes32 _executionId, string memory _reason) public {
         ProcedureExecution storage execution = executions[_executionId];
         require(execution.executor == msg.sender || msg.sender == owner(), "Not authorized");
         require(execution.status == ExecutionStatus.IN_PROGRESS, "Cannot rollback");
@@ -341,9 +337,7 @@ contract ImplementationProcedures is Ownable, ReentrancyGuard {
     /**
      * @notice Get procedure details
      */
-    function getProcedure(bytes32 _procedureId)
-        external
-        view
+    function getProcedure(bytes32 _procedureId) public view
         returns (
             ProcedureType procedureType,
             string memory name,
@@ -354,7 +348,7 @@ contract ImplementationProcedures is Ownable, ReentrancyGuard {
             uint256 successRate
         )
     {
-        Procedure memory procedure = procedures[_procedureId];
+        Procedure storage procedure = procedures[_procedureId];
         return (
             procedure.procedureType,
             procedure.name,
@@ -369,9 +363,7 @@ contract ImplementationProcedures is Ownable, ReentrancyGuard {
     /**
      * @notice Get checklist item details
      */
-    function getChecklistItem(bytes32 _procedureId, bytes32 _itemId)
-        external
-        view
+    function getChecklistItem(bytes32 _procedureId, bytes32 _itemId) public view
         returns (
             string memory description,
             string memory instructions,
@@ -397,9 +389,7 @@ contract ImplementationProcedures is Ownable, ReentrancyGuard {
     /**
      * @notice Get execution details
      */
-    function getExecution(bytes32 _executionId)
-        external
-        view
+    function getExecution(bytes32 _executionId) public view
         returns (
             bytes32 procedureId,
             address executor,
@@ -412,7 +402,7 @@ contract ImplementationProcedures is Ownable, ReentrancyGuard {
             uint256 approvalCount
         )
     {
-        ProcedureExecution memory execution = executions[_executionId];
+        ProcedureExecution storage execution = executions[_executionId];
         return (
             execution.procedureId,
             execution.executor,
@@ -429,9 +419,7 @@ contract ImplementationProcedures is Ownable, ReentrancyGuard {
     /**
      * @notice Get procedure metrics
      */
-    function getProcedureMetrics(ProcedureType _type)
-        external
-        view
+    function getProcedureMetrics(ProcedureType _type) public view
         returns (
             uint256 totalExecutions,
             uint256 successfulExecutions,
@@ -453,9 +441,7 @@ contract ImplementationProcedures is Ownable, ReentrancyGuard {
     /**
      * @notice Get procedures by type
      */
-    function getProceduresByType(ProcedureType _type)
-        external
-        view
+    function getProceduresByType(ProcedureType _type) public view
         returns (bytes32[] memory)
     {
         return proceduresByType[_type];
@@ -468,7 +454,7 @@ contract ImplementationProcedures is Ownable, ReentrancyGuard {
         uint256 _minApprovalCount,
         uint256 _maxExecutionTime,
         uint256 _evidenceRetentionPeriod
-    ) external onlyOwner {
+    ) public onlyOwner {
         minApprovalCount = _minApprovalCount;
         maxExecutionTime = _maxExecutionTime;
         evidenceRetentionPeriod = _evidenceRetentionPeriod;
@@ -477,9 +463,7 @@ contract ImplementationProcedures is Ownable, ReentrancyGuard {
     /**
      * @notice Get global procedure statistics
      */
-    function getGlobalStatistics()
-        external
-        view
+    function getGlobalStatistics() public view
         returns (
             uint256 _totalProcedures,
             uint256 _totalExecutions,

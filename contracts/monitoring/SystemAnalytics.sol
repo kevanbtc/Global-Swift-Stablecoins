@@ -2,7 +2,7 @@
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "../common/Types.sol";
 import "../common/Roles.sol";
@@ -105,9 +105,7 @@ contract SystemAnalytics is AccessControl, Pausable {
         string memory patternType,
         uint256 gasUsed,
         uint256 value
-    )
-        external
-        onlyRole(ANALYTICS_ROLE)
+    ) public onlyRole(ANALYTICS_ROLE)
         whenNotPaused
         returns (bytes32)
     {
@@ -146,9 +144,7 @@ contract SystemAnalytics is AccessControl, Pausable {
         uint256 value,
         uint256 responseTime,
         bytes32 patternId
-    )
-        external
-        onlyRole(ANALYTICS_ROLE)
+    ) public onlyRole(ANALYTICS_ROLE)
         whenNotPaused
     {
         UserAnalytics storage analytics = userAnalytics[user];
@@ -244,9 +240,7 @@ contract SystemAnalytics is AccessControl, Pausable {
      * @notice Get pattern details
      * @param patternId Pattern identifier
      */
-    function getPattern(bytes32 patternId)
-        external
-        view
+    function getPattern(bytes32 patternId) public view
         returns (TransactionPattern memory)
     {
         return patterns[patternId];
@@ -255,9 +249,7 @@ contract SystemAnalytics is AccessControl, Pausable {
     /**
      * @notice Get all known patterns
      */
-    function getAllPatterns()
-        external
-        view
+    function getAllPatterns() public view
         returns (TransactionPattern[] memory)
     {
         bytes32[] memory patternIds = new bytes32[](knownPatterns.length());
@@ -275,9 +267,7 @@ contract SystemAnalytics is AccessControl, Pausable {
      * @notice Get user analytics
      * @param user User address
      */
-    function getUserAnalytics(address user)
-        external
-        view
+    function getUserAnalytics(address user) public view
         returns (UserAnalytics memory)
     {
         return userAnalytics[user];
@@ -287,9 +277,7 @@ contract SystemAnalytics is AccessControl, Pausable {
      * @notice Get hourly system usage
      * @param hour Hour timestamp
      */
-    function getHourlyUsage(uint256 hour)
-        external
-        view
+    function getHourlyUsage(uint256 hour) public view
         returns (
             uint256 timestamp,
             uint256 activeUsers,
@@ -314,9 +302,7 @@ contract SystemAnalytics is AccessControl, Pausable {
      * @notice Get daily system usage
      * @param day Day timestamp
      */
-    function getDailyUsage(uint256 day)
-        external
-        view
+    function getDailyUsage(uint256 day) public view
         returns (
             uint256 timestamp,
             uint256 activeUsers,
@@ -340,9 +326,7 @@ contract SystemAnalytics is AccessControl, Pausable {
     /**
      * @notice Get system overview
      */
-    function getSystemOverview()
-        external
-        view
+    function getSystemOverview() public view
         returns (
             uint256 _totalUsers,
             uint256 _activeUsers,
@@ -361,11 +345,11 @@ contract SystemAnalytics is AccessControl, Pausable {
     }
 
     // Admin functions
-    function pause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _pause();
     }
 
-    function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _unpause();
     }
 }

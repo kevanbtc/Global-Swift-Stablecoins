@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 
 import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import {AccessControlUpgradeable as AC} from "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
-import {Errors} from "../common/Errors.sol";
+import {CustomErrors} from "../common/Errors.sol";
 
 /**
  * @title ReserveManagerUpgradeable
@@ -29,31 +29,30 @@ contract ReserveManagerUpgradeable is Initializable, AC {
         _grantRole(GOVERNOR_ROLE, governor);
     }
 
-    function setLimit(Bucket b, uint16 maxBps) external onlyRole(GOVERNOR_ROLE) {
-        if (maxBps > 10_000) revert Errors.InvalidParam();
+    function setLimit(Bucket b, uint16 maxBps) public onlyRole(GOVERNOR_ROLE) {
+        if (maxBps > 10_000) revert CustomErrors.InvalidParam();
         limits[b] = Limits({maxBps: maxBps});
         emit LimitsSet(b, maxBps);
     }
 
-    function attest(uint256 total, uint256[5] calldata byBucket, uint64 ts, bytes32 proofCid)
-        external onlyRole(ATTESTOR_ROLE)
+    function attest(uint256 total, uint256[5] calldata byBucket, uint64 ts, bytes32 proofCid) public onlyRole(ATTESTOR_ROLE)
     {
-        if (total == 0) revert Errors.InvalidParam();
+        if (total == 0) revert CustomErrors.InvalidParam();
         uint256 sum;
         for (uint256 i; i < 5; ++i) sum += byBucket[i];
-        if (sum != total) revert Errors.InvalidParam();
+        if (sum != total) revert CustomErrors.InvalidParam();
 
         for (uint256 i; i < 5; ++i) {
             uint16 cap = limits[Bucket(i)].maxBps;
             if (cap == 0) continue;
             uint256 bps = (byBucket[i] * 10_000) / total;
-            if (bps > cap) revert Errors.ConcentrationBreach();
+            if (bps > cap) revert CustomErrors.ConcentrationBreach();
         }
         last = Snapshot({total: total, byBucket: byBucket, ts: ts, proofCid: proofCid});
         emit ReservesAttested(total, byBucket, ts, proofCid);
     }
 
-    function coverageBps(uint256 liabilities) external view returns (uint16 cov) {
+    function coverageBps(uint256 liabilities) public view returns (uint16 cov) {
         if (liabilities == 0) return type(uint16).max;
         uint256 c = (last.total * 10_000) / liabilities;
         cov = c > type(uint16).max ? type(uint16).max : uint16(c);

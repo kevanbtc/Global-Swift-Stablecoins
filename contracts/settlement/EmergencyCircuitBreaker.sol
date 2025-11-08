@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {Pausable} from "@openzeppelin/contracts/security/Pausable.sol";
+import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 
 /**
  * @title EmergencyCircuitBreaker
@@ -51,7 +51,7 @@ contract EmergencyCircuitBreaker is Ownable, Pausable {
         uint256 triggerThreshold,
         uint256 recoveryThreshold,
         uint256 cooldownPeriod
-    ) external onlyOwner {
+    ) public onlyOwner {
         circuitBreakers[breakerId] = CircuitBreaker({
             isActive: false,
             triggerThreshold: triggerThreshold,
@@ -70,7 +70,7 @@ contract EmergencyCircuitBreaker is Ownable, Pausable {
         uint256 price,
         uint256 volume24h,
         uint256 volatilityIndex
-    ) external {
+    ) public {
         require(authorizedOracles[msg.sender], "Unauthorized oracle");
 
         marketData[asset] = MarketData({
@@ -89,7 +89,7 @@ contract EmergencyCircuitBreaker is Ownable, Pausable {
     /**
      * @notice Check if settlement is allowed for given assets
      */
-    function isSettlementAllowed(address[] memory assets) external view returns (bool) {
+    function isSettlementAllowed(address[] memory assets) public view returns (bool) {
         for (uint i = 0; i < assets.length; i++) {
             if (_isAssetCircuitBroken(assets[i])) {
                 return false;
@@ -101,7 +101,7 @@ contract EmergencyCircuitBreaker is Ownable, Pausable {
     /**
      * @notice Manually trigger circuit breaker (governance only)
      */
-    function triggerCircuitBreaker(bytes32 breakerId) external onlyOwner {
+    function triggerCircuitBreaker(bytes32 breakerId) public onlyOwner {
         CircuitBreaker storage cb = circuitBreakers[breakerId];
         require(!cb.isActive, "Already active");
 
@@ -115,7 +115,7 @@ contract EmergencyCircuitBreaker is Ownable, Pausable {
     /**
      * @notice Reset circuit breaker if conditions met
      */
-    function resetCircuitBreaker(bytes32 breakerId) external onlyOwner {
+    function resetCircuitBreaker(bytes32 breakerId) public onlyOwner {
         CircuitBreaker storage cb = circuitBreakers[breakerId];
         require(cb.isActive, "Not active");
         require(block.timestamp >= cb.lastTriggered + cb.cooldownPeriod, "Cooldown active");
@@ -131,7 +131,7 @@ contract EmergencyCircuitBreaker is Ownable, Pausable {
     /**
      * @notice Authorize oracle for market data updates
      */
-    function authorizeOracle(address oracle, bool authorized) external onlyOwner {
+    function authorizeOracle(address oracle, bool authorized) public onlyOwner {
         authorizedOracles[oracle] = authorized;
     }
 

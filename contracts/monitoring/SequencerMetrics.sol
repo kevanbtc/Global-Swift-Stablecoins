@@ -2,7 +2,7 @@
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
 import "../common/Types.sol";
 import "../common/Roles.sol";
 import "../common/Errors.sol";
@@ -106,9 +106,7 @@ contract SequencerMetrics is AccessControl, Pausable {
         uint256 processingTime,
         uint256 confirmationTime,
         uint256 executionTime
-    )
-        external
-        onlyRole(METRICS_ROLE)
+    ) public onlyRole(METRICS_ROLE)
         whenNotPaused
     {
         BatchMetrics memory metrics = BatchMetrics({
@@ -149,9 +147,7 @@ contract SequencerMetrics is AccessControl, Pausable {
         uint256 txCount,
         uint256 gasUsed,
         uint256 successCount
-    )
-        external
-        onlyRole(METRICS_ROLE)
+    ) public onlyRole(METRICS_ROLE)
         whenNotPaused
     {
         SequencerMetric storage metrics = sequencerMetrics[sequencer];
@@ -254,9 +250,7 @@ contract SequencerMetrics is AccessControl, Pausable {
      * @notice Get metrics for a specific batch
      * @param batchId Batch identifier
      */
-    function getBatchMetrics(uint256 batchId)
-        external
-        view
+    function getBatchMetrics(uint256 batchId) public view
         returns (BatchMetrics memory)
     {
         return batchMetrics[batchId];
@@ -266,9 +260,7 @@ contract SequencerMetrics is AccessControl, Pausable {
      * @notice Get metrics for a specific sequencer
      * @param sequencer Sequencer address
      */
-    function getSequencerMetrics(address sequencer)
-        external
-        view
+    function getSequencerMetrics(address sequencer) public view
         returns (SequencerMetric memory)
     {
         return sequencerMetrics[sequencer];
@@ -278,9 +270,7 @@ contract SequencerMetrics is AccessControl, Pausable {
      * @notice Get metrics for a specific hour
      * @param hour Hour timestamp (in hours)
      */
-    function getHourlyMetrics(uint256 hour)
-        external
-        view
+    function getHourlyMetrics(uint256 hour) public view
         returns (TimeWindowMetrics memory)
     {
         return hourlyMetrics[hour];
@@ -290,9 +280,7 @@ contract SequencerMetrics is AccessControl, Pausable {
      * @notice Get metrics for a specific day
      * @param day Day timestamp (in days)
      */
-    function getDailyMetrics(uint256 day)
-        external
-        view
+    function getDailyMetrics(uint256 day) public view
         returns (TimeWindowMetrics memory)
     {
         return dailyMetrics[day];
@@ -301,9 +289,7 @@ contract SequencerMetrics is AccessControl, Pausable {
     /**
      * @notice Get system-wide performance indicators
      */
-    function getSystemMetrics()
-        external
-        view
+    function getSystemMetrics() public view
         returns (
             uint256 _totalBatches,
             uint256 _totalTransactions,
@@ -325,11 +311,11 @@ contract SequencerMetrics is AccessControl, Pausable {
     }
 
     // Admin functions
-    function pause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _pause();
     }
 
-    function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _unpause();
     }
 }

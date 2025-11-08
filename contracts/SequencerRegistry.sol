@@ -2,11 +2,11 @@
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
-import "../common/Types.sol";
-import "../common/Roles.sol";
-import "../common/Errors.sol";
+import "./common/Types.sol";
+import "./common/Roles.sol";
+import "./common/Errors.sol";
 
 /**
  * @title SequencerRegistry
@@ -79,9 +79,7 @@ contract SequencerRegistry is AccessControl, Pausable {
      * @param nodeAddress Address of the sequencer node
      * @param endpoint Node endpoint URL
      */
-    function registerNode(address nodeAddress, string memory endpoint)
-        external
-        payable
+    function registerNode(address nodeAddress, string memory endpoint) public payable
         whenNotPaused
     {
         require(msg.value >= MIN_STAKE, "Insufficient stake");
@@ -108,9 +106,7 @@ contract SequencerRegistry is AccessControl, Pausable {
      * @notice Deregister a sequencer node
      * @param nodeAddress Address of the sequencer node
      */
-    function deregisterNode(address nodeAddress)
-        external
-        whenNotPaused
+    function deregisterNode(address nodeAddress) public whenNotPaused
     {
         SequencerNode storage node = nodes[nodeAddress];
         require(node.registeredAt > 0, "Node not registered");
@@ -143,9 +139,7 @@ contract SequencerRegistry is AccessControl, Pausable {
      * @notice Increase stake for a node
      * @param nodeAddress Address of the sequencer node
      */
-    function increaseStake(address nodeAddress)
-        external
-        payable
+    function increaseStake(address nodeAddress) public payable
         whenNotPaused
     {
         SequencerNode storage node = nodes[nodeAddress];
@@ -163,9 +157,7 @@ contract SequencerRegistry is AccessControl, Pausable {
      * @param nodeAddress Address of the sequencer node
      * @param amount Amount to decrease
      */
-    function decreaseStake(address nodeAddress, uint256 amount)
-        external
-        whenNotPaused
+    function decreaseStake(address nodeAddress, uint256 amount) public whenNotPaused
     {
         SequencerNode storage node = nodes[nodeAddress];
         require(node.registeredAt > 0, "Node not registered");
@@ -184,9 +176,7 @@ contract SequencerRegistry is AccessControl, Pausable {
      * @notice Send heartbeat for a node
      * @param nodeAddress Address of the sequencer node
      */
-    function sendHeartbeat(address nodeAddress)
-        external
-        whenNotPaused
+    function sendHeartbeat(address nodeAddress) public whenNotPaused
     {
         SequencerNode storage node = nodes[nodeAddress];
         require(node.registeredAt > 0, "Node not registered");
@@ -205,9 +195,7 @@ contract SequencerRegistry is AccessControl, Pausable {
      * @param nodeAddress Address of the sequencer node
      * @param active New active status
      */
-    function updateNodeStatus(address nodeAddress, bool active)
-        external
-        onlyRole(ADMIN_ROLE)
+    function updateNodeStatus(address nodeAddress, bool active) public onlyRole(ADMIN_ROLE)
         whenNotPaused
     {
         SequencerNode storage node = nodes[nodeAddress];
@@ -236,9 +224,7 @@ contract SequencerRegistry is AccessControl, Pausable {
      * @notice Get node details
      * @param nodeAddress Address of the sequencer node
      */
-    function getNode(address nodeAddress)
-        external
-        view
+    function getNode(address nodeAddress) public view
         returns (
             address owner,
             string memory endpoint,
@@ -264,9 +250,7 @@ contract SequencerRegistry is AccessControl, Pausable {
     /**
      * @notice Get all active nodes
      */
-    function getActiveNodes()
-        external
-        view
+    function getActiveNodes() public view
         returns (address[] memory)
     {
         return activeNodes;
@@ -276,9 +260,7 @@ contract SequencerRegistry is AccessControl, Pausable {
      * @notice Check if a node is healthy
      * @param nodeAddress Address of the sequencer node
      */
-    function isNodeHealthy(address nodeAddress)
-        external
-        view
+    function isNodeHealthy(address nodeAddress) public view
         returns (bool)
     {
         SequencerNode storage node = nodes[nodeAddress];
@@ -290,11 +272,11 @@ contract SequencerRegistry is AccessControl, Pausable {
     }
 
     // Admin functions
-    function pause() external onlyRole(ADMIN_ROLE) {
+    function pause() public onlyRole(ADMIN_ROLE) {
         _pause();
     }
 
-    function unpause() external onlyRole(ADMIN_ROLE) {
+    function unpause() public onlyRole(ADMIN_ROLE) {
         _unpause();
     }
 }
