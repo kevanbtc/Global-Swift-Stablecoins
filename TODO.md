@@ -1,52 +1,30 @@
-# Unykorn L1 Testnet Deployment Plan
+# Compilation Fixes and Repairs for Unykorn Contracts
 
-## Phase 1: Chain Infrastructure Setup
-- [x] Verify Besu configuration (besu-config.toml, genesis.json)
-- [x] Start Besu QBFT chain with 2 validators
-- [x] Verify chain is running (RPC, WebSocket, metrics)
-- [x] Confirm QBFT consensus is operational
+## Current Status
+- Compilation failing with syntax errors in LifeLineOrchestrator.sol and UniversalDeployer.sol
+- OpenZeppelin dependencies partially installed but remappings may need adjustment
+- Multiple contracts need fixes for imports, implementations, and syntax
 
-## Phase 2: Core Infrastructure Deployment
-- [ ] Deploy compliance framework (KYC, Sanctions, ComplianceModule)
-- [ ] Deploy ISO20022 bridge
-- [ ] Deploy settlement rails (ERC20, Native, External)
-- [ ] Deploy settlement hub (SettlementHub2PC)
-- [ ] Deploy rail registry
+## Plan
 
-## Phase 3: Stablecoin Infrastructure Deployment
-- [ ] Deploy stablecoin rails (CCIP, CCTP, PoR Guard)
-- [ ] Deploy stablecoin registry and router
-- [ ] Deploy stablecoin-aware ERC20 rail
-- [ ] Configure rail routing
+### 1. Fix Syntax Errors in Core Contracts
+- [ ] Fix LifeLineOrchestrator.sol: Remove invalid "memory" keyword from mapping declaration
+- [ ] Fix UniversalDeployer.sol: Correct invalid "type(bytes).memory" usage
 
-## Phase 4: Production Core Deployment
-- [ ] Deploy compliance registry (upgradeable)
-- [ ] Deploy court order registry
-- [ ] Deploy policy engine
-- [ ] Deploy institutional EMT token
-- [ ] Deploy reserve manager
-- [ ] Deploy NAV event oracle
-- [ ] Deploy Merkle stream distributor
+### 2. Install Missing Dependencies
+- [ ] Properly install OpenZeppelin contracts (resolve existing directory conflict)
+- [ ] Ensure Chainlink contracts are accessible via remappings
 
-## Phase 5: Verification and Testing
-- [ ] Verify all contracts deployed successfully
-- [ ] Test basic RPC functionality
-- [ ] Test WebSocket connections
-- [ ] Validate contract interactions
-- [ ] Test settlement rails
-- [ ] Verify compliance framework
-- [ ] Test stablecoin infrastructure
+### 3. Fix Import and Implementation Issues
+- [ ] Add missing imports for Types.sol, Roles.sol, Errors.sol in affected contracts
+- [ ] Implement missing IRail interfaces in settlement contracts
+- [ ] Fix Ownable constructor issues
+- [ ] Resolve parameter conflicts in oracle contracts
 
-## Phase 6: Advanced Features Testing
-- [ ] Test cross-chain capabilities
-- [ ] Validate ISO20022 compliance
-- [ ] Test oracle functionality
-- [ ] Verify governance mechanisms
-- [ ] Test emergency procedures
-- [ ] Validate security features
+### 4. Test Compilation
+- [ ] Run forge build to verify all fixes
+- [ ] Address any remaining errors iteratively
 
-## Phase 7: Final Validation
-- [ ] Confirm all major features operational
-- [ ] Document deployed contract addresses
-- [ ] Update deployment status documentation
-- [ ] Prepare for mainnet deployment
+### 5. Deployment Preparation
+- [ ] Ensure all contracts can be compiled successfully
+- [ ] Verify contract interactions and dependencies
