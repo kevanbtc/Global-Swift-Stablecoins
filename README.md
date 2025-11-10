@@ -372,6 +372,15 @@ graph TD
 - 🧮 **Multilateral Netting**: Net settlement across multiple parties
 - ⏱️ **Milestone Escrow**: Conditional release based on milestones
 
+**Supported External Stablecoins:**
+- 💵 **USDC** (Circle) - Ethereum, multi-chain
+- 💵 **USDT** (Tether) - Ethereum, multi-chain
+- 💵 **RLUSD** (Ripple USD) - XRPL native + Ethereum ERC-20
+  - XRPL Issuer: `rMxCKbEDwqr76QuheSUMdEGf4B9xJ8m5De`
+  - Ethereum: `0x8292Bb45bf1Ee4d140127049757C2E0fF06317eD`
+  - Classification: TIER1_STABLE (90% LTV, 5% haircut)
+  - [📘 RLUSD Integration Guide](./docs/RLUSD-INTEGRATION-GUIDE.md)
+
 ### ⚖️ Compliance Framework
 
 ```mermaid

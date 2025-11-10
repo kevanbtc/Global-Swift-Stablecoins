@@ -59,7 +59,8 @@ contract GlobalStablecoinRegistry is Ownable, ReentrancyGuard {
         AUD_FRAMEWORK,      // AUD stablecoins
         CAD_FRAMEWORK,      // CAD stablecoins
         SGD_FRAMEWORK,      // SGD stablecoins
-        CHF_FRAMEWORK       // CHF stablecoins
+        CHF_FRAMEWORK,      // CHF stablecoins
+        RLUSD_FRAMEWORK     // Ripple USD
     }
 
     struct StablecoinProfile {

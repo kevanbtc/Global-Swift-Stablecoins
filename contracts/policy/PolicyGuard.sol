@@ -20,7 +20,7 @@ import {Roles} from "../common/Roles.sol";
  */
 contract PolicyGuard is Initializable, UUPSUpgradeable, PausableUpgradeable, AccessControlUpgradeable {
     // asset classes
-    enum AssetClass { CASH, TBILL, NOTE, BOND, ETF, MMF, RWA, OTHER }
+    enum AssetClass { CASH, TBILL, NOTE, BOND, ETF, MMF, RWA, OTHER, EXTERNAL_STABLECOIN }
 
     struct ClassLimits {
         uint16 maxBp;            // max % in basis points, e.g., 9000 = 90%

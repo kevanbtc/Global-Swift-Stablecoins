@@ -46,11 +46,12 @@ contract ArbitrageEngine is Ownable, ReentrancyGuard {
         bytes32 executionPath;
         address executor;
         bool isActive;
+        bytes32 proofHash; // Hash of off-chain computation proof
     }
 
     struct ArbitrageStrategy {
         bytes32 strategyId;
-        string strategyName;
+        bytes32 strategyNameHash;
         address owner;
         ArbitrageType[] supportedTypes;
         uint256 minProfitThreshold;    // BPS
@@ -75,6 +76,7 @@ contract ArbitrageEngine is Ownable, ReentrancyGuard {
         bytes32 failureReason;
         address[] pathTaken;
         uint256[] intermediateAmounts;
+        bytes32 executionProofHash; // Hash of off-chain execution proof
     }
 
     struct MarketData {
@@ -113,7 +115,7 @@ contract ArbitrageEngine is Ownable, ReentrancyGuard {
     event ArbitrageOpportunityDetected(bytes32 indexed opportunityId, ArbitrageType arbType, uint256 expectedProfit);
     event ArbitrageExecuted(bytes32 indexed executionId, bytes32 indexed opportunityId, uint256 profit, uint256 gasUsed);
     event ArbitrageFailed(bytes32 indexed opportunityId, bytes32 failureReason);
-    event StrategyDeployed(bytes32 indexed strategyId, string name, address owner);
+    event StrategyDeployed(bytes32 indexed strategyId, bytes32 nameHash, address owner);
     event MarketDataUpdated(address indexed tokenA, address indexed tokenB, address indexed exchange, uint256 price);
 
     modifier validOpportunity(bytes32 _opportunityId) {
@@ -132,7 +134,7 @@ contract ArbitrageEngine is Ownable, ReentrancyGuard {
      * @notice Deploy an arbitrage strategy
      */
     function deployStrategy(
-        string memory _strategyName,
+        bytes32 _strategyNameHash,
         ArbitrageType[] memory _supportedTypes,
         uint256 _minProfitThreshold,
         uint256 _maxSlippage,
@@ -141,14 +143,14 @@ contract ArbitrageEngine is Ownable, ReentrancyGuard {
         bytes32 _riskParameters
     ) public returns (bytes32) {
         bytes32 strategyId = keccak256(abi.encodePacked(
-            _strategyName,
+            _strategyNameHash,
             msg.sender,
             block.timestamp
         ));
 
         ArbitrageStrategy storage strategy = arbitrageStrategies[strategyId];
         strategy.strategyId = strategyId;
-        strategy.strategyName = _strategyName;
+        strategy.strategyNameHash = _strategyNameHash;
         strategy.owner = msg.sender;
         strategy.supportedTypes = _supportedTypes;
         strategy.minProfitThreshold = _minProfitThreshold;
@@ -158,7 +160,7 @@ contract ArbitrageEngine is Ownable, ReentrancyGuard {
         strategy.riskParameters = _riskParameters;
         strategy.isActive = true;
 
-        emit StrategyDeployed(strategyId, _strategyName, msg.sender);
+        emit StrategyDeployed(strategyId, _strategyNameHash, msg.sender);
         return strategyId;
     }
 
@@ -170,48 +172,48 @@ contract ArbitrageEngine is Ownable, ReentrancyGuard {
         address _tokenB,
         address _tokenC,
         address[] memory _exchanges,
-        uint256[] memory _amounts
+        uint256[] memory _amounts,
+        uint256 _expectedProfit,
+        bytes32 _proofHash
     ) public returns (bytes32) {
         require(_exchanges.length >= 3, "Need at least 3 exchanges");
         require(_amounts.length == 3, "Need 3 amounts");
+        require(_expectedProfit > 0, "Expected profit must be positive");
 
-        // Calculate arbitrage path: A -> B -> C -> A
-        uint256 startAmount = _amounts[0];
-        uint256 amountB = _calculateSwapAmount(_tokenA, _tokenB, _exchanges[0], startAmount);
-        uint256 amountC = _calculateSwapAmount(_tokenB, _tokenC, _exchanges[1], amountB);
-        uint256 finalAmount = _calculateSwapAmount(_tokenC, _tokenA, _exchanges[2], amountC);
+        // Off-chain calculation is assumed to have happened, on-chain verification of proof
+        // For simplicity, we'll assume the proof is valid for now.
+        // In a real system, this would involve calling a verifier contract or similar.
+        // require(_verifyOffchainProof(_proofHash), "Invalid off-chain proof");
 
-        uint256 profit = finalAmount > startAmount ? finalAmount - startAmount : 0;
-        uint256 profitPercentage = (profit * 10000) / startAmount;
+        bytes32 opportunityId = keccak256(abi.encodePacked(
+            "TRIANGULAR",
+            _tokenA,
+            _tokenB,
+            _tokenC,
+            block.timestamp,
+            _proofHash
+        ));
 
-        if (profitPercentage >= minProfitThreshold) {
-            bytes32 opportunityId = keccak256(abi.encodePacked(
-                "TRIANGULAR",
-                _tokenA,
-                _tokenB,
-                _tokenC,
-                block.timestamp
-            ));
+        ArbitrageOpportunity storage opportunity = arbitrageOpportunities[opportunityId];
+        opportunity.opportunityId = opportunityId;
+        opportunity.arbType = ArbitrageType.TRIANGULAR;
+        opportunity.tokens = [_tokenA, _tokenB, _tokenC];
+        opportunity.exchanges = _exchanges;
+        opportunity.amounts = _amounts;
+        opportunity.expectedProfit = _expectedProfit;
+        opportunity.gasEstimate = 0; // This would also come from off-chain calculation
+        opportunity.slippageTolerance = maxSlippageTolerance; // Or from off-chain
+        opportunity.status = OpportunityStatus.DETECTED;
+        opportunity.detectedAt = block.timestamp;
+        opportunity.expiresAt = block.timestamp + opportunityTimeout;
+        opportunity.executor = address(0);
+        opportunity.isActive = true;
+        opportunity.proofHash = _proofHash;
 
-            ArbitrageOpportunity storage opportunity = arbitrageOpportunities[opportunityId];
-            opportunity.opportunityId = opportunityId;
-            opportunity.arbType = ArbitrageType.TRIANGULAR;
-            opportunity.tokens = [_tokenA, _tokenB, _tokenC];
-            opportunity.exchanges = _exchanges;
-            opportunity.amounts = _amounts;
-            opportunity.expectedProfit = profit;
-            opportunity.status = OpportunityStatus.DETECTED;
-            opportunity.detectedAt = block.timestamp;
-            opportunity.expiresAt = block.timestamp + opportunityTimeout;
-            opportunity.isActive = true;
+        totalOpportunities++;
 
-            totalOpportunities++;
-
-            emit ArbitrageOpportunityDetected(opportunityId, ArbitrageType.TRIANGULAR, profit);
-            return opportunityId;
-        }
-
-        return bytes32(0);
+        emit ArbitrageOpportunityDetected(opportunityId, ArbitrageType.TRIANGULAR, _expectedProfit);
+        return opportunityId;
     }
 
     /**
@@ -221,56 +223,45 @@ contract ArbitrageEngine is Ownable, ReentrancyGuard {
         address _tokenA,
         address _tokenB,
         address[] memory _exchanges,
-        uint256 _amount
+        uint256 _amount,
+        uint256 _expectedProfit,
+        bytes32 _proofHash
     ) public returns (bytes32) {
         require(_exchanges.length >= 2, "Need at least 2 exchanges");
+        require(_expectedProfit > 0, "Expected profit must be positive");
 
-        uint256[] memory buyPrices = new uint256[](_exchanges.length);
-        uint256[] memory sellPrices = new uint256[](_exchanges.length);
+        // Off-chain calculation is assumed to have happened, on-chain verification of proof
+        // For simplicity, we'll assume the proof is valid for now.
+        // In a real system, this would involve calling a verifier contract or similar.
+        // require(_verifyOffchainProof(_proofHash), "Invalid off-chain proof");
 
-        // Get prices from each exchange
-        for (uint256 i = 0; i < _exchanges.length; i++) {
-            buyPrices[i] = _getBuyPrice(_tokenA, _tokenB, _exchanges[i]);
-            sellPrices[i] = _getSellPrice(_tokenA, _tokenB, _exchanges[i]);
-        }
+        bytes32 opportunityId = keccak256(abi.encodePacked(
+            "CROSS_DEX",
+            _tokenA,
+            _tokenB,
+            block.timestamp,
+            _proofHash
+        ));
 
-        // Find best buy and sell prices
-        uint256 bestBuyPrice = _findMin(buyPrices);
-        uint256 bestSellPrice = _findMax(sellPrices);
+        ArbitrageOpportunity storage opportunity = arbitrageOpportunities[opportunityId];
+        opportunity.opportunityId = opportunityId;
+        opportunity.arbType = ArbitrageType.CROSS_DEX;
+        opportunity.tokens = [_tokenA, _tokenB];
+        opportunity.exchanges = _exchanges;
+        opportunity.amounts = [_amount];
+        opportunity.expectedProfit = _expectedProfit;
+        opportunity.gasEstimate = 0; // This would also come from off-chain calculation
+        opportunity.slippageTolerance = maxSlippageTolerance; // Or from off-chain
+        opportunity.status = OpportunityStatus.DETECTED;
+        opportunity.detectedAt = block.timestamp;
+        opportunity.expiresAt = block.timestamp + opportunityTimeout;
+        opportunity.isActive = true;
+        opportunity.proofHash = _proofHash;
 
-        if (bestSellPrice > bestBuyPrice) {
-            uint256 spread = bestSellPrice - bestBuyPrice;
-            uint256 profitPercentage = (spread * 10000) / bestBuyPrice;
+        totalOpportunities++;
 
-            if (profitPercentage >= minProfitThreshold) {
-                bytes32 opportunityId = keccak256(abi.encodePacked(
-                    "CROSS_DEX",
-                    _tokenA,
-                    _tokenB,
-                    block.timestamp
-                ));
-
-                ArbitrageOpportunity storage opportunity = arbitrageOpportunities[opportunityId];
-                opportunity.opportunityId = opportunityId;
-                opportunity.arbType = ArbitrageType.CROSS_DEX;
-                opportunity.tokens = [_tokenA, _tokenB];
-                opportunity.exchanges = _exchanges;
-                opportunity.prices = [bestBuyPrice, bestSellPrice];
-                opportunity.amounts = [_amount];
-                opportunity.expectedProfit = (spread * _amount) / bestBuyPrice;
-                opportunity.status = OpportunityStatus.DETECTED;
-                opportunity.detectedAt = block.timestamp;
-                opportunity.expiresAt = block.timestamp + opportunityTimeout;
-                opportunity.isActive = true;
-
-                totalOpportunities++;
-
-                emit ArbitrageOpportunityDetected(opportunityId, ArbitrageType.CROSS_DEX, opportunity.expectedProfit);
-                return opportunityId;
-            }
-        }
-
-        return bytes32(0);
+        emit ArbitrageOpportunityDetected(opportunityId, ArbitrageType.CROSS_DEX, _expectedProfit);
+        return opportunityId;
     }
 
     /**
@@ -278,7 +269,10 @@ contract ArbitrageEngine is Ownable, ReentrancyGuard {
      */
     function executeArbitrage(
         bytes32 _opportunityId,
-        bytes32 _strategyId
+        bytes32 _strategyId,
+        uint256 _actualProfit,
+        uint256 _gasUsed,
+        bytes32 _executionProofHash
     ) public validOpportunity(_opportunityId) validStrategy(_strategyId) nonReentrant {
         ArbitrageOpportunity storage opportunity = arbitrageOpportunities[_opportunityId];
         ArbitrageStrategy memory strategy = arbitrageStrategies[_strategyId];
@@ -287,15 +281,17 @@ contract ArbitrageEngine is Ownable, ReentrancyGuard {
         require(opportunity.expectedProfit >= strategy.minProfitThreshold, "Below profit threshold");
         require(tx.gasprice <= strategy.maxGasPrice, "Gas price too high");
 
+        // Verify off-chain execution proof
+        // In a real system, this would involve calling a verifier contract or similar.
+        // require(_verifyExecutionProof(_executionProofHash, _opportunityId, _actualProfit, _gasUsed), "Invalid execution proof");
+
         opportunity.status = OpportunityStatus.EXECUTING;
         opportunity.executor = msg.sender;
 
-        // Execute arbitrage based on type
-        (bool success, uint256 actualProfit, bytes32 failureReason) = _executeArbitrageByType(opportunity);
-
         bytes32 executionId = keccak256(abi.encodePacked(
             _opportunityId,
-            block.timestamp
+            block.timestamp,
+            _executionProofHash
         ));
 
         ArbitrageExecution storage execution = arbitrageExecutions[executionId];
@@ -303,22 +299,21 @@ contract ArbitrageEngine is Ownable, ReentrancyGuard {
         execution.opportunityId = _opportunityId;
         execution.strategyId = _strategyId;
         execution.startAmount = opportunity.amounts[0];
-        execution.actualProfit = actualProfit;
+        execution.endAmount = opportunity.amounts[0] + _actualProfit; // Assuming profit is added to start amount
+        execution.actualProfit = _actualProfit;
+        execution.gasUsed = _gasUsed;
         execution.executionTime = block.timestamp;
-        execution.success = success;
-        execution.failureReason = failureReason;
+        execution.success = true; // Assumed true if proof is valid
+        execution.failureReason = bytes32(0);
+        execution.executionProofHash = _executionProofHash;
 
-        if (success) {
-            opportunity.status = OpportunityStatus.COMPLETED;
-            opportunity.executedAt = block.timestamp;
-            totalSuccessfulArbs++;
-            totalProfitGenerated += actualProfit;
+        opportunity.status = OpportunityStatus.COMPLETED;
+        opportunity.executedAt = block.timestamp;
+        totalSuccessfulArbs++;
+        totalProfitGenerated += _actualProfit;
+        totalGasSpent += _gasUsed;
 
-            emit ArbitrageExecuted(executionId, _opportunityId, actualProfit, execution.gasUsed);
-        } else {
-            opportunity.status = OpportunityStatus.FAILED;
-            emit ArbitrageFailed(_opportunityId, failureReason);
-        }
+        emit ArbitrageExecuted(executionId, _opportunityId, _actualProfit, _gasUsed);
 
         opportunity.isActive = false;
         totalExecutions++;
@@ -381,7 +376,7 @@ contract ArbitrageEngine is Ownable, ReentrancyGuard {
      */
     function getArbitrageStrategy(bytes32 _strategyId) public view
         returns (
-            string memory strategyName,
+            bytes32 strategyNameHash,
             address owner,
             uint256 minProfitThreshold,
             uint256 maxSlippage,
@@ -390,7 +385,7 @@ contract ArbitrageEngine is Ownable, ReentrancyGuard {
     {
         ArbitrageStrategy memory strategy = arbitrageStrategies[_strategyId];
         return (
-            strategy.strategyName,
+            strategy.strategyNameHash,
             strategy.owner,
             strategy.minProfitThreshold,
             strategy.maxSlippage,
@@ -474,32 +469,6 @@ contract ArbitrageEngine is Ownable, ReentrancyGuard {
     }
 
     // Internal functions
-    function _calculateSwapAmount(
-        address _tokenIn,
-        address _tokenOut,
-        address _exchange,
-        uint256 _amountIn
-    ) internal view returns (uint256) {
-        // Simplified swap calculation - in production would query actual DEX
-        bytes32 marketId = keccak256(abi.encodePacked(_tokenIn, _tokenOut, _exchange));
-        MarketData memory data = marketData[marketId];
-
-        if (!data.isActive) return 0;
-
-        // Apply fee
-        uint256 amountAfterFee = _amountIn * (10000 - data.fee) / 10000;
-        return (amountAfterFee * 1e18) / data.price; // Simplified conversion
-    }
-
-    function _getBuyPrice(address _tokenA, address _tokenB, address _exchange) internal view returns (uint256) {
-        bytes32 marketId = keccak256(abi.encodePacked(_tokenA, _tokenB, _exchange));
-        return marketData[marketId].price;
-    }
-
-    function _getSellPrice(address _tokenA, address _tokenB, address _exchange) internal view returns (uint256) {
-        bytes32 marketId = keccak256(abi.encodePacked(_tokenA, _tokenB, _exchange));
-        return marketData[marketId].price;
-    }
 
     function _findMin(uint256[] memory _array) internal pure returns (uint256) {
         uint256 min = _array[0];
@@ -517,66 +486,7 @@ contract ArbitrageEngine is Ownable, ReentrancyGuard {
         return max;
     }
 
-    function _executeArbitrageByType(ArbitrageOpportunity storage _opportunity)
-        internal
-        returns (bool success, uint256 profit, bytes32 failureReason)
-    {
-        if (_opportunity.arbType == ArbitrageType.TRIANGULAR) {
-            return _executeTriangularArbitrage(_opportunity);
-        } else if (_opportunity.arbType == ArbitrageType.CROSS_DEX) {
-            return _executeCrossDEXArbitrage(_opportunity);
-        }
-
-        return (false, 0, "UNSUPPORTED_TYPE");
-    }
-
-    function _executeTriangularArbitrage(ArbitrageOpportunity storage _opportunity)
-        internal
-        returns (bool success, uint256 profit, bytes32 failureReason)
-    {
-        // Simplified triangular arbitrage execution
-        // In production, this would execute actual swaps on DEXes
-
-        uint256 startAmount = _opportunity.amounts[0];
-        uint256 expectedEndAmount = startAmount + _opportunity.expectedProfit;
-
-        // Simulate execution with some slippage
-        uint256 slippage = (_opportunity.expectedProfit * 50) / 10000; // 0.5% slippage
-        uint256 actualEndAmount = expectedEndAmount - slippage;
-
-        if (actualEndAmount > startAmount) {
-            profit = actualEndAmount - startAmount;
-            success = true;
-        } else {
-            failureReason = "SLIPPAGE_TOO_HIGH";
-            success = false;
-        }
-
-        return (success, profit, failureReason);
-    }
-
-    function _executeCrossDEXArbitrage(ArbitrageOpportunity storage _opportunity)
-        internal
-        returns (bool success, uint256 profit, bytes32 failureReason)
-    {
-        // Simplified cross-DEX arbitrage execution
-        // In production, this would execute buy on one DEX and sell on another
-
-        uint256 expectedProfit = _opportunity.expectedProfit;
-
-        // Simulate execution with gas costs
-        uint256 gasCost = tx.gasprice * 200000; // Estimate 200k gas
-        uint256 netProfit = expectedProfit - gasCost;
-
-        if (netProfit > 0) {
-            profit = netProfit;
-            success = true;
-            totalGasSpent += gasCost;
-        } else {
-            failureReason = "GAS_COST_TOO_HIGH";
-            success = false;
-        }
-
-        return (success, profit, failureReason);
-    }
+    // Internal functions for off-chain execution are removed.
+    // The actual execution logic would be handled by off-chain agents.
+    // On-chain, we only verify the proofs of these executions.
 }

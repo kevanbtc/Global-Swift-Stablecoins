@@ -15,6 +15,8 @@ import {StablecoinAwareERC20Rail} from "../contracts/settlement/stable/Stablecoi
 import {CCTPExternalRail} from "../contracts/settlement/stable/CCTPExternalRail.sol";
 import {CCIPRail} from "../contracts/settlement/stable/CCIPRail.sol";
 import {StablecoinRouter} from "../contracts/settlement/stable/StablecoinRouter.sol";
+import {Types} from "../contracts/common/Types.sol";
+import {GlobalStablecoinRegistry} from "../contracts/stablecoins/GlobalStablecoinRegistry.sol";
 
 contract DeployStablecoinInfra is Script {
     // Example keys (keccak of readable labels)
@@ -66,13 +68,31 @@ contract DeployStablecoinInfra is Script {
         console2.log("NativeRail:", address(nativeRail));
         console2.log("ExternalRail:", address(extRail));
         console2.log("CCTPExternalRail:", address(cctpRail));
-    console2.log("CCIPRail:", address(ccipRail));
-    console2.log("GuardedERC20 key:");
-    console2.logBytes32(KEY_GUARDED);
+        console2.log("CCIPRail:", address(ccipRail));
+        console2.log("GuardedERC20 key:");
+        console2.logBytes32(KEY_GUARDED);
         console2.log("StablecoinRegistry:", address(scReg));
         console2.log("PoRGuard:", address(guard));
         console2.log("StablecoinRouter:", address(router));
 
+        // Register RLUSD
+        registerRlusd(scReg);
+
         vm.stopBroadcast();
+    }
+
+    function registerRlusd(StablecoinRegistry _scReg) internal {
+        // Register RLUSD in StablecoinRegistry
+        _scReg.setStablecoin(
+            0x8292Bb45bf1Ee4d140127049757C2E0fF06317eD, // RLUSD Ethereum mainnet proxy address
+            true, // supported
+            keccak256("RLUSD_RESERVE"), // reserveId
+            address(0), // por (external)
+            0, // minReserveRatioBps (external stablecoin)
+            KEY_EXT, // defaultRailKey (using ExternalRail)
+            bytes32(0), // cctpRailKey (not CCTP)
+            bytes32(0) // ccipRailKey (not CCIP)
+        );
+        console2.log("RLUSD registered in StablecoinRegistry.");
     }
 }

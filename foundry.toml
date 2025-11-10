@@ -2,7 +2,7 @@
 src = "contracts"
 test = "foundry/test"
 out = "foundry/out"
-libs = ["lib"]
+libs = ["lib", "node_modules"]
 evm_version = "paris"
 optimizer = true
 optimizer_runs = 500000

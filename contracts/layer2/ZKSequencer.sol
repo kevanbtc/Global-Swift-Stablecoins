@@ -36,8 +36,8 @@ contract ZKSequencer is AccessControl, Pausable {
         address to;
         uint256 amount;
         uint256 nonce;
-        bytes data;
-        bytes signature;
+        bytes32 dataHash;
+        bytes32 signatureHash;
     }
 
     struct VerifierConfig {
@@ -114,12 +114,14 @@ contract ZKSequencer is AccessControl, Pausable {
      * @notice Submit a new transaction for inclusion in the next batch
      * @param to Recipient address
      * @param amount Transaction amount
-     * @param data Additional transaction data
+     * @param _dataHash Hash of additional transaction data
+     * @param _signatureHash Hash of the transaction signature
      */
     function submitTransaction(
         address to,
         uint256 amount,
-        bytes calldata data
+        bytes32 _dataHash,
+        bytes32 _signatureHash
     ) public whenNotPaused
         returns (bytes32)
     {
@@ -130,10 +132,9 @@ contract ZKSequencer is AccessControl, Pausable {
             to,
             amount,
             nonce,
-            data
+            _dataHash,
+            _signatureHash
         ));
-        
-        bytes memory signature = msg.data[msg.data.length-65:];
         
         transactions[txHash] = ZKTransaction({
             txHash: txHash,
@@ -141,8 +142,8 @@ contract ZKSequencer is AccessControl, Pausable {
             to: to,
             amount: amount,
             nonce: nonce,
-            data: data,
-            signature: signature
+            dataHash: _dataHash,
+            signatureHash: _signatureHash
         });
         
         emit TransactionProcessed(txHash, msg.sender, to, amount);
@@ -327,10 +328,27 @@ contract ZKSequencer is AccessControl, Pausable {
      * @param txHash Transaction hash
      */
     function getTransaction(bytes32 txHash) public view
-        returns (ZKTransaction memory)
+        returns (
+            bytes32 txHash_,
+            address from,
+            address to,
+            uint256 amount,
+            uint256 nonce,
+            bytes32 dataHash,
+            bytes32 signatureHash
+        )
     {
-        require(transactions[txHash].nonce > 0, "Transaction not found");
-        return transactions[txHash];
+        ZKTransaction memory tx_ = transactions[txHash];
+        require(tx_.nonce > 0, "Transaction not found");
+        return (
+            tx_.txHash,
+            tx_.from,
+            tx_.to,
+            tx_.amount,
+            tx_.nonce,
+            tx_.dataHash,
+            tx_.signatureHash
+        );
     }
 
     // Admin functions

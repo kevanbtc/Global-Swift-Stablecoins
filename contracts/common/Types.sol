@@ -39,4 +39,12 @@ library Types {
         SWIFTStatus status;
         uint256 timestamp;
     }
+
+    enum AssetId {
+        USDC,
+        USDT,
+        TGUSD,
+        FTHUSD,
+        RLUSD
+    }
 }

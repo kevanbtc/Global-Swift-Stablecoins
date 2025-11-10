@@ -1,0 +1,29 @@
+{
+  "RLUSD": {
+    "symbol": "RLUSD",
+    "displayName": "Ripple USD",
+    "class": "EXTERNAL_STABLECOIN",
+    "decimals": 18,
+    "networks": {
+      "ethereum-mainnet": {
+        "type": "ERC20",
+        "proxyAddress": "0x8292Bb45bf1Ee4d140127049757C2E0fF06317eD"
+      },
+      "xrpl-mainnet": {
+        "type": "XRPL_ISSUED",
+        "currency": "RLUSD",
+        "issuer": "rMxCKbEDwqr76QuheSUMdEGf4B9xJ8m5De"
+      },
+      "xrpl-testnet": {
+        "type": "XRPL_ISSUED",
+        "currency": "RLUSD",
+        "issuer": "rQhWct2fv4Vc4KRjRgMrxa8xPN9Zx9iLKV"
+      }
+    },
+    "risk": {
+      "ltv": 0.9,
+      "haircut": 0.05,
+      "category": "TIER1_STABLE"
+    }
+  }
+}
