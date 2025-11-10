@@ -20,11 +20,11 @@ contract StablecoinRouter {
 
     constructor(address _admin, address _registry){ require(_admin!=address(0) && _registry!=address(0), "SCR: 0"); admin=_admin; registry = RailRegistry(_registry); }
 
-    function transferAdmin(address to) external onlyAdmin { require(to!=address(0), "SCR: 0"); emit AdminTransferred(admin,to); admin=to; }
-    function setDefaultRail(address token, bytes32 railKey) external onlyAdmin { defaultRailKey[token]=railKey; emit DefaultRailSet(token, railKey); }
+    function transferAdmin(address to) public onlyAdmin { require(to!=address(0), "SCR: 0"); emit AdminTransferred(admin,to); admin=to; }
+    function setDefaultRail(address token, bytes32 railKey) public onlyAdmin { defaultRailKey[token]=railKey; emit DefaultRailSet(token, railKey); }
 
     /// @notice Convenience method to prepare a single-leg transfer via the configured rail for the token
-    function routeAndPrepare(IRail.Transfer calldata t) external payable returns (bytes32 tid){
+    function routeAndPrepare(IRail.Transfer calldata t) public payable returns (bytes32 tid){
         bytes32 key = defaultRailKey[t.asset];
         require(key != bytes32(0), "SCR: no rail");
         IRail r = IRail(registry.rails(key));

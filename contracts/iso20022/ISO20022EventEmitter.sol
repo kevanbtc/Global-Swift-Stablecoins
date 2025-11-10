@@ -60,7 +60,7 @@ contract ISO20022EventEmitter is AccessControl {
         string calldata creditorIban,
         string calldata purpose,
         uint64  valueDate
-    ) external onlyRole(ROLE_PUBLISHER) {
+    ) public onlyRole(ROLE_PUBLISHER) {
         emit Pacs008Payment(
             correlationId, payer, payee, amountMinor, ccy, debtorIban, creditorIban, purpose, valueDate, uint64(block.timestamp)
         );
@@ -74,7 +74,7 @@ contract ISO20022EventEmitter is AccessControl {
         string calldata txnRef,
         string calldata narrative,
         uint64  bookingDate
-    ) external onlyRole(ROLE_PUBLISHER) {
+    ) public onlyRole(ROLE_PUBLISHER) {
         emit Camt053Statement(
             correlationId, accountRef, bookingAmountMinor, ccy, txnRef, narrative, bookingDate, uint64(block.timestamp)
         );
@@ -89,7 +89,7 @@ contract ISO20022EventEmitter is AccessControl {
         string calldata ccy,
         string calldata accountRef,
         uint64  settlementDate
-    ) external onlyRole(ROLE_PUBLISHER) {
+    ) public onlyRole(ROLE_PUBLISHER) {
         emit Sese023SecuritiesSettlement(
             correlationId, isinOrCusip, side, quantity, priceMinor, ccy, accountRef, settlementDate, uint64(block.timestamp)
         );

@@ -2,4 +2,5 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { ISO20022EventEmitter } from "./ISO20022EventEmitter";
+export type { ISO20022MessageHandler } from "./ISO20022MessageHandler";
 export type { Iso20022Bridge } from "./Iso20022Bridge";

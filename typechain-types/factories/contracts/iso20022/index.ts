@@ -2,4 +2,5 @@
 /* tslint:disable */
 /* eslint-disable */
 export { ISO20022EventEmitter__factory } from "./ISO20022EventEmitter__factory";
+export { ISO20022MessageHandler__factory } from "./ISO20022MessageHandler__factory";
 export { Iso20022Bridge__factory } from "./Iso20022Bridge__factory";

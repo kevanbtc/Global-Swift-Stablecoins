@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title StakeholderRegistry
@@ -196,7 +196,7 @@ contract StakeholderRegistry is Ownable, ReentrancyGuard {
         Jurisdiction _jurisdiction,
         address _custodian,
         bytes32 _kycHash
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         require(walletToStakeholder[msg.sender] == bytes32(0), "Already registered");
 
         bytes32 stakeholderId = keccak256(abi.encodePacked(
@@ -245,7 +245,7 @@ contract StakeholderRegistry is Ownable, ReentrancyGuard {
         bytes32 _stakeholderId,
         AccreditationLevel _level,
         bytes32 _accreditationHash
-    ) external onlyOwner validStakeholder(_stakeholderId) {
+    ) public onlyOwner validStakeholder(_stakeholderId) {
         Stakeholder storage stakeholder = stakeholders[_stakeholderId];
         AccreditationLevel oldLevel = stakeholder.accreditationLevel;
 
@@ -264,7 +264,7 @@ contract StakeholderRegistry is Ownable, ReentrancyGuard {
     function updateVotingPower(
         bytes32 _stakeholderId,
         VotingPower _power
-    ) external onlyOwner validStakeholder(_stakeholderId) {
+    ) public onlyOwner validStakeholder(_stakeholderId) {
         Stakeholder storage stakeholder = stakeholders[_stakeholderId];
         VotingPower oldPower = stakeholder.votingPower;
 
@@ -288,7 +288,7 @@ contract StakeholderRegistry is Ownable, ReentrancyGuard {
         Jurisdiction[] memory _jurisdictions,
         uint256 _minVotingWeight,
         bool _requiresConsensus
-    ) external onlyOwner returns (bytes32) {
+    ) public onlyOwner returns (bytes32) {
         bytes32 groupId = keccak256(abi.encodePacked(
             _groupName,
             msg.sender,
@@ -317,7 +317,7 @@ contract StakeholderRegistry is Ownable, ReentrancyGuard {
         bytes32 _groupId,
         string memory _title,
         string memory _description
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         require(stakeholderGroups[_groupId].groupAdmin != address(0), "Group not found");
 
         bytes32 stakeholderId = walletToStakeholder[msg.sender];
@@ -354,7 +354,7 @@ contract StakeholderRegistry is Ownable, ReentrancyGuard {
     function castVote(
         bytes32 _proposalId,
         bool _approve
-    ) external {
+    ) public {
         GovernanceProposal storage proposal = governanceProposals[_proposalId];
         require(proposal.createdAt > 0, "Proposal not found");
         require(block.timestamp <= proposal.votingDeadline, "Voting period ended");
@@ -363,7 +363,7 @@ contract StakeholderRegistry is Ownable, ReentrancyGuard {
         bytes32 stakeholderId = walletToStakeholder[msg.sender];
         require(stakeholderId != bytes32(0), "Not a registered stakeholder");
 
-        Stakeholder memory stakeholder = stakeholders[stakeholderId];
+        Stakeholder storage stakeholder = stakeholders[stakeholderId];
         require(stakeholder.isActive, "Stakeholder not active");
 
         uint256 voteWeight = stakeholder.votingWeight;
@@ -383,7 +383,7 @@ contract StakeholderRegistry is Ownable, ReentrancyGuard {
     /**
      * @notice Execute a passed proposal
      */
-    function executeProposal(bytes32 _proposalId) external {
+    function executeProposal(bytes32 _proposalId) public {
         GovernanceProposal storage proposal = governanceProposals[_proposalId];
         require(!proposal.executed, "Already executed");
         require(block.timestamp > proposal.votingDeadline, "Voting still open");
@@ -420,7 +420,7 @@ contract StakeholderRegistry is Ownable, ReentrancyGuard {
     function updateStakeholderAssets(
         bytes32 _stakeholderId,
         uint256 _newTotalAssets
-    ) external onlyOwner validStakeholder(_stakeholderId) {
+    ) public onlyOwner validStakeholder(_stakeholderId) {
         Stakeholder storage stakeholder = stakeholders[_stakeholderId];
         uint256 oldAssets = stakeholder.totalAssets;
 
@@ -433,9 +433,7 @@ contract StakeholderRegistry is Ownable, ReentrancyGuard {
     /**
      * @notice Get stakeholder details
      */
-    function getStakeholder(bytes32 _stakeholderId)
-        external
-        view
+    function getStakeholder(bytes32 _stakeholderId) public view
         returns (
             string memory name,
             StakeholderType stakeholderType,
@@ -447,7 +445,7 @@ contract StakeholderRegistry is Ownable, ReentrancyGuard {
             bool isVerified
         )
     {
-        Stakeholder memory stakeholder = stakeholders[_stakeholderId];
+        Stakeholder storage stakeholder = stakeholders[_stakeholderId];
         return (
             stakeholder.name,
             stakeholder.stakeholderType,
@@ -463,9 +461,7 @@ contract StakeholderRegistry is Ownable, ReentrancyGuard {
     /**
      * @notice Get proposal details
      */
-    function getProposal(bytes32 _proposalId)
-        external
-        view
+    function getProposal(bytes32 _proposalId) public view
         returns (
             string memory title,
             string memory description,
@@ -476,7 +472,7 @@ contract StakeholderRegistry is Ownable, ReentrancyGuard {
             bool executed
         )
     {
-        GovernanceProposal memory proposal = governanceProposals[_proposalId];
+        GovernanceProposal storage proposal = governanceProposals[_proposalId];
         return (
             proposal.title,
             proposal.description,
@@ -491,9 +487,7 @@ contract StakeholderRegistry is Ownable, ReentrancyGuard {
     /**
      * @notice Check if stakeholder has permission
      */
-    function hasPermission(bytes32 _stakeholderId, bytes32 _permission)
-        external
-        view
+    function hasPermission(bytes32 _stakeholderId, bytes32 _permission) public view
         returns (bool)
     {
         return stakeholders[_stakeholderId].permissions[_permission];
@@ -502,9 +496,7 @@ contract StakeholderRegistry is Ownable, ReentrancyGuard {
     /**
      * @notice Get stakeholder asset holdings
      */
-    function getStakeholderHoldings(bytes32 _stakeholderId, bytes32 _assetId)
-        external
-        view
+    function getStakeholderHoldings(bytes32 _stakeholderId, bytes32 _assetId) public view
         returns (uint256)
     {
         return stakeholders[_stakeholderId].holdings[_assetId];
@@ -518,7 +510,7 @@ contract StakeholderRegistry is Ownable, ReentrancyGuard {
         uint256 _maxVotingWeight,
         uint256 _votingPeriod,
         uint256 _proposalQuorum
-    ) external onlyOwner {
+    ) public onlyOwner {
         minVotingWeight = _minVotingWeight;
         maxVotingWeight = _maxVotingWeight;
         votingPeriod = _votingPeriod;
@@ -528,9 +520,7 @@ contract StakeholderRegistry is Ownable, ReentrancyGuard {
     /**
      * @notice Get global stakeholder statistics
      */
-    function getGlobalStatistics()
-        external
-        view
+    function getGlobalStatistics() public view
         returns (
             uint256 _totalStakeholders,
             uint256 _totalActiveStakeholders,
@@ -559,7 +549,7 @@ contract StakeholderRegistry is Ownable, ReentrancyGuard {
     }
 
     function _calculateVotingWeight(bytes32 _stakeholderId) internal view returns (uint256) {
-        Stakeholder memory stakeholder = stakeholders[_stakeholderId];
+        Stakeholder storage stakeholder = stakeholders[_stakeholderId];
         uint256 baseWeight = _calculateInitialVotingWeight(stakeholder.stakeholderType, stakeholder.jurisdiction);
 
         // Accreditation multiplier
@@ -614,7 +604,7 @@ contract StakeholderRegistry is Ownable, ReentrancyGuard {
     }
 
     function _isEligibleForGroup(bytes32 _stakeholderId, bytes32 _groupId) internal view returns (bool) {
-        Stakeholder memory stakeholder = stakeholders[_stakeholderId];
+        Stakeholder storage stakeholder = stakeholders[_stakeholderId];
         StakeholderGroup memory group = stakeholderGroups[_groupId];
 
         // Check stakeholder type

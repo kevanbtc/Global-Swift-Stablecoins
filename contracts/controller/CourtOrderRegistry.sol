@@ -40,11 +40,11 @@ contract CourtOrderRegistry is AccessControl {
         _grantRole(GOVERNOR_ROLE, governor);
     }
 
-    function grantCourt(address court) external onlyRole(GOVERNOR_ROLE) {
+    function grantCourt(address court) public onlyRole(GOVERNOR_ROLE) {
         _grantRole(COURT_ROLE, court);
     }
 
-    function fileOrder(Order calldata o) external onlyRole(COURT_ROLE) {
+    function fileOrder(Order calldata o) public onlyRole(COURT_ROLE) {
         require(o.id != 0, "id=0");
         require(orders[o.id].id == 0, "exists");
         require(o.subject != address(0), "subject=0");
@@ -53,12 +53,12 @@ contract CourtOrderRegistry is AccessControl {
         emit OrderFiled(o.id, o.token, o.subject, o.action);
     }
 
-    function setGlobalFreeze(address token, bool frozen) external onlyRole(COURT_ROLE) {
+    function setGlobalFreeze(address token, bool frozen) public onlyRole(COURT_ROLE) {
         globalFreeze[token] = frozen;
         emit GlobalFreeze(token, frozen);
     }
 
-    function markExecuted(bytes32 id) external onlyRole(COURT_ROLE) {
+    function markExecuted(bytes32 id) public onlyRole(COURT_ROLE) {
         Order storage o = orders[id];
         require(o.id != 0, "notfound");
         o.executed = true;
@@ -74,7 +74,7 @@ contract CourtOrderRegistry is AccessControl {
         return !o.executed;
     }
 
-    function subjectFrozen(address token, address subject) external view returns (bool) {
+    function subjectFrozen(address token, address subject) public view returns (bool) {
         // Scan is expensive on-chain; for MVP assume single active freeze per subject
         // Practical deployments should index per (token,subject) to last freeze order id.
         // Here: global freeze OR any active freeze order targeting subject.

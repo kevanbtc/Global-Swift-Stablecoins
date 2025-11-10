@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title CrossBorderCompliance
@@ -121,7 +121,7 @@ contract CrossBorderCompliance is Ownable, ReentrancyGuard {
         bool requiresGAAR,
         bool requiresCFC,
         string[] memory restrictedActivities
-    ) external onlyOwner {
+    ) public onlyOwner {
         JurisdictionRules storage rules = jurisdictionRules[jurisdiction];
         rules.jurisdiction = jurisdiction;
         rules.requiresFATCA = requiresFATCA;
@@ -148,7 +148,7 @@ contract CrossBorderCompliance is Ownable, ReentrancyGuard {
         Jurisdiction fromJurisdiction,
         Jurisdiction toJurisdiction,
         string memory memo
-    ) external returns (bytes32, ComplianceStatus) {
+    ) public returns (bytes32, ComplianceStatus) {
         require(jurisdictionRules[fromJurisdiction].isActive, "Invalid source jurisdiction");
         require(jurisdictionRules[toJurisdiction].isActive, "Invalid target jurisdiction");
 
@@ -210,7 +210,7 @@ contract CrossBorderCompliance is Ownable, ReentrancyGuard {
         TaxType taxType,
         uint256 amount,
         uint256 dueDate
-    ) external onlyOwner returns (bytes32) {
+    ) public onlyOwner returns (bytes32) {
         bytes32 obligationId = keccak256(abi.encodePacked(
             taxpayer, recipient, taxType, amount, block.timestamp
         ));
@@ -242,7 +242,7 @@ contract CrossBorderCompliance is Ownable, ReentrancyGuard {
     /**
      * @notice Pay tax obligation
      */
-    function payTaxObligation(bytes32 obligationId) external payable nonReentrant {
+    function payTaxObligation(bytes32 obligationId) public payable nonReentrant {
         TaxObligation storage obligation = taxObligations[obligationId];
         require(obligation.taxpayer == msg.sender, "Not authorized");
         require(!obligation.isPaid, "Already paid");
@@ -265,7 +265,7 @@ contract CrossBorderCompliance is Ownable, ReentrancyGuard {
     function grantTaxExemption(
         bytes32 obligationId,
         string memory exemptionReason
-    ) external onlyOwner {
+    ) public onlyOwner {
         TaxObligation storage obligation = taxObligations[obligationId];
         require(!obligation.isPaid, "Already paid");
 
@@ -276,7 +276,7 @@ contract CrossBorderCompliance is Ownable, ReentrancyGuard {
     /**
      * @notice Check if transfer is compliant
      */
-    function isTransferCompliant(bytes32 transferId) external view returns (bool) {
+    function isTransferCompliant(bytes32 transferId) public view returns (bool) {
         CrossBorderTransfer memory transfer = crossBorderTransfers[transferId];
         return transfer.status == ComplianceStatus.COMPLIANT ||
                transfer.status == ComplianceStatus.REQUIRES_REPORTING;
@@ -285,14 +285,14 @@ contract CrossBorderCompliance is Ownable, ReentrancyGuard {
     /**
      * @notice Get withholding amount for transfer
      */
-    function getWithholdingAmount(bytes32 transferId) external view returns (uint256) {
+    function getWithholdingAmount(bytes32 transferId) public view returns (uint256) {
         return crossBorderTransfers[transferId].withholdingAmount;
     }
 
     /**
      * @notice Get compliance flags for transfer
      */
-    function getComplianceFlags(bytes32 transferId) external view returns (string[] memory) {
+    function getComplianceFlags(bytes32 transferId) public view returns (string[] memory) {
         return crossBorderTransfers[transferId].complianceFlags;
     }
 

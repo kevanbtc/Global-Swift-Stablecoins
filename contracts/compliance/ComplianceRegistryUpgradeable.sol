@@ -50,22 +50,22 @@ contract ComplianceRegistryUpgradeable is Initializable, AccessControlUpgradeabl
 
     function _authorizeUpgrade(address newImpl) internal override onlyRole(DEFAULT_ADMIN_ROLE) {}
 
-    function setPolicy(bytes32 id, Policy calldata p) external onlyRole(ADMIN_ROLE) {
+    function setPolicy(bytes32 id, Policy calldata p) public onlyRole(ADMIN_ROLE) {
         policies[id] = p;
         emit PolicySet(id, p);
     }
 
-    function setProfile(address user, Profile calldata prof) external onlyRole(ATTESTOR_ROLE) {
+    function setProfile(address user, Profile calldata prof) public onlyRole(ATTESTOR_ROLE) {
         profiles[user] = prof;
         emit ProfileSet(user, prof);
     }
 
-    function setAllowlist(address user, bool ok) external onlyRole(ADMIN_ROLE) {
+    function setAllowlist(address user, bool ok) public onlyRole(ADMIN_ROLE) {
         allowlist[user] = ok;
         emit AllowlistSet(user, ok);
     }
 
-    function canHold(address user, bytes32 policyId) external view returns (bool) {
+    function canHold(address user, bytes32 policyId) public view returns (bool) {
         // Allowlist override
         if (allowlist[user]) return true;
 

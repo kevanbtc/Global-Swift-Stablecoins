@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title GlobalInfrastructureCodex
@@ -149,7 +149,7 @@ contract GlobalInfrastructureCodex is Ownable, ReentrancyGuard {
         address _governingBody,
         string memory _ipfsDocumentation,
         bytes32[] memory _dependencies
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         require(_implementingContract != address(0), "Invalid contract address");
         require(bytes(_moduleName).length > 0, "Invalid module name");
 
@@ -194,7 +194,7 @@ contract GlobalInfrastructureCodex is Ownable, ReentrancyGuard {
         string memory _ipfsSpecification,
         bool _isMandatory,
         ComplianceLevel _requiredLevel
-    ) external onlyOwner returns (bytes32) {
+    ) public onlyOwner returns (bytes32) {
         require(bytes(_standardName).length > 0, "Invalid standard name");
         require(bytes(_issuingBody).length > 0, "Invalid issuing body");
         require(_effectiveDate < _expiryDate, "Invalid date range");
@@ -233,7 +233,7 @@ contract GlobalInfrastructureCodex is Ownable, ReentrancyGuard {
         string memory _agentType,
         address _agentAddress,
         bytes32[] memory _capabilities
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         require(_agentAddress != address(0), "Invalid agent address");
         require(bytes(_agentName).length > 0, "Invalid agent name");
 
@@ -271,7 +271,7 @@ contract GlobalInfrastructureCodex is Ownable, ReentrancyGuard {
         bytes32[] memory _participatingModules,
         string memory _integrationPurpose,
         bytes32[] memory _sharedStandards
-    ) external onlyOwner returns (bytes32) {
+    ) public onlyOwner returns (bytes32) {
         require(_participatingModules.length > 0, "No participating modules");
 
         bytes32 integrationId = keccak256(abi.encodePacked(
@@ -302,7 +302,7 @@ contract GlobalInfrastructureCodex is Ownable, ReentrancyGuard {
     /**
      * @notice Vote on governance proposal
      */
-    function voteOnGovernance(bytes32 _moduleId, bool _approve) external {
+    function voteOnGovernance(bytes32 _moduleId, bool _approve) public {
         require(infrastructureModules[_moduleId].implementingContract != address(0), "Module not found");
 
         InfrastructureModule storage module = infrastructureModules[_moduleId];
@@ -332,7 +332,7 @@ contract GlobalInfrastructureCodex is Ownable, ReentrancyGuard {
         bytes32 _moduleId,
         ComplianceLevel _achievedLevel,
         bytes32 _complianceHash
-    ) external {
+    ) public {
         InfrastructureModule storage module = infrastructureModules[_moduleId];
         require(module.authorizedImplementers[msg.sender] || owner() == msg.sender, "Not authorized");
 
@@ -353,7 +353,7 @@ contract GlobalInfrastructureCodex is Ownable, ReentrancyGuard {
     function certifyImplementation(
         bytes32 _standardId,
         address _implementation
-    ) external onlyOwner {
+    ) public onlyOwner {
         require(globalStandards[_standardId].effectiveDate > 0, "Standard not found");
         require(_implementation != address(0), "Invalid implementation");
 
@@ -367,7 +367,7 @@ contract GlobalInfrastructureCodex is Ownable, ReentrancyGuard {
         bytes32 _agentId,
         bytes32 _metricType,
         uint256 _value
-    ) external {
+    ) public {
         AI_Agent storage agent = aiAgents[_agentId];
         require(agent.agentAddress == msg.sender || owner() == msg.sender, "Not authorized");
 
@@ -391,7 +391,7 @@ contract GlobalInfrastructureCodex is Ownable, ReentrancyGuard {
         bytes32 _integrationId,
         bytes32 _dataKey,
         bytes memory _data
-    ) external {
+    ) public {
         InfrastructureIntegration storage integration = infrastructureIntegrations[_integrationId];
         require(integration.isActive, "Integration not active");
         require(integration.coordinator == msg.sender || owner() == msg.sender, "Not authorized");
@@ -403,9 +403,7 @@ contract GlobalInfrastructureCodex is Ownable, ReentrancyGuard {
     /**
      * @notice Get module details
      */
-    function getInfrastructureModule(bytes32 _moduleId)
-        external
-        view
+    function getInfrastructureModule(bytes32 _moduleId) public view
         returns (
             string memory moduleName,
             InfrastructureType moduleType,
@@ -414,7 +412,7 @@ contract GlobalInfrastructureCodex is Ownable, ReentrancyGuard {
             address implementingContract
         )
     {
-        InfrastructureModule memory module = infrastructureModules[_moduleId];
+        InfrastructureModule storage module = infrastructureModules[_moduleId];
         return (
             module.moduleName,
             module.moduleType,
@@ -427,9 +425,7 @@ contract GlobalInfrastructureCodex is Ownable, ReentrancyGuard {
     /**
      * @notice Get AI agent details
      */
-    function getAIAgent(bytes32 _agentId)
-        external
-        view
+    function getAIAgent(bytes32 _agentId) public view
         returns (
             string memory agentName,
             string memory agentType,
@@ -438,7 +434,7 @@ contract GlobalInfrastructureCodex is Ownable, ReentrancyGuard {
             bool isActive
         )
     {
-        AI_Agent memory agent = aiAgents[_agentId];
+        AI_Agent storage agent = aiAgents[_agentId];
         return (
             agent.agentName,
             agent.agentType,
@@ -451,9 +447,7 @@ contract GlobalInfrastructureCodex is Ownable, ReentrancyGuard {
     /**
      * @notice Get global standard details
      */
-    function getGlobalStandard(bytes32 _standardId)
-        external
-        view
+    function getGlobalStandard(bytes32 _standardId) public view
         returns (
             string memory standardName,
             string memory issuingBody,
@@ -462,7 +456,7 @@ contract GlobalInfrastructureCodex is Ownable, ReentrancyGuard {
             ComplianceLevel requiredLevel
         )
     {
-        GlobalStandard memory standard = globalStandards[_standardId];
+        GlobalStandard storage standard = globalStandards[_standardId];
         return (
             standard.standardName,
             standard.issuingBody,
@@ -475,9 +469,7 @@ contract GlobalInfrastructureCodex is Ownable, ReentrancyGuard {
     /**
      * @notice Check if implementation is certified
      */
-    function isCertifiedImplementation(bytes32 _standardId, address _implementation)
-        external
-        view
+    function isCertifiedImplementation(bytes32 _standardId, address _implementation) public view
         returns (bool)
     {
         return globalStandards[_standardId].certifiedImplementations[_implementation];
@@ -486,9 +478,7 @@ contract GlobalInfrastructureCodex is Ownable, ReentrancyGuard {
     /**
      * @notice Get modules by type
      */
-    function getModulesByType(InfrastructureType _type)
-        external
-        view
+    function getModulesByType(InfrastructureType _type) public view
         returns (bytes32[] memory)
     {
         return modulesByType[_type];
@@ -497,9 +487,7 @@ contract GlobalInfrastructureCodex is Ownable, ReentrancyGuard {
     /**
      * @notice Get agents by type
      */
-    function getAgentsByType(string memory _type)
-        external
-        view
+    function getAgentsByType(string memory _type) public view
         returns (bytes32[] memory)
     {
         return agentsByType[_type];
@@ -510,16 +498,14 @@ contract GlobalInfrastructureCodex is Ownable, ReentrancyGuard {
      */
     function updateGovernanceParameters(
         uint256 _globalGovernanceThreshold
-    ) external onlyOwner {
+    ) public onlyOwner {
         globalGovernanceThreshold = _globalGovernanceThreshold;
     }
 
     /**
      * @notice Get global statistics
      */
-    function getGlobalStatistics()
-        external
-        view
+    function getGlobalStatistics() public view
         returns (
             uint256 _totalModules,
             uint256 _totalStandards,

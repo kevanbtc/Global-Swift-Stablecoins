@@ -1,0 +1,37 @@
+```mermaid
+graph TB
+    subgraph Core Infrastructure
+        L1[Unykorn L1] --> CB[Consensus Bridge]
+        L1 --> SM[State Machine]
+        L1 --> SC[Smart Contracts]
+    end
+
+    subgraph Settlement Layer
+        SWIFT[SWIFT Integration] --> ISO[ISO20022]
+        SWIFT --> SL[Settlement Logic]
+        ISO --> MQ[Message Queue]
+    end
+
+    subgraph Asset Layer
+        RWA[RWA Tokens $222M] --> Gold[Gold Tokens]
+        RWA --> RE[Real Estate]
+        RWA --> TB[T-Bills]
+    end
+
+    subgraph Compliance
+        KYC[KYC/AML] --> Rules[Rule Engine]
+        Rules --> Rep[Reporting]
+        Rules --> Audit[Audit Log]
+    end
+
+    subgraph Security
+        QR[Quantum Resistant] --> Crypto[Cryptography]
+        AI[AI Security] --> Monitor[Monitoring]
+        AI --> Response[Auto Response]
+    end
+
+    L1 --> SWIFT
+    SWIFT --> RWA
+    RWA --> KYC
+    KYC --> QR
+```

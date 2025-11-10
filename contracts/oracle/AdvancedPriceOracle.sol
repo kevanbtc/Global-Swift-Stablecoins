@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
 
 /**
@@ -69,7 +69,7 @@ contract AdvancedPriceOracle is Ownable, ReentrancyGuard {
         uint256 deviationThreshold,
         address fallbackOracle,
         uint256 observationPeriod
-    ) external onlyOwner {
+    ) public onlyOwner {
         require(asset != address(0), "Invalid asset address");
         require(aggregator != address(0), "Invalid aggregator address");
         require(heartbeat > 0, "Heartbeat must be > 0");
@@ -114,7 +114,7 @@ contract AdvancedPriceOracle is Ownable, ReentrancyGuard {
     /**
      * @notice Get the latest price for an asset with all safety checks
      */
-    function getPrice(address asset) external view returns (uint256 price, uint256 timestamp) {
+    function getPrice(address asset) public view returns (uint256 price, uint256 timestamp) {
         require(priceFeeds[asset].isActive, "Price feed not active");
 
         PriceFeed memory feed = priceFeeds[asset];
@@ -172,7 +172,7 @@ contract AdvancedPriceOracle is Ownable, ReentrancyGuard {
     /**
      * @notice Get price without safety checks (for internal use)
      */
-    function getRawPrice(address asset) external view returns (int256 price, uint256 timestamp) {
+    function getRawPrice(address asset) public view returns (int256 price, uint256 timestamp) {
         require(priceFeeds[asset].isActive, "Price feed not active");
         return _getPriceFromAggregator(priceFeeds[asset].aggregator);
     }
@@ -180,14 +180,14 @@ contract AdvancedPriceOracle is Ownable, ReentrancyGuard {
     /**
      * @notice Get TWAP price for an asset
      */
-    function getTWAP(address asset) external view returns (uint256) {
+    function getTWAP(address asset) public view returns (uint256) {
         return _getTWAP(asset);
     }
 
     /**
      * @notice Update TWAP with latest price observation
      */
-    function updateTWAP(address asset) external {
+    function updateTWAP(address asset) public {
         require(priceFeeds[asset].isActive, "Price feed not active");
 
         (int256 price, uint256 timestamp) = _getPriceFromAggregator(priceFeeds[asset].aggregator);
@@ -206,7 +206,7 @@ contract AdvancedPriceOracle is Ownable, ReentrancyGuard {
     /**
      * @notice Check if price feed is healthy
      */
-    function isHealthy(address asset) external view returns (bool) {
+    function isHealthy(address asset) public view returns (bool) {
         if (!priceFeeds[asset].isActive) return false;
 
         PriceFeed memory feed = priceFeeds[asset];
@@ -242,7 +242,7 @@ contract AdvancedPriceOracle is Ownable, ReentrancyGuard {
     /**
      * @notice Manually trigger circuit breaker
      */
-    function triggerCircuitBreaker(address asset) external onlyOwner {
+    function triggerCircuitBreaker(address asset) public onlyOwner {
         CircuitBreaker storage breaker = circuitBreakers[asset];
         breaker.lastTriggerTime = block.timestamp;
         breaker.triggerCount++;
@@ -253,7 +253,7 @@ contract AdvancedPriceOracle is Ownable, ReentrancyGuard {
     /**
      * @notice Reset circuit breaker
      */
-    function resetCircuitBreaker(address asset) external onlyOwner {
+    function resetCircuitBreaker(address asset) public onlyOwner {
         CircuitBreaker storage breaker = circuitBreakers[asset];
         breaker.lastTriggerTime = 0;
 
@@ -268,7 +268,7 @@ contract AdvancedPriceOracle is Ownable, ReentrancyGuard {
         bool isActive,
         uint256 maxDeviation,
         uint256 cooldownPeriod
-    ) external onlyOwner {
+    ) public onlyOwner {
         CircuitBreaker storage breaker = circuitBreakers[asset];
         breaker.isActive = isActive;
         breaker.maxDeviation = maxDeviation;
@@ -278,7 +278,7 @@ contract AdvancedPriceOracle is Ownable, ReentrancyGuard {
     /**
      * @notice Get supported assets
      */
-    function getSupportedAssets() external view returns (address[] memory) {
+    function getSupportedAssets() public view returns (address[] memory) {
         return supportedAssets;
     }
 

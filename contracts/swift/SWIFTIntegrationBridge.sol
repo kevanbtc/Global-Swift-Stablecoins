@@ -2,8 +2,8 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import {Pausable} from "@openzeppelin/contracts/security/Pausable.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 
 /**
  * @title SWIFTIntegrationBridge
@@ -136,7 +136,7 @@ contract SWIFTIntegrationBridge is Ownable, ReentrancyGuard, Pausable {
         string memory _receiverBIC,
         string memory _uetr,
         bytes memory _messageData
-    ) external onlySWIFTNode whenNotPaused validMessageSize(_messageData) returns (bytes32) {
+    ) public onlySWIFTNode whenNotPaused validMessageSize(_messageData) returns (bytes32) {
         require(_amount > 0, "Invalid amount");
         require(bytes(_currency).length == 3, "Invalid currency");
         require(bytes(_uetr).length == 36, "Invalid UETR format");
@@ -208,7 +208,7 @@ contract SWIFTIntegrationBridge is Ownable, ReentrancyGuard, Pausable {
         string memory _uetr,
         GPIStatus _status,
         string memory _trackingInfo
-    ) external onlySWIFTNode whenNotPaused {
+    ) public onlySWIFTNode whenNotPaused {
         bytes32 uetrHash = bytes32(abi.encodePacked(_uetr));
         require(gpiTracking[uetrHash].lastUpdate > 0, "UETR not found");
 
@@ -237,7 +237,7 @@ contract SWIFTIntegrationBridge is Ownable, ReentrancyGuard, Pausable {
         string memory _assetType,
         string memory _uetr,
         bytes memory _settlementProof
-    ) external onlySWIFTNode whenNotPaused returns (bytes32) {
+    ) public onlySWIFTNode whenNotPaused returns (bytes32) {
         require(_amount > 0, "Invalid amount");
         require(_participant != address(0), "Invalid participant");
 
@@ -278,7 +278,7 @@ contract SWIFTIntegrationBridge is Ownable, ReentrancyGuard, Pausable {
     function confirmSettlement(
         bytes32 _messageId,
         bytes memory _proof
-    ) external onlySWIFTNode whenNotPaused {
+    ) public onlySWIFTNode whenNotPaused {
         SWIFTMessage storage message = messages[_messageId];
         require(message.timestamp > 0, "Message not found");
         require(message.settlementStatus == SettlementStatus.PENDING, "Settlement not pending");
@@ -303,7 +303,7 @@ contract SWIFTIntegrationBridge is Ownable, ReentrancyGuard, Pausable {
     function failSettlement(
         bytes32 _messageId,
         string memory _reason
-    ) external onlySWIFTNode whenNotPaused {
+    ) public onlySWIFTNode whenNotPaused {
         SWIFTMessage storage message = messages[_messageId];
         require(message.timestamp > 0, "Message not found");
         require(message.settlementStatus == SettlementStatus.PENDING, "Settlement not pending");
@@ -319,7 +319,7 @@ contract SWIFTIntegrationBridge is Ownable, ReentrancyGuard, Pausable {
     function mapBICToAddress(
         string memory _bic,
         address _blockchainAddress
-    ) external onlyOwner {
+    ) public onlyOwner {
         require(bytes(_bic).length == 8 || bytes(_bic).length == 11, "Invalid BIC format");
         require(_blockchainAddress != address(0), "Invalid blockchain address");
 
@@ -333,7 +333,7 @@ contract SWIFTIntegrationBridge is Ownable, ReentrancyGuard, Pausable {
     function setSWIFTNodeAuthorization(
         address _node,
         bool _authorized
-    ) external onlyOwner {
+    ) public onlyOwner {
         authorizedSWIFTNodes[_node] = _authorized;
         emit SWIFTNodeAuthorized(_node, _authorized);
     }
@@ -346,7 +346,7 @@ contract SWIFTIntegrationBridge is Ownable, ReentrancyGuard, Pausable {
         uint256 _gpiTimeout,
         uint256 _settlementTimeout,
         uint256 _sharedLedgerTimeout
-    ) external onlyOwner {
+    ) public onlyOwner {
         require(_maxMessageSize > 0, "Invalid max message size");
         require(_gpiTimeout > 0, "Invalid GPI timeout");
         require(_settlementTimeout > 0, "Invalid settlement timeout");
@@ -361,9 +361,7 @@ contract SWIFTIntegrationBridge is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Get SWIFT message details
      */
-    function getSWIFTMessage(bytes32 _messageId)
-        external
-        view
+    function getSWIFTMessage(bytes32 _messageId) public view
         returns (
             SWIFTMessageType msgType,
             GPIStatus gpiStatus,
@@ -395,9 +393,7 @@ contract SWIFTIntegrationBridge is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Get GPI tracking information
      */
-    function getGPITracking(string memory _uetr)
-        external
-        view
+    function getGPITracking(string memory _uetr) public view
         returns (
             GPIStatus status,
             uint256 lastUpdate,
@@ -419,9 +415,7 @@ contract SWIFTIntegrationBridge is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Get shared ledger entry
      */
-    function getSharedLedgerEntry(bytes32 _txId)
-        external
-        view
+    function getSharedLedgerEntry(bytes32 _txId) public view
         returns (
             address participant,
             uint256 amount,
@@ -445,7 +439,7 @@ contract SWIFTIntegrationBridge is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Check if settlement is overdue
      */
-    function isSettlementOverdue(bytes32 _messageId) external view returns (bool) {
+    function isSettlementOverdue(bytes32 _messageId) public view returns (bool) {
         SWIFTMessage memory message = messages[_messageId];
         if (message.timestamp == 0 || message.settlementStatus != SettlementStatus.PENDING) {
             return false;
@@ -456,14 +450,14 @@ contract SWIFTIntegrationBridge is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Emergency pause
      */
-    function emergencyPause() external onlyOwner {
+    function emergencyPause() public onlyOwner {
         _pause();
     }
 
     /**
      * @notice Emergency unpause
      */
-    function emergencyUnpause() external onlyOwner {
+    function emergencyUnpause() public onlyOwner {
         _unpause();
     }
 

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title BlockchainInteroperability
@@ -145,7 +145,7 @@ contract BlockchainInteroperability is Ownable, ReentrancyGuard {
         address _nativeToken,
         uint256 _blockTime,
         uint256 _gasPrice
-    ) external onlyOwner {
+    ) public onlyOwner {
         NetworkConfig storage config = networkConfigs[_network];
         config.network = _network;
         config.rpcUrl = _rpcUrl;
@@ -170,7 +170,7 @@ contract BlockchainInteroperability is Ownable, ReentrancyGuard {
         uint256 _minConfirmations,
         uint256 _maxTransferAmount,
         uint256 _feePercentage
-    ) external onlyOwner validNetwork(_network) returns (bytes32) {
+    ) public onlyOwner validNetwork(_network) returns (bytes32) {
         bytes32 bridgeId = keccak256(abi.encodePacked(
             _network,
             _bridgeType,
@@ -201,7 +201,7 @@ contract BlockchainInteroperability is Ownable, ReentrancyGuard {
     /**
      * @notice Add supported token to bridge
      */
-    function addSupportedToken(bytes32 _bridgeId, address _token) external onlyOwner validBridge(_bridgeId) {
+    function addSupportedToken(bytes32 _bridgeId, address _token) public onlyOwner validBridge(_bridgeId) {
         bridgeConfigs[_bridgeId].supportedTokens[_token] = true;
     }
 
@@ -213,7 +213,7 @@ contract BlockchainInteroperability is Ownable, ReentrancyGuard {
         address _targetToken,
         address _recipient,
         uint256 _amount
-    ) external payable validNetwork(_targetChain) returns (bytes32) {
+    ) public payable validNetwork(_targetChain) returns (bytes32) {
         require(_amount >= minTransferAmount, "Amount too small");
         require(_amount <= maxTransferAmount, "Amount too large");
 
@@ -257,7 +257,7 @@ contract BlockchainInteroperability is Ownable, ReentrancyGuard {
         bytes32 _transferId,
         bytes32 _bridgeTxHash,
         uint256 _confirmations
-    ) external {
+    ) public {
         CrossChainTransfer storage transfer = crossChainTransfers[_transferId];
         require(transfer.sender != address(0), "Transfer not found");
         require(transfer.status == TransferStatus.PENDING, "Invalid status");
@@ -267,7 +267,7 @@ contract BlockchainInteroperability is Ownable, ReentrancyGuard {
         require(bridges.length > 0, "No bridge available");
 
         bytes32 bridgeId = bridges[0]; // Use first available bridge
-        BridgeConfig memory bridge = bridgeConfigs[bridgeId];
+        BridgeConfig storage bridge = bridgeConfigs[bridgeId];
 
         require(_confirmations >= bridge.minConfirmations, "Insufficient confirmations");
         require(transfer.amount <= bridge.maxTransferAmount, "Amount exceeds bridge limit");
@@ -285,7 +285,7 @@ contract BlockchainInteroperability is Ownable, ReentrancyGuard {
     function completeTransfer(
         bytes32 _transferId,
         bytes32 _txHash
-    ) external {
+    ) public {
         CrossChainTransfer storage transfer = crossChainTransfers[_transferId];
         require(transfer.sender != address(0), "Transfer not found");
         require(transfer.status == TransferStatus.CONFIRMED, "Transfer not confirmed");
@@ -300,7 +300,7 @@ contract BlockchainInteroperability is Ownable, ReentrancyGuard {
     /**
      * @notice Refund failed transfer
      */
-    function refundTransfer(bytes32 _transferId) external {
+    function refundTransfer(bytes32 _transferId) public {
         CrossChainTransfer storage transfer = crossChainTransfers[_transferId];
         require(transfer.sender == msg.sender, "Not transfer sender");
         require(transfer.status == TransferStatus.PENDING, "Cannot refund");
@@ -317,9 +317,7 @@ contract BlockchainInteroperability is Ownable, ReentrancyGuard {
     /**
      * @notice Get transfer details
      */
-    function getTransfer(bytes32 _transferId)
-        external
-        view
+    function getTransfer(bytes32 _transferId) public view
         returns (
             address sender,
             address recipient,
@@ -345,9 +343,7 @@ contract BlockchainInteroperability is Ownable, ReentrancyGuard {
     /**
      * @notice Get bridge details
      */
-    function getBridge(bytes32 _bridgeId)
-        external
-        view
+    function getBridge(bytes32 _bridgeId) public view
         returns (
             BlockchainNetwork network,
             BridgeType bridgeType,
@@ -357,7 +353,7 @@ contract BlockchainInteroperability is Ownable, ReentrancyGuard {
             bool isActive
         )
     {
-        BridgeConfig memory bridge = bridgeConfigs[_bridgeId];
+        BridgeConfig storage bridge = bridgeConfigs[_bridgeId];
         return (
             bridge.network,
             bridge.bridgeType,
@@ -371,9 +367,7 @@ contract BlockchainInteroperability is Ownable, ReentrancyGuard {
     /**
      * @notice Get network configuration
      */
-    function getNetworkConfig(BlockchainNetwork _network)
-        external
-        view
+    function getNetworkConfig(BlockchainNetwork _network) public view
         returns (
             string memory rpcUrl,
             uint256 chainId,
@@ -395,21 +389,21 @@ contract BlockchainInteroperability is Ownable, ReentrancyGuard {
     /**
      * @notice Check if token is supported by bridge
      */
-    function isTokenSupported(bytes32 _bridgeId, address _token) external view returns (bool) {
+    function isTokenSupported(bytes32 _bridgeId, address _token) public view returns (bool) {
         return bridgeConfigs[_bridgeId].supportedTokens[_token];
     }
 
     /**
      * @notice Get user transfers
      */
-    function getUserTransfers(address _user) external view returns (bytes32[] memory) {
+    function getUserTransfers(address _user) public view returns (bytes32[] memory) {
         return userTransfers[_user];
     }
 
     /**
      * @notice Get bridges for network
      */
-    function getNetworkBridges(BlockchainNetwork _network) external view returns (bytes32[] memory) {
+    function getNetworkBridges(BlockchainNetwork _network) public view returns (bytes32[] memory) {
         return networkBridges[_network];
     }
 
@@ -422,7 +416,7 @@ contract BlockchainInteroperability is Ownable, ReentrancyGuard {
         uint256 _minTransferAmount,
         uint256 _maxTransferAmount,
         uint256 _confirmationTimeout
-    ) external onlyOwner {
+    ) public onlyOwner {
         baseFee = _baseFee;
         feePercentage = _feePercentage;
         minTransferAmount = _minTransferAmount;
@@ -433,9 +427,7 @@ contract BlockchainInteroperability is Ownable, ReentrancyGuard {
     /**
      * @notice Get global interoperability statistics
      */
-    function getGlobalStatistics()
-        external
-        view
+    function getGlobalStatistics() public view
         returns (
             uint256 _totalTransfers,
             uint256 _totalBridges,

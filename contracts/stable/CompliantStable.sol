@@ -4,8 +4,8 @@ pragma solidity ^0.8.24;
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {ERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
-import {Pausable} from "@openzeppelin/contracts/security/Pausable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title CompliantStable
@@ -72,7 +72,7 @@ contract CompliantStable is ERC20, ERC20Permit, AccessControl, Pausable, Reentra
     /**
      * @notice Mint tokens against reserves (only minter)
      */
-    function mint(address to, uint256 amount) external onlyRole(MINTER_ROLE) whenNotPaused {
+    function mint(address to, uint256 amount) public onlyRole(MINTER_ROLE) whenNotPaused {
         require(_checkCompliance(to, amount), "Compliance check failed");
         _mint(to, amount);
     }
@@ -80,7 +80,7 @@ contract CompliantStable is ERC20, ERC20Permit, AccessControl, Pausable, Reentra
     /**
      * @notice Burn tokens (only burner)
      */
-    function burn(address from, uint256 amount) external onlyRole(BURNER_ROLE) whenNotPaused {
+    function burn(address from, uint256 amount) public onlyRole(BURNER_ROLE) whenNotPaused {
         _burn(from, amount);
     }
 
@@ -111,7 +111,7 @@ contract CompliantStable is ERC20, ERC20Permit, AccessControl, Pausable, Reentra
         address asset,
         uint256 amount,
         uint256 weight
-    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    ) public onlyRole(DEFAULT_ADMIN_ROLE) {
         require(reserves[asset].asset == address(0), "Reserve already exists");
 
         reserves[asset] = Reserve({
@@ -128,7 +128,7 @@ contract CompliantStable is ERC20, ERC20Permit, AccessControl, Pausable, Reentra
     /**
      * @notice Update reserve amount
      */
-    function updateReserveAmount(address asset, uint256 newAmount) external onlyRole(ORACLE_ROLE) {
+    function updateReserveAmount(address asset, uint256 newAmount) public onlyRole(ORACLE_ROLE) {
         require(reserves[asset].isActive, "Reserve not active");
         reserves[asset].amount = newAmount;
     }
@@ -136,14 +136,14 @@ contract CompliantStable is ERC20, ERC20Permit, AccessControl, Pausable, Reentra
     /**
      * @notice Update total reserve value (USD)
      */
-    function updateReserveValue(uint256 newValue) external onlyRole(ORACLE_ROLE) {
+    function updateReserveValue(uint256 newValue) public onlyRole(ORACLE_ROLE) {
         totalReserveValue = newValue;
     }
 
     /**
      * @notice Perform NAV rebase
      */
-    function rebase() external onlyRole(ORACLE_ROLE) {
+    function rebase() public onlyRole(ORACLE_ROLE) {
         require(block.timestamp >= lastRebaseTime + rebaseCooldown, "Rebase cooldown active");
 
         uint256 oldNav = navPerToken;
@@ -160,7 +160,7 @@ contract CompliantStable is ERC20, ERC20Permit, AccessControl, Pausable, Reentra
     /**
      * @notice Get current NAV per token
      */
-    function getNavPerToken() external view returns (uint256) {
+    function getNavPerToken() public view returns (uint256) {
         return navPerToken;
     }
 
@@ -188,7 +188,7 @@ contract CompliantStable is ERC20, ERC20Permit, AccessControl, Pausable, Reentra
     /**
      * @notice Update blacklist status
      */
-    function setBlacklist(address account, bool status) external onlyRole(COMPLIANCE_ROLE) {
+    function setBlacklist(address account, bool status) public onlyRole(COMPLIANCE_ROLE) {
         blacklisted[account] = status;
         emit BlacklistUpdated(account, status);
     }
@@ -196,42 +196,42 @@ contract CompliantStable is ERC20, ERC20Permit, AccessControl, Pausable, Reentra
     /**
      * @notice Set max transaction amount
      */
-    function setMaxTransactionAmount(uint256 amount) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function setMaxTransactionAmount(uint256 amount) public onlyRole(DEFAULT_ADMIN_ROLE) {
         maxTransactionAmount = amount;
     }
 
     /**
      * @notice Set rebase cooldown
      */
-    function setRebaseCooldown(uint256 cooldown) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function setRebaseCooldown(uint256 cooldown) public onlyRole(DEFAULT_ADMIN_ROLE) {
         rebaseCooldown = cooldown;
     }
 
     /**
      * @notice Emergency pause
      */
-    function pause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _pause();
     }
 
     /**
      * @notice Unpause
      */
-    function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _unpause();
     }
 
     /**
      * @notice Get reserve assets count
      */
-    function getReserveCount() external view returns (uint256) {
+    function getReserveCount() public view returns (uint256) {
         return reserveAssets.length;
     }
 
     /**
      * @notice Get reserve asset by index
      */
-    function getReserveAsset(uint256 index) external view returns (address) {
+    function getReserveAsset(uint256 index) public view returns (address) {
         return reserveAssets[index];
     }
 }

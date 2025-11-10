@@ -25,10 +25,10 @@ contract HybridQuoteAdapter is IQuoteAdapter, AccessControl {
         emit SecondarySet(_secondary);
     }
 
-    function setPrimary(address a) external onlyRole(ADMIN) { primary = IQuoteAdapter(a); emit PrimarySet(a); }
-    function setSecondary(address a) external onlyRole(ADMIN) { secondary = IQuoteAdapter(a); emit SecondarySet(a); }
+    function setPrimary(address a) public onlyRole(ADMIN) { primary = IQuoteAdapter(a); emit PrimarySet(a); }
+    function setSecondary(address a) public onlyRole(ADMIN) { secondary = IQuoteAdapter(a); emit SecondarySet(a); }
 
-    function quoteInCash(address instrument) external view returns (uint256 price, uint8 decimals, uint64 lastUpdate) {
+    function quoteInCash(address instrument) public view returns (uint256 price, uint8 decimals, uint64 lastUpdate) {
         // try primary
         try primary.quoteInCash(instrument) returns (uint256 p, uint8 d, uint64 t) {
             if (p > 0) return (p, d, t);
@@ -40,7 +40,7 @@ contract HybridQuoteAdapter is IQuoteAdapter, AccessControl {
         revert("no_quote");
     }
 
-    function isFresh(address instrument, uint64 maxAgeSec) external view returns (bool) {
+    function isFresh(address instrument, uint64 maxAgeSec) public view returns (bool) {
         bool f1 = false;
         bool f2 = false;
         try primary.isFresh(instrument, maxAgeSec) returns (bool ok) { f1 = ok; } catch {}

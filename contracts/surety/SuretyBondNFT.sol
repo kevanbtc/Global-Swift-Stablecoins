@@ -42,8 +42,8 @@ contract SuretyBondNFT is ERC721, AccessControl, Pausable {
         _grantRole(PolicyRoles.ROLE_GUARDIAN, admin);
     }
 
-    function pause() external onlyRole(PolicyRoles.ROLE_GUARDIAN) { _pause(); }
-    function unpause() external onlyRole(PolicyRoles.ROLE_GUARDIAN) { _unpause(); }
+    function pause() public onlyRole(PolicyRoles.ROLE_GUARDIAN) { _pause(); }
+    function unpause() public onlyRole(PolicyRoles.ROLE_GUARDIAN) { _unpause(); }
 
     function issue(
         address principal,
@@ -51,7 +51,7 @@ contract SuretyBondNFT is ERC721, AccessControl, Pausable {
         uint256 penalSum,
         uint64 issueDate,
         uint64 expiry
-    ) external onlyRole(PolicyRoles.ROLE_ISSUER) whenNotPaused returns (uint256 tokenId) {
+    ) public onlyRole(PolicyRoles.ROLE_ISSUER) whenNotPaused returns (uint256 tokenId) {
         require(issueDate < expiry, "bad dates");
         tokenId = ++_id;
         bonds[tokenId] = Bond(principal, obligee, penalSum, issueDate, expiry, true);
@@ -63,7 +63,7 @@ contract SuretyBondNFT is ERC721, AccessControl, Pausable {
         uint256 tokenId,
         uint256 amount,
         string calldata evidence
-    ) external whenNotPaused {
+    ) public whenNotPaused {
         Bond storage bond = bonds[tokenId];
         require(msg.sender == bond.obligee, "not obligee");
         require(bond.active, "not active");
@@ -75,8 +75,7 @@ contract SuretyBondNFT is ERC721, AccessControl, Pausable {
         emit ClaimFiled(tokenId, idx, amount);
     }
 
-    function setClaimStatus(uint256 tokenId, uint256 claimIdx, ClaimStatus status) 
-        external onlyRole(PolicyRoles.ROLE_ADMIN) whenNotPaused 
+    function setClaimStatus(uint256 tokenId, uint256 claimIdx, ClaimStatus status) public onlyRole(PolicyRoles.ROLE_ADMIN) whenNotPaused 
     {
         require(bonds[tokenId].active, "not active");
         Claim storage claim = claims[tokenId][claimIdx];
@@ -85,7 +84,7 @@ contract SuretyBondNFT is ERC721, AccessControl, Pausable {
         emit ClaimStatusChanged(tokenId, claimIdx, status);
     }
 
-    function setBondStatus(uint256 tokenId, bool active) external onlyRole(PolicyRoles.ROLE_ADMIN) {
+    function setBondStatus(uint256 tokenId, bool active) public onlyRole(PolicyRoles.ROLE_ADMIN) {
         bonds[tokenId].active = active;
         emit BondStatusChanged(tokenId, active);
     }

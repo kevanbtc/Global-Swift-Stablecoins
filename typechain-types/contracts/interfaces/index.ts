@@ -6,6 +6,8 @@ export type { externalInterfacesSol };
 export type { IAttestationOracle } from "./IAttestationOracle";
 export type { IComplianceRegistry } from "./IComplianceRegistry";
 export type { IComplianceRegistryV2 } from "./IComplianceRegistryV2";
+export type { IPriceOracle } from "./IPriceOracle";
 export type { IProofOfReserves } from "./IProofOfReserves";
 export type { IQuoteAdapter } from "./IQuoteAdapter";
+export type { IReserveManager } from "./IReserveManager";
 export type { IShareMaturityOracle } from "./IShareMaturityOracle";

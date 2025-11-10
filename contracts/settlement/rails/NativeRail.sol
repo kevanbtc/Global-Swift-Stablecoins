@@ -14,13 +14,13 @@ contract NativeRail is IRail {
     modifier onlyAdmin(){ require(msg.sender==admin, "RNAT: not admin"); _; }
     constructor(address _admin){ require(_admin!=address(0), "RNAT: 0"); admin=_admin; }
 
-    function kind() external pure override returns (Kind){ return Kind.NATIVE; }
+    function kind() public pure override returns (Kind){ return Kind.NATIVE; }
 
     function transferId(Transfer calldata t) public pure returns (bytes32){
         return keccak256(abi.encode(address(0), t.from, t.to, t.amount, t.metadata));
     }
 
-    function prepare(Transfer calldata t) external payable override {
+    function prepare(Transfer calldata t) public payable override {
         bytes32 id = transferId(t);
         require(_status[id] == Status.NONE, "RNAT: exists");
         require(msg.value == t.amount, "RNAT: bad msg.value");
@@ -28,19 +28,19 @@ contract NativeRail is IRail {
         emit RailPrepared(id, t.from, t.to, address(0), t.amount);
     }
 
-    function release(bytes32 id, Transfer calldata t) external override onlyAdmin {
+    function release(bytes32 id, Transfer calldata t) public override onlyAdmin {
         require(_status[id] == Status.PREPARED, "RNAT: bad state");
         _status[id] = Status.RELEASED;
         (bool ok,) = t.to.call{value: t.amount}(""); require(ok, "RNAT: xfer fail");
         emit RailReleased(id, t.to, address(0), t.amount);
     }
 
-    function refund(bytes32 id, Transfer calldata t) external override onlyAdmin {
+    function refund(bytes32 id, Transfer calldata t) public override onlyAdmin {
         require(_status[id] == Status.PREPARED, "RNAT: bad state");
         _status[id] = Status.REFUNDED;
         (bool ok,) = t.from.call{value: t.amount}(""); require(ok, "RNAT: refund fail");
         emit RailRefunded(id, t.from, address(0), t.amount);
     }
 
-    function status(bytes32 id) external view override returns (Status){ return _status[id]; }
+    function status(bytes32 id) public view override returns (Status){ return _status[id]; }
 }

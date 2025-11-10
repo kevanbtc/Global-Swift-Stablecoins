@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title GlobalFinancialInstitutions
@@ -149,7 +149,7 @@ contract GlobalFinancialInstitutions is Ownable, ReentrancyGuard {
         InstitutionType _institutionType,
         string memory _jurisdiction,
         uint256 _votingPower
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         require(_votingPower >= minVotingPower && _votingPower <= maxVotingPower, "Invalid voting power");
 
         bytes32 institutionId = keccak256(abi.encodePacked(
@@ -190,7 +190,7 @@ contract GlobalFinancialInstitutions is Ownable, ReentrancyGuard {
         bytes32[] memory _supportedStandards,
         string memory _ipfsDocumentation,
         bool _isMultilateral
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         require(_targetCompletion > block.timestamp, "Invalid completion date");
 
         bytes32 initiativeId = keccak256(abi.encodePacked(
@@ -231,7 +231,7 @@ contract GlobalFinancialInstitutions is Ownable, ReentrancyGuard {
         uint256 _version,
         bool _isMandatory,
         string memory _ipfsSpecification
-    ) external onlyOwner returns (bytes32) {
+    ) public onlyOwner returns (bytes32) {
         bytes32 standardId = keccak256(abi.encodePacked(
             _standardName,
             _issuingBody,
@@ -259,7 +259,7 @@ contract GlobalFinancialInstitutions is Ownable, ReentrancyGuard {
     /**
      * @notice Contribute funding to an initiative
      */
-    function contributeToInitiative(bytes32 _initiativeId) external payable validInitiative(_initiativeId) {
+    function contributeToInitiative(bytes32 _initiativeId) public payable validInitiative(_initiativeId) {
         DigitalAssetInitiative storage initiative = digitalAssetInitiatives[_initiativeId];
         require(initiative.status != InitiativeStatus.DEPRECATED, "Initiative deprecated");
         require(initiative.fundingReceived < initiative.fundingRequired, "Funding complete");
@@ -291,7 +291,7 @@ contract GlobalFinancialInstitutions is Ownable, ReentrancyGuard {
         address _receiver,
         uint256 _amount,
         bytes32 _complianceProof
-    ) external validInitiative(_sourceInitiative) validInitiative(_targetInitiative) returns (bytes32) {
+    ) public validInitiative(_sourceInitiative) validInitiative(_targetInitiative) returns (bytes32) {
         bytes32 settlementId = keccak256(abi.encodePacked(
             _sourceInitiative,
             _targetInitiative,
@@ -323,7 +323,7 @@ contract GlobalFinancialInstitutions is Ownable, ReentrancyGuard {
         bytes32 _proposalId,
         bytes32 _institutionId,
         bool _approve
-    ) external validInstitution(_institutionId) onlyInstitution(_institutionId) {
+    ) public validInstitution(_institutionId) onlyInstitution(_institutionId) {
         FinancialInstitution storage institution = financialInstitutions[_institutionId];
         require(institution.isActive, "Institution not active");
 
@@ -342,7 +342,7 @@ contract GlobalFinancialInstitutions is Ownable, ReentrancyGuard {
         bytes32 _standardId,
         bytes32 _implementationId,
         bool _compliant
-    ) external onlyOwner {
+    ) public onlyOwner {
         globalStandards[_standardId].compliantImplementations[_implementationId] = _compliant;
     }
 
@@ -352,7 +352,7 @@ contract GlobalFinancialInstitutions is Ownable, ReentrancyGuard {
     function updateInitiativeStatus(
         bytes32 _initiativeId,
         InitiativeStatus _newStatus
-    ) external validInitiative(_initiativeId) {
+    ) public validInitiative(_initiativeId) {
         DigitalAssetInitiative storage initiative = digitalAssetInitiatives[_initiativeId];
         // Only lead institution or governance can update
         require(msg.sender == owner() || _isLeadInstitution(initiative.leadInstitution, msg.sender), "Not authorized");
@@ -363,9 +363,7 @@ contract GlobalFinancialInstitutions is Ownable, ReentrancyGuard {
     /**
      * @notice Get institution details
      */
-    function getInstitution(bytes32 _institutionId)
-        external
-        view
+    function getInstitution(bytes32 _institutionId) public view
         returns (
             string memory institutionName,
             InstitutionType institutionType,
@@ -374,7 +372,7 @@ contract GlobalFinancialInstitutions is Ownable, ReentrancyGuard {
             bool isActive
         )
     {
-        FinancialInstitution memory institution = financialInstitutions[_institutionId];
+        FinancialInstitution storage institution = financialInstitutions[_institutionId];
         return (
             institution.institutionName,
             institution.institutionType,
@@ -387,9 +385,7 @@ contract GlobalFinancialInstitutions is Ownable, ReentrancyGuard {
     /**
      * @notice Get initiative details
      */
-    function getInitiative(bytes32 _initiativeId)
-        external
-        view
+    function getInitiative(bytes32 _initiativeId) public view
         returns (
             string memory initiativeName,
             DigitalAssetType assetType,
@@ -399,7 +395,7 @@ contract GlobalFinancialInstitutions is Ownable, ReentrancyGuard {
             bool isMultilateral
         )
     {
-        DigitalAssetInitiative memory initiative = digitalAssetInitiatives[_initiativeId];
+        DigitalAssetInitiative storage initiative = digitalAssetInitiatives[_initiativeId];
         return (
             initiative.initiativeName,
             initiative.assetType,
@@ -413,9 +409,7 @@ contract GlobalFinancialInstitutions is Ownable, ReentrancyGuard {
     /**
      * @notice Get global standard details
      */
-    function getStandard(bytes32 _standardId)
-        external
-        view
+    function getStandard(bytes32 _standardId) public view
         returns (
             string memory standardName,
             InstitutionType issuingBody,
@@ -423,7 +417,7 @@ contract GlobalFinancialInstitutions is Ownable, ReentrancyGuard {
             bool isMandatory
         )
     {
-        GlobalStandard memory standard = globalStandards[_standardId];
+        GlobalStandard storage standard = globalStandards[_standardId];
         return (
             standard.standardName,
             standard.issuingBody,
@@ -435,9 +429,7 @@ contract GlobalFinancialInstitutions is Ownable, ReentrancyGuard {
     /**
      * @notice Get cross-border settlement details
      */
-    function getCrossBorderSettlement(bytes32 _settlementId)
-        external
-        view
+    function getCrossBorderSettlement(bytes32 _settlementId) public view
         returns (
             bytes32 sourceInitiative,
             bytes32 targetInitiative,
@@ -461,9 +453,7 @@ contract GlobalFinancialInstitutions is Ownable, ReentrancyGuard {
     /**
      * @notice Get institutions by type
      */
-    function getInstitutionsByType(InstitutionType _type)
-        external
-        view
+    function getInstitutionsByType(InstitutionType _type) public view
         returns (bytes32[] memory)
     {
         return institutionsByType[_type];
@@ -472,9 +462,7 @@ contract GlobalFinancialInstitutions is Ownable, ReentrancyGuard {
     /**
      * @notice Get initiatives by type
      */
-    function getInitiativesByType(DigitalAssetType _type)
-        external
-        view
+    function getInitiativesByType(DigitalAssetType _type) public view
         returns (bytes32[] memory)
     {
         return initiativesByType[_type];
@@ -483,9 +471,7 @@ contract GlobalFinancialInstitutions is Ownable, ReentrancyGuard {
     /**
      * @notice Check if implementation is compliant
      */
-    function isCompliantImplementation(bytes32 _standardId, bytes32 _implementationId)
-        external
-        view
+    function isCompliantImplementation(bytes32 _standardId, bytes32 _implementationId) public view
         returns (bool)
     {
         return globalStandards[_standardId].compliantImplementations[_implementationId];
@@ -499,7 +485,7 @@ contract GlobalFinancialInstitutions is Ownable, ReentrancyGuard {
         uint256 _minVotingPower,
         uint256 _maxVotingPower,
         uint256 _initiativeFundingPeriod
-    ) external onlyOwner {
+    ) public onlyOwner {
         governanceQuorum = _governanceQuorum;
         minVotingPower = _minVotingPower;
         maxVotingPower = _maxVotingPower;
@@ -509,9 +495,7 @@ contract GlobalFinancialInstitutions is Ownable, ReentrancyGuard {
     /**
      * @notice Get global statistics
      */
-    function getGlobalStatistics()
-        external
-        view
+    function getGlobalStatistics() public view
         returns (
             uint256 _totalInstitutions,
             uint256 _totalInitiatives,

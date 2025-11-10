@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title InstitutionalDeFiHub
@@ -167,7 +167,7 @@ contract InstitutionalDeFiHub is Ownable, ReentrancyGuard {
         uint256 _maxLTV,
         uint256 _liquidationThreshold,
         RiskLevel _riskLevel
-    ) external onlyOwner returns (bytes32) {
+    ) public onlyOwner returns (bytes32) {
         require(_asset != address(0), "Invalid asset");
         require(_maxLTV <= 9000, "LTV too high"); // Max 90%
         require(_liquidationThreshold > _maxLTV, "Invalid liquidation threshold");
@@ -205,7 +205,7 @@ contract InstitutionalDeFiHub is Ownable, ReentrancyGuard {
         address[] memory _assets,
         uint256[] memory _amounts,
         uint256 _leverage
-    ) external payable nonReentrant returns (bytes32) {
+    ) public payable nonReentrant returns (bytes32) {
         require(_assets.length == _amounts.length, "Array length mismatch");
         require(_leverage <= maxLeverage, "Leverage too high");
 
@@ -253,7 +253,7 @@ contract InstitutionalDeFiHub is Ownable, ReentrancyGuard {
         uint256[] memory _allocations,
         uint256 _minInvestment,
         uint256 _lockupPeriod
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         require(_tokens.length == _allocations.length, "Array length mismatch");
 
         // Validate allocations sum to 100%
@@ -300,7 +300,7 @@ contract InstitutionalDeFiHub is Ownable, ReentrancyGuard {
         uint256 _notionalAmount,
         bool _isCall,
         address _counterparty
-    ) external payable returns (bytes32) {
+    ) public payable returns (bytes32) {
         require(_expiration > block.timestamp, "Invalid expiration");
         require(_notionalAmount > 0, "Invalid notional amount");
         require(msg.value >= _notionalAmount / 100, "Insufficient premium"); // 1% premium
@@ -341,7 +341,7 @@ contract InstitutionalDeFiHub is Ownable, ReentrancyGuard {
         uint256 _premium,
         uint256 _deductible,
         uint256 _expiration
-    ) external payable returns (bytes32) {
+    ) public payable returns (bytes32) {
         require(msg.value >= _premium, "Insufficient premium payment");
         require(_expiration > block.timestamp, "Invalid expiration");
         require(_coverageAmount > _deductible, "Invalid coverage structure");
@@ -376,7 +376,7 @@ contract InstitutionalDeFiHub is Ownable, ReentrancyGuard {
     function updatePositionValuation(
         bytes32 _positionId,
         uint256 _newValue
-    ) external validPosition(_positionId) {
+    ) public validPosition(_positionId) {
         InstitutionalPosition storage position = institutionalPositions[_positionId];
 
         uint256 oldValue = position.currentValue;
@@ -402,7 +402,7 @@ contract InstitutionalDeFiHub is Ownable, ReentrancyGuard {
     /**
      * @notice Close position
      */
-    function closePosition(bytes32 _positionId) external validPosition(_positionId) nonReentrant {
+    function closePosition(bytes32 _positionId) public validPosition(_positionId) nonReentrant {
         InstitutionalPosition storage position = institutionalPositions[_positionId];
         require(position.institution == msg.sender, "Not position owner");
         require(position.isActive, "Position not active");
@@ -418,7 +418,7 @@ contract InstitutionalDeFiHub is Ownable, ReentrancyGuard {
     /**
      * @notice Claim insurance
      */
-    function claimInsurance(bytes32 _policyId, uint256 _claimAmount) external {
+    function claimInsurance(bytes32 _policyId, uint256 _claimAmount) public {
         InsurancePolicy storage policy = insurancePolicies[_policyId];
         require(policy.insured == msg.sender, "Not policy holder");
         require(policy.isActive, "Policy not active");
@@ -450,9 +450,7 @@ contract InstitutionalDeFiHub is Ownable, ReentrancyGuard {
     /**
      * @notice Get lending pool details
      */
-    function getLendingPool(bytes32 _poolId)
-        external
-        view
+    function getLendingPool(bytes32 _poolId) public view
         returns (
             address asset,
             uint256 totalSupplied,
@@ -474,9 +472,7 @@ contract InstitutionalDeFiHub is Ownable, ReentrancyGuard {
     /**
      * @notice Get institutional position
      */
-    function getInstitutionalPosition(bytes32 _positionId)
-        external
-        view
+    function getInstitutionalPosition(bytes32 _positionId) public view
         returns (
             address institution,
             PositionType positionType,
@@ -498,9 +494,7 @@ contract InstitutionalDeFiHub is Ownable, ReentrancyGuard {
     /**
      * @notice Get yield strategy
      */
-    function getYieldStrategy(bytes32 _strategyId)
-        external
-        view
+    function getYieldStrategy(bytes32 _strategyId) public view
         returns (
             string memory strategyName,
             RiskLevel riskLevel,
@@ -522,9 +516,7 @@ contract InstitutionalDeFiHub is Ownable, ReentrancyGuard {
     /**
      * @notice Get derivatives contract
      */
-    function getDerivativesContract(bytes32 _contractId)
-        external
-        view
+    function getDerivativesContract(bytes32 _contractId) public view
         returns (
             string memory instrument,
             uint256 strikePrice,
@@ -546,9 +538,7 @@ contract InstitutionalDeFiHub is Ownable, ReentrancyGuard {
     /**
      * @notice Get insurance policy
      */
-    function getInsurancePolicy(bytes32 _policyId)
-        external
-        view
+    function getInsurancePolicy(bytes32 _policyId) public view
         returns (
             address insured,
             string memory coverageType,
@@ -575,7 +565,7 @@ contract InstitutionalDeFiHub is Ownable, ReentrancyGuard {
         uint256 _minCollateralRatio,
         uint256 _liquidationBonus,
         uint256 _protocolFee
-    ) external onlyOwner {
+    ) public onlyOwner {
         maxLeverage = _maxLeverage;
         minCollateralRatio = _minCollateralRatio;
         liquidationBonus = _liquidationBonus;
@@ -585,9 +575,7 @@ contract InstitutionalDeFiHub is Ownable, ReentrancyGuard {
     /**
      * @notice Get global DeFi statistics
      */
-    function getGlobalStatistics()
-        external
-        view
+    function getGlobalStatistics() public view
         returns (
             uint256 _totalValueLocked,
             uint256 _totalBorrowed,

@@ -29,17 +29,17 @@ contract ExternalRailEIP712 is IRail, EIP712 {
         admin = _admin;
     }
 
-    function transferAdmin(address to) external onlyAdmin { require(to!=address(0), "X712: 0"); emit AdminTransferred(admin,to); admin=to; }
-    function setSigner(address s, bool allowed) external onlyAdmin { isSigner[s] = allowed; emit SignerSet(s, allowed); }
+    function transferAdmin(address to) public onlyAdmin { require(to!=address(0), "X712: 0"); emit AdminTransferred(admin,to); admin=to; }
+    function setSigner(address s, bool allowed) public onlyAdmin { isSigner[s] = allowed; emit SignerSet(s, allowed); }
 
-    function kind() external pure override returns (Kind){ return Kind.EXTERNAL; }
+    function kind() public pure override returns (Kind){ return Kind.EXTERNAL; }
 
     function transferId(Transfer calldata t) public pure returns (bytes32){
         // Domain-separate with a salt and hash dynamic metadata to a fixed-length value
         return keccak256(abi.encode("X712", t.asset, t.from, t.to, t.amount, keccak256(t.metadata)));
     }
 
-    function prepare(Transfer calldata t) external payable override {
+    function prepare(Transfer calldata t) public payable override {
         bytes32 id = transferId(t);
         require(_status[id] == Status.NONE, "X712: exists");
         _status[id] = Status.PREPARED;
@@ -56,7 +56,7 @@ contract ExternalRailEIP712 is IRail, EIP712 {
         return ECDSA.recover(digest, sig);
     }
 
-    function markWithReceipt(Transfer calldata t, bool released, uint64 settledAt, bytes calldata sig) external {
+    function markWithReceipt(Transfer calldata t, bool released, uint64 settledAt, bytes calldata sig) public {
         bytes32 id = transferId(t);
         require(_status[id] == Status.PREPARED, "X712: bad state");
         address signer = _verify(id, released, settledAt, sig);
@@ -71,7 +71,7 @@ contract ExternalRailEIP712 is IRail, EIP712 {
     }
 
     // IRail compatibility (admin paths disabled)
-    function release(bytes32 /*id*/, Transfer calldata /*t*/) external override onlyAdmin { revert("X712: use markWithReceipt"); }
-    function refund(bytes32 /*id*/, Transfer calldata /*t*/) external override onlyAdmin { revert("X712: use markWithReceipt"); }
-    function status(bytes32 id) external view override returns (Status){ return _status[id]; }
+    function release(bytes32 /*id*/, Transfer calldata /*t*/) public override onlyAdmin { revert("X712: use markWithReceipt"); }
+    function refund(bytes32 /*id*/, Transfer calldata /*t*/) public override onlyAdmin { revert("X712: use markWithReceipt"); }
+    function status(bytes32 id) public view override returns (Status){ return _status[id]; }
 }

@@ -27,16 +27,14 @@ contract DisclosureRegistry is AccessControl, Pausable {
     }
 
     // Convenience getters for external systems/tests
-    function ROLE_ADMIN_ID() external pure returns (bytes32) { return PolicyRoles.ROLE_ADMIN; }
-    function ROLE_AUDITOR_ID() external pure returns (bytes32) { return PolicyRoles.ROLE_AUDITOR; }
+    function ROLE_ADMIN_ID() public pure returns (bytes32) { return PolicyRoles.ROLE_ADMIN; }
+    function ROLE_AUDITOR_ID() public pure returns (bytes32) { return PolicyRoles.ROLE_AUDITOR; }
 
     function keyOf(address issuerOrVault, bytes32 instrumentOrCategory, bytes32 docType) public pure returns (bytes32) {
         return keccak256(abi.encode(issuerOrVault, instrumentOrCategory, docType));
     }
 
-    function set(address issuerOrVault, bytes32 instrumentOrCategory, bytes32 docType, string calldata uri, uint64 asOf)
-        external
-        whenNotPaused
+    function set(address issuerOrVault, bytes32 instrumentOrCategory, bytes32 docType, string calldata uri, uint64 asOf) public whenNotPaused
     {
         // Allow either ADMIN or AUDITOR to publish disclosures
         require(
@@ -48,11 +46,11 @@ contract DisclosureRegistry is AccessControl, Pausable {
         emit DisclosureSet(k, uri, asOf, msg.sender);
     }
 
-    function get(bytes32 key) external view returns (string memory uri, uint64 asOf, address signer) {
+    function get(bytes32 key) public view returns (string memory uri, uint64 asOf, address signer) {
         Doc memory d = docOf[key];
         return (d.uri, d.asOf, d.signer);
     }
 
-    function pause() external onlyRole(DEFAULT_ADMIN_ROLE) { _pause(); }
-    function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) { _unpause(); }
+    function pause() public onlyRole(DEFAULT_ADMIN_ROLE) { _pause(); }
+    function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) { _unpause(); }
 }

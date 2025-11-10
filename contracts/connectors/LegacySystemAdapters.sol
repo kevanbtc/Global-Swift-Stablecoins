@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title LegacySystemAdapters
@@ -142,7 +142,7 @@ contract LegacySystemAdapters is Ownable, ReentrancyGuard {
         string memory _systemName,
         bytes32 _authenticationToken,
         uint256 _connectionTimeout
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         bytes32 adapterId = keccak256(abi.encodePacked(
             _systemType,
             _systemName,
@@ -176,7 +176,7 @@ contract LegacySystemAdapters is Ownable, ReentrancyGuard {
     function updateConnectionStatus(
         bytes32 _adapterId,
         ConnectionStatus _status
-    ) external validAdapter(_adapterId) onlyAdapter(_adapterId) {
+    ) public validAdapter(_adapterId) onlyAdapter(_adapterId) {
         SystemAdapter storage adapter = systemAdapters[_adapterId];
         ConnectionStatus oldStatus = adapter.status;
 
@@ -202,7 +202,7 @@ contract LegacySystemAdapters is Ownable, ReentrancyGuard {
         address _recipient,
         bytes32 _contentHash,
         bytes32 _correlationId
-    ) external validAdapter(_adapterId) activeAdapter(_adapterId) returns (bytes32) {
+    ) public validAdapter(_adapterId) activeAdapter(_adapterId) returns (bytes32) {
         SystemAdapter storage adapter = systemAdapters[_adapterId];
         require(adapter.supportedMessages[_messageType], "Message type not supported");
         require(adapter.status == ConnectionStatus.ACTIVE, "Adapter not connected");
@@ -240,7 +240,7 @@ contract LegacySystemAdapters is Ownable, ReentrancyGuard {
         bytes32 _messageId,
         bytes32 _correlationId,
         bytes32 _responseHash
-    ) external validAdapter(_getAdapterId(msg.sender)) {
+    ) public validAdapter(_getAdapterId(msg.sender)) {
         bytes32 adapterId = _getAdapterId(msg.sender);
         SystemAdapter storage adapter = systemAdapters[adapterId];
 
@@ -265,7 +265,7 @@ contract LegacySystemAdapters is Ownable, ReentrancyGuard {
         bytes32 _legacyMessageId,
         bytes32 _blockchainMessageId,
         LegacySystem _sourceSystem
-    ) external onlyOwner returns (bytes32) {
+    ) public onlyOwner returns (bytes32) {
         bytes32 mappingId = keccak256(abi.encodePacked(
             _legacyMessageId,
             _blockchainMessageId,
@@ -292,7 +292,7 @@ contract LegacySystemAdapters is Ownable, ReentrancyGuard {
         bytes32 _adapterId,
         MessageType[] memory _messageTypes,
         bool[] memory _supported
-    ) external validAdapter(_adapterId) onlyAdapter(_adapterId) {
+    ) public validAdapter(_adapterId) onlyAdapter(_adapterId) {
         require(_messageTypes.length == _supported.length, "Array length mismatch");
 
         SystemAdapter storage adapter = systemAdapters[_adapterId];
@@ -304,7 +304,7 @@ contract LegacySystemAdapters is Ownable, ReentrancyGuard {
     /**
      * @notice Send heartbeat to maintain connection
      */
-    function sendHeartbeat(bytes32 _adapterId) external validAdapter(_adapterId) onlyAdapter(_adapterId) {
+    function sendHeartbeat(bytes32 _adapterId) public validAdapter(_adapterId) onlyAdapter(_adapterId) {
         SystemAdapter storage adapter = systemAdapters[_adapterId];
         adapter.lastHeartbeat = block.timestamp;
 
@@ -321,9 +321,7 @@ contract LegacySystemAdapters is Ownable, ReentrancyGuard {
     /**
      * @notice Get adapter details
      */
-    function getAdapter(bytes32 _adapterId)
-        external
-        view
+    function getAdapter(bytes32 _adapterId) public view
         returns (
             LegacySystem systemType,
             string memory systemName,
@@ -333,7 +331,7 @@ contract LegacySystemAdapters is Ownable, ReentrancyGuard {
             bool isActive
         )
     {
-        SystemAdapter memory adapter = systemAdapters[_adapterId];
+        SystemAdapter storage adapter = systemAdapters[_adapterId];
         return (
             adapter.systemType,
             adapter.systemName,
@@ -347,9 +345,7 @@ contract LegacySystemAdapters is Ownable, ReentrancyGuard {
     /**
      * @notice Get message details
      */
-    function getMessage(bytes32 _messageId)
-        external
-        view
+    function getMessage(bytes32 _messageId) public view
         returns (
             bytes32 adapterId,
             MessageType messageType,
@@ -375,9 +371,7 @@ contract LegacySystemAdapters is Ownable, ReentrancyGuard {
     /**
      * @notice Get message mapping
      */
-    function getMessageMapping(bytes32 _mappingId)
-        external
-        view
+    function getMessageMapping(bytes32 _mappingId) public view
         returns (
             bytes32 legacyMessageId,
             bytes32 blockchainMessageId,
@@ -399,9 +393,7 @@ contract LegacySystemAdapters is Ownable, ReentrancyGuard {
     /**
      * @notice Get adapters by system type
      */
-    function getAdaptersByType(LegacySystem _systemType)
-        external
-        view
+    function getAdaptersByType(LegacySystem _systemType) public view
         returns (bytes32[] memory)
     {
         return systemAdaptersByType[_systemType];
@@ -410,9 +402,7 @@ contract LegacySystemAdapters is Ownable, ReentrancyGuard {
     /**
      * @notice Check if message type is supported
      */
-    function isMessageTypeSupported(bytes32 _adapterId, MessageType _messageType)
-        external
-        view
+    function isMessageTypeSupported(bytes32 _adapterId, MessageType _messageType) public view
         returns (bool)
     {
         return systemAdapters[_adapterId].supportedMessages[_messageType];
@@ -426,7 +416,7 @@ contract LegacySystemAdapters is Ownable, ReentrancyGuard {
         uint256 _connectionTimeout,
         uint256 _maxMessageSize,
         uint256 _processingTimeout
-    ) external onlyOwner {
+    ) public onlyOwner {
         heartbeatInterval = _heartbeatInterval;
         connectionTimeout = _connectionTimeout;
         maxMessageSize = _maxMessageSize;
@@ -436,9 +426,7 @@ contract LegacySystemAdapters is Ownable, ReentrancyGuard {
     /**
      * @notice Get global adapter statistics
      */
-    function getGlobalStatistics()
-        external
-        view
+    function getGlobalStatistics() public view
         returns (
             uint256 _totalAdapters,
             uint256 _totalMessages,

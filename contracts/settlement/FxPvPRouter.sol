@@ -22,14 +22,14 @@ contract FxPvPRouter {
         admin=_admin; oracle=IPriceOracle(_oracle); erc20Rail=IRail(_erc20Rail);
     }
 
-    function transferAdmin(address to) external onlyAdmin { require(to!=address(0), "FX: 0"); emit AdminTransferred(admin,to); admin=to; }
+    function transferAdmin(address to) public onlyAdmin { require(to!=address(0), "FX: 0"); emit AdminTransferred(admin,to); admin=to; }
 
     /// @notice Prepare both sides with price bound (using USD or shared quote from oracle).
     function prepareBound(
         IRail.Transfer calldata legA,
         IRail.Transfer calldata legB,
         uint256 maxSlippageBps // allowed deviation from oracle-implied amount
-    ) external onlyAdmin {
+    ) public onlyAdmin {
         require(legA.asset != address(0) && legB.asset != address(0), "FX: assets");
         (uint256 pA, uint8 dA) = oracle.getPrice(legA.asset);
         (uint256 pB, uint8 dB) = oracle.getPrice(legB.asset);

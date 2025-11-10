@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title ThirdPartyValidation
@@ -144,7 +144,7 @@ contract ThirdPartyValidation is Ownable, ReentrancyGuard {
     }
 
     modifier authorizedProvider(bytes32 _requestId) {
-        ValidationRequest memory request = validationRequests[_requestId];
+        ValidationRequest storage request = validationRequests[_requestId];
         require(providerProfiles[request.provider].providerAddress == msg.sender, "Not authorized provider");
         _;
     }
@@ -160,7 +160,7 @@ contract ThirdPartyValidation is Ownable, ReentrancyGuard {
         string memory _description,
         ValidationType[] memory _supportedTypes,
         uint256[] memory _typeFees
-    ) external onlyOwner {
+    ) public onlyOwner {
         require(_supportedTypes.length == _typeFees.length, "Array length mismatch");
 
         ProviderProfile storage profile = providerProfiles[_provider];
@@ -190,8 +190,8 @@ contract ThirdPartyValidation is Ownable, ReentrancyGuard {
         bytes32 _targetId,
         uint256 _deadline,
         bool _isRenewable
-    ) external payable validProvider(_provider) returns (bytes32) {
-        ProviderProfile memory profile = providerProfiles[_provider];
+    ) public payable validProvider(_provider) returns (bytes32) {
+        ProviderProfile storage profile = providerProfiles[_provider];
         require(profile.supportedTypes[_validationType], "Validation type not supported");
         require(_deadline <= maxDeadline, "Deadline too far");
         require(profile.reputationScore >= minReputationScore, "Provider reputation too low");
@@ -237,7 +237,7 @@ contract ThirdPartyValidation is Ownable, ReentrancyGuard {
         string memory _reportURI,
         bytes32 _reportHash,
         uint256 _validityPeriod
-    ) external validRequest(_requestId) authorizedProvider(_requestId) {
+    ) public validRequest(_requestId) authorizedProvider(_requestId) {
         ValidationRequest storage request = validationRequests[_requestId];
         require(request.status == ValidationStatus.REQUESTED || request.status == ValidationStatus.IN_PROGRESS, "Invalid status");
         require(block.timestamp <= request.deadline, "Deadline exceeded");
@@ -264,9 +264,7 @@ contract ThirdPartyValidation is Ownable, ReentrancyGuard {
     /**
      * @notice Dispute validation result
      */
-    function disputeValidation(bytes32 _requestId, string memory _reason)
-        external
-        validRequest(_requestId)
+    function disputeValidation(bytes32 _requestId, string memory _reason) public validRequest(_requestId)
     {
         ValidationRequest storage request = validationRequests[_requestId];
         require(request.status == ValidationStatus.COMPLETED, "Validation not completed");
@@ -287,9 +285,7 @@ contract ThirdPartyValidation is Ownable, ReentrancyGuard {
     /**
      * @notice Authorize reviewer for validation
      */
-    function authorizeReviewer(bytes32 _requestId, address _reviewer)
-        external
-        validRequest(_requestId)
+    function authorizeReviewer(bytes32 _requestId, address _reviewer) public validRequest(_requestId)
     {
         ValidationRequest storage request = validationRequests[_requestId];
         require(request.requester == msg.sender, "Not request owner");
@@ -300,9 +296,7 @@ contract ThirdPartyValidation is Ownable, ReentrancyGuard {
     /**
      * @notice Get validation request details
      */
-    function getValidationRequest(bytes32 _requestId)
-        external
-        view
+    function getValidationRequest(bytes32 _requestId) public view
         returns (
             ValidationProvider provider,
             ValidationType validationType,
@@ -313,7 +307,7 @@ contract ThirdPartyValidation is Ownable, ReentrancyGuard {
             uint256 deadline
         )
     {
-        ValidationRequest memory request = validationRequests[_requestId];
+        ValidationRequest storage request = validationRequests[_requestId];
         return (
             request.provider,
             request.validationType,
@@ -328,9 +322,7 @@ contract ThirdPartyValidation is Ownable, ReentrancyGuard {
     /**
      * @notice Get provider profile
      */
-    function getProviderProfile(ValidationProvider _provider)
-        external
-        view
+    function getProviderProfile(ValidationProvider _provider) public view
         returns (
             string memory name,
             string memory description,
@@ -340,7 +332,7 @@ contract ThirdPartyValidation is Ownable, ReentrancyGuard {
             bool isActive
         )
     {
-        ProviderProfile memory profile = providerProfiles[_provider];
+        ProviderProfile storage profile = providerProfiles[_provider];
         return (
             profile.name,
             profile.description,
@@ -354,9 +346,7 @@ contract ThirdPartyValidation is Ownable, ReentrancyGuard {
     /**
      * @notice Check if provider supports validation type
      */
-    function providerSupportsType(ValidationProvider _provider, ValidationType _type)
-        external
-        view
+    function providerSupportsType(ValidationProvider _provider, ValidationType _type) public view
         returns (bool)
     {
         return providerProfiles[_provider].supportedTypes[_type];
@@ -365,9 +355,7 @@ contract ThirdPartyValidation is Ownable, ReentrancyGuard {
     /**
      * @notice Get provider fee for validation type
      */
-    function getProviderFee(ValidationProvider _provider, ValidationType _type)
-        external
-        view
+    function getProviderFee(ValidationProvider _provider, ValidationType _type) public view
         returns (uint256)
     {
         return providerProfiles[_provider].typeFees[_type];
@@ -376,9 +364,7 @@ contract ThirdPartyValidation is Ownable, ReentrancyGuard {
     /**
      * @notice Get validation metrics by type
      */
-    function getValidationMetrics(ValidationType _type)
-        external
-        view
+    function getValidationMetrics(ValidationType _type) public view
         returns (
             uint256 totalRequests,
             uint256 completedValidations,
@@ -400,9 +386,7 @@ contract ThirdPartyValidation is Ownable, ReentrancyGuard {
     /**
      * @notice Get requests by type
      */
-    function getRequestsByType(ValidationType _type)
-        external
-        view
+    function getRequestsByType(ValidationType _type) public view
         returns (bytes32[] memory)
     {
         return requestsByType[_type];
@@ -411,9 +395,7 @@ contract ThirdPartyValidation is Ownable, ReentrancyGuard {
     /**
      * @notice Get requests by provider
      */
-    function getRequestsByProvider(ValidationProvider _provider)
-        external
-        view
+    function getRequestsByProvider(ValidationProvider _provider) public view
         returns (bytes32[] memory)
     {
         return requestsByProvider[_provider];
@@ -422,9 +404,7 @@ contract ThirdPartyValidation is Ownable, ReentrancyGuard {
     /**
      * @notice Get requests by requester
      */
-    function getRequestsByRequester(address _requester)
-        external
-        view
+    function getRequestsByRequester(address _requester) public view
         returns (bytes32[] memory)
     {
         return requestsByRequester[_requester];
@@ -433,9 +413,7 @@ contract ThirdPartyValidation is Ownable, ReentrancyGuard {
     /**
      * @notice Update provider reputation
      */
-    function updateProviderReputation(ValidationProvider _provider, uint256 _newScore)
-        external
-        onlyOwner
+    function updateProviderReputation(ValidationProvider _provider, uint256 _newScore) public onlyOwner
     {
         require(_newScore <= 100, "Invalid score");
         providerProfiles[_provider].reputationScore = _newScore;
@@ -449,7 +427,7 @@ contract ThirdPartyValidation is Ownable, ReentrancyGuard {
         uint256 _maxDeadline,
         uint256 _minReputationScore,
         uint256 _disputePeriod
-    ) external onlyOwner {
+    ) public onlyOwner {
         baseValidationFee = _baseValidationFee;
         maxDeadline = _maxDeadline;
         minReputationScore = _minReputationScore;
@@ -459,9 +437,7 @@ contract ThirdPartyValidation is Ownable, ReentrancyGuard {
     /**
      * @notice Get global validation statistics
      */
-    function getGlobalStatistics()
-        external
-        view
+    function getGlobalStatistics() public view
         returns (
             uint256 _totalRequests,
             uint256 _totalProviders,

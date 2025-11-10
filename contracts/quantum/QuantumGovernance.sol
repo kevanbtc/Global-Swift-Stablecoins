@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title QuantumGovernance
@@ -134,7 +134,7 @@ contract QuantumGovernance is Ownable, ReentrancyGuard {
         uint256 _quorumRequired,
         uint256 _approvalThreshold,
         bytes32 _quantumProof
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         require(bytes(_title).length > 0, "Invalid title");
         require(bytes(_description).length > 0, "Invalid description");
 
@@ -188,7 +188,7 @@ contract QuantumGovernance is Ownable, ReentrancyGuard {
         VoteType _voteType,
         uint256 _weight,
         bytes32 _quantumSignature
-    ) external validProposal(_proposalId) proposalActive(_proposalId) {
+    ) public validProposal(_proposalId) proposalActive(_proposalId) {
         Proposal storage proposal = proposals[_proposalId];
         require(block.timestamp >= proposal.startTime, "Voting not started");
         require(block.timestamp <= proposal.endTime, "Voting ended");
@@ -220,7 +220,7 @@ contract QuantumGovernance is Ownable, ReentrancyGuard {
     /**
      * @notice Execute a successful proposal
      */
-    function executeProposal(bytes32 _proposalId) external validProposal(_proposalId) nonReentrant {
+    function executeProposal(bytes32 _proposalId) public validProposal(_proposalId) nonReentrant {
         Proposal storage proposal = proposals[_proposalId];
         require(proposal.status == ProposalStatus.ACTIVE, "Proposal not active");
         require(block.timestamp > proposal.endTime, "Voting not ended");
@@ -246,7 +246,7 @@ contract QuantumGovernance is Ownable, ReentrancyGuard {
     /**
      * @notice Actually execute the proposal actions
      */
-    function executeProposalActions(bytes32 _proposalId) external validProposal(_proposalId) {
+    function executeProposalActions(bytes32 _proposalId) public validProposal(_proposalId) {
         Proposal storage proposal = proposals[_proposalId];
         require(proposal.status == ProposalStatus.SUCCEEDED, "Proposal not succeeded");
         require(block.timestamp >= proposal.executionTime, "Execution delay not passed");
@@ -272,7 +272,7 @@ contract QuantumGovernance is Ownable, ReentrancyGuard {
     function registerQuantumKey(
         bytes memory _publicKey,
         bytes32 _algorithm
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         bytes32 keyId = keccak256(abi.encodePacked(
             msg.sender,
             _publicKey,
@@ -297,7 +297,7 @@ contract QuantumGovernance is Ownable, ReentrancyGuard {
     function rotateQuantumKey(
         bytes32 _keyId,
         bytes memory _newPublicKey
-    ) external {
+    ) public {
         QuantumKey storage key = quantumKeys[_keyId];
         require(key.owner == msg.sender, "Not key owner");
         require(key.isActive, "Key not active");
@@ -317,7 +317,7 @@ contract QuantumGovernance is Ownable, ReentrancyGuard {
         address _tokenAddress,
         uint256 _quorumThreshold,
         uint256 _approvalThreshold
-    ) external onlyOwner {
+    ) public onlyOwner {
         require(_tokenAddress != address(0), "Invalid token address");
 
         GovernanceToken storage token = governanceTokens[_tokenAddress];
@@ -332,9 +332,7 @@ contract QuantumGovernance is Ownable, ReentrancyGuard {
     /**
      * @notice Get proposal details
      */
-    function getProposal(bytes32 _proposalId)
-        external
-        view
+    function getProposal(bytes32 _proposalId) public view
         returns (
             string memory title,
             ProposalType proposalType,
@@ -344,7 +342,7 @@ contract QuantumGovernance is Ownable, ReentrancyGuard {
             uint256 endTime
         )
     {
-        Proposal memory proposal = proposals[_proposalId];
+        Proposal storage proposal = proposals[_proposalId];
         return (
             proposal.title,
             proposal.proposalType,
@@ -358,9 +356,7 @@ contract QuantumGovernance is Ownable, ReentrancyGuard {
     /**
      * @notice Get user vote on proposal
      */
-    function getUserVote(bytes32 _proposalId, address _user)
-        external
-        view
+    function getUserVote(bytes32 _proposalId, address _user) public view
         returns (VoteType voteType, uint256 weight, bool hasVoted)
     {
         Vote memory vote = proposals[_proposalId].votes[_user];
@@ -370,9 +366,7 @@ contract QuantumGovernance is Ownable, ReentrancyGuard {
     /**
      * @notice Get quantum key details
      */
-    function getQuantumKey(bytes32 _keyId)
-        external
-        view
+    function getQuantumKey(bytes32 _keyId) public view
         returns (
             address owner,
             uint256 keyVersion,
@@ -418,7 +412,7 @@ contract QuantumGovernance is Ownable, ReentrancyGuard {
         uint256 _proposalThreshold,
         uint256 _defaultQuorum,
         uint256 _defaultApproval
-    ) external onlyOwner {
+    ) public onlyOwner {
         votingPeriod = _votingPeriod;
         executionDelay = _executionDelay;
         proposalThreshold = _proposalThreshold;
@@ -432,7 +426,7 @@ contract QuantumGovernance is Ownable, ReentrancyGuard {
     function updateQuantumParameters(
         uint256 _keyRotationPeriod,
         bytes32 _currentAlgorithm
-    ) external onlyOwner {
+    ) public onlyOwner {
         keyRotationPeriod = _keyRotationPeriod;
         currentAlgorithm = _currentAlgorithm;
     }

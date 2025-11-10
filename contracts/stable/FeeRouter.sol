@@ -46,16 +46,15 @@ contract FeeRouter is Ownable {
     event FeeRecipientRemoved(address indexed token, address indexed recipient);
     event TreasuryUpdated(address indexed oldTreasury, address indexed newTreasury);
 
-    constructor(address _treasury) {
+    constructor(address _treasury) Ownable(msg.sender) {
         require(_treasury != address(0), "Invalid treasury address");
         treasury = _treasury;
-        _transferOwnership(msg.sender);
     }
 
     /**
      * @notice Collect fees from stablecoin operations
      */
-    function collectFee(address token, uint256 amount) external payable {
+    function collectFee(address token, uint256 amount) public payable {
         require(amount > 0, "Amount must be greater than 0");
 
         if (token == address(0)) {
@@ -79,7 +78,7 @@ contract FeeRouter is Ownable {
     /**
      * @notice Distribute collected fees to recipients
      */
-    function distributeFees(address token) external {
+    function distributeFees(address token) public {
         FeeConfig storage config = feeConfigs[token];
         require(config.token != address(0), "Fee config not initialized");
         require(config.recipients.length > 0, "No recipients configured");
@@ -135,7 +134,7 @@ contract FeeRouter is Ownable {
         address recipient,
         uint256 share,
         string memory description
-    ) external onlyOwner {
+    ) public onlyOwner {
         require(recipient != address(0), "Invalid recipient address");
         require(share > 0 && share <= MAX_SHARE, "Invalid share amount");
 
@@ -166,7 +165,7 @@ contract FeeRouter is Ownable {
     /**
      * @notice Remove fee recipient
      */
-    function removeFeeRecipient(address token, uint256 index) external onlyOwner {
+    function removeFeeRecipient(address token, uint256 index) public onlyOwner {
         FeeConfig storage config = feeConfigs[token];
         require(index < config.recipients.length, "Invalid recipient index");
 
@@ -183,7 +182,7 @@ contract FeeRouter is Ownable {
         address token,
         uint256 index,
         uint256 newShare
-    ) external onlyOwner {
+    ) public onlyOwner {
         require(newShare > 0 && newShare <= MAX_SHARE, "Invalid share amount");
 
         FeeConfig storage config = feeConfigs[token];
@@ -204,14 +203,14 @@ contract FeeRouter is Ownable {
     /**
      * @notice Set distribution cooldown for a token
      */
-    function setDistributionCooldown(address token, uint256 cooldown) external onlyOwner {
+    function setDistributionCooldown(address token, uint256 cooldown) public onlyOwner {
         feeConfigs[token].distributionCooldown = cooldown;
     }
 
     /**
      * @notice Update treasury address
      */
-    function setTreasury(address newTreasury) external onlyOwner {
+    function setTreasury(address newTreasury) public onlyOwner {
         require(newTreasury != address(0), "Invalid treasury address");
         address oldTreasury = treasury;
         treasury = newTreasury;
@@ -221,7 +220,7 @@ contract FeeRouter is Ownable {
     /**
      * @notice Emergency withdraw stuck tokens
      */
-    function emergencyWithdraw(address token, uint256 amount) external onlyOwner {
+    function emergencyWithdraw(address token, uint256 amount) public onlyOwner {
         if (token == address(0)) {
             payable(treasury).transfer(amount);
         } else {
@@ -232,7 +231,7 @@ contract FeeRouter is Ownable {
     /**
      * @notice Get fee configuration
      */
-    function getFeeConfig(address token) external view returns (
+    function getFeeConfig(address token) public view returns (
         address tokenAddress,
         uint256 totalCollected,
         uint256 recipientCount,
@@ -250,7 +249,7 @@ contract FeeRouter is Ownable {
     /**
      * @notice Get fee recipient details
      */
-    function getFeeRecipient(address token, uint256 index) external view returns (
+    function getFeeRecipient(address token, uint256 index) public view returns (
         address recipient,
         uint256 share,
         bool isActive,
@@ -268,7 +267,7 @@ contract FeeRouter is Ownable {
     /**
      * @notice Get total active recipients for a token
      */
-    function getActiveRecipientCount(address token) external view returns (uint256) {
+    function getActiveRecipientCount(address token) public view returns (uint256) {
         FeeRecipient[] memory recipients = feeConfigs[token].recipients;
         uint256 activeCount = 0;
         for (uint256 i = 0; i < recipients.length; i++) {
@@ -282,7 +281,7 @@ contract FeeRouter is Ownable {
     /**
      * @notice Check if distribution is ready for a token
      */
-    function canDistribute(address token) external view returns (bool) {
+    function canDistribute(address token) public view returns (bool) {
         FeeConfig memory config = feeConfigs[token];
         if (config.token == address(0) || config.totalCollected == 0) {
             return false;
@@ -320,14 +319,14 @@ contract FeeRouter is Ownable {
     /**
      * @notice Get supported tokens count
      */
-    function getSupportedTokensCount() external view returns (uint256) {
+    function getSupportedTokensCount() public view returns (uint256) {
         return supportedTokens.length;
     }
 
     /**
      * @notice Get supported token by index
      */
-    function getSupportedToken(uint256 index) external view returns (address) {
+    function getSupportedToken(uint256 index) public view returns (address) {
         return supportedTokens[index];
     }
 

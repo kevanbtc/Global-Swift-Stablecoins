@@ -56,7 +56,7 @@ contract MultiAssetEscrow is ReentrancyGuard, AccessControl {
         uint256 paymentAmount,
         bytes32 partition,
         uint256 deadline
-    ) external onlyRole(SETTLEMENT_OPERATOR_ROLE) returns (bytes32) {
+    ) public onlyRole(SETTLEMENT_OPERATOR_ROLE) returns (bytes32) {
         require(securityToken != address(0), "Invalid security token");
         require(paymentToken != address(0), "Invalid payment token");
         require(seller != address(0), "Invalid seller");
@@ -108,7 +108,7 @@ contract MultiAssetEscrow is ReentrancyGuard, AccessControl {
         return settlementId;
     }
 
-    function executeSettlement(bytes32 settlementId) external nonReentrant {
+    function executeSettlement(bytes32 settlementId) public nonReentrant {
         Settlement storage settlement = settlements[settlementId];
         require(!settlement.isSettled, "Already settled");
         require(block.timestamp <= settlement.deadline, "Settlement expired");
@@ -147,7 +147,7 @@ contract MultiAssetEscrow is ReentrancyGuard, AccessControl {
         emit SettlementExecuted(settlementId);
     }
 
-    function cancelSettlement(bytes32 settlementId) external {
+    function cancelSettlement(bytes32 settlementId) public {
         Settlement storage settlement = settlements[settlementId];
         require(!settlement.isSettled, "Already settled");
         require(

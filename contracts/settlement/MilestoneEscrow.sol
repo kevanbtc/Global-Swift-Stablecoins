@@ -35,15 +35,15 @@ contract MilestoneEscrow {
         for (uint256 i=0;i<amounts.length;i++){ milestones.push(Milestone({amount: amounts[i], buyerApproved:false, sellerApproved:false, released:false})); }
     }
 
-    function transferAdmin(address to) external onlyAdmin { require(to!=address(0), "ME: 0"); emit AdminTransferred(admin,to); admin = to; }
+    function transferAdmin(address to) public onlyAdmin { require(to!=address(0), "ME: 0"); emit AdminTransferred(admin,to); admin = to; }
 
-    function fund(uint256 amount) external onlyBuyer { require(IERC20Pay(token).transferFrom(msg.sender, address(this), amount), "ME: fund fail"); funded += amount; emit Funded(msg.sender, amount); }
+    function fund(uint256 amount) public onlyBuyer { require(IERC20Pay(token).transferFrom(msg.sender, address(this), amount), "ME: fund fail"); funded += amount; emit Funded(msg.sender, amount); }
 
-    function approve(uint256 idx) external { require(idx < milestones.length, "ME: idx"); if (msg.sender == buyer) milestones[idx].buyerApproved = true; else if (msg.sender == seller) milestones[idx].sellerApproved = true; else revert("ME: no auth"); emit Approved(idx, msg.sender, milestones[idx].buyerApproved, milestones[idx].sellerApproved); }
+    function approve(uint256 idx) public { require(idx < milestones.length, "ME: idx"); if (msg.sender == buyer) milestones[idx].buyerApproved = true; else if (msg.sender == seller) milestones[idx].sellerApproved = true; else revert("ME: no auth"); emit Approved(idx, msg.sender, milestones[idx].buyerApproved, milestones[idx].sellerApproved); }
 
-    function release(uint256 idx, address to) external onlyAdmin {
+    function release(uint256 idx, address to) public onlyAdmin {
         require(block.timestamp <= deadline, "ME: expired"); Milestone storage m = milestones[idx]; require(!m.released && m.buyerApproved && m.sellerApproved, "ME: not releasable"); require(funded >= m.amount, "ME: unfunded"); m.released = true; funded -= m.amount; require(IERC20Pay(token).transfer(to, m.amount), "ME: xfer fail"); emit Released(idx, m.amount);
     }
 
-    function refundRemaining(address to) external onlyAdmin { uint256 bal = funded; funded = 0; require(IERC20Pay(token).transfer(to, bal), "ME: refund fail"); emit Refunded(bal); }
+    function refundRemaining(address to) public onlyAdmin { uint256 bal = funded; funded = 0; require(IERC20Pay(token).transfer(to, bal), "ME: refund fail"); emit Refunded(bal); }
 }

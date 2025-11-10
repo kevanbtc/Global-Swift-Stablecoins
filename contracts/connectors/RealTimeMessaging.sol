@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title RealTimeMessaging
@@ -161,7 +161,7 @@ contract RealTimeMessaging is Ownable, ReentrancyGuard {
         string memory _content,
         ChannelType[] memory _channels,
         bool _requiresAcknowledgment
-    ) external returns (bytes32) {
+        ) public returns (bytes32) {
         require(bytes(_subject).length > 0, "Subject required");
         require(bytes(_content).length <= maxMessageSize, "Content too large");
         require(_channels.length > 0, "At least one channel required");
@@ -213,7 +213,7 @@ contract RealTimeMessaging is Ownable, ReentrancyGuard {
         address _recipient,
         string[] memory _placeholders,
         ChannelType[] memory _channels
-    ) external validTemplate(_templateId) returns (bytes32) {
+    ) public validTemplate(_templateId) returns (bytes32) {
         MessageTemplate memory template = messageTemplates[_templateId];
 
         // Apply placeholders to template (simplified)
@@ -247,7 +247,7 @@ contract RealTimeMessaging is Ownable, ReentrancyGuard {
         MessagePriority _priority,
         string memory _subjectTemplate,
         string memory _contentTemplate
-    ) external onlyOwner returns (bytes32) {
+    ) public onlyOwner returns (bytes32) {
         bytes32 templateId = keccak256(abi.encodePacked(
             _name,
             _messageType,
@@ -275,7 +275,7 @@ contract RealTimeMessaging is Ownable, ReentrancyGuard {
     function subscribeToMessages(
         MessageType[] memory _messageTypes,
         ChannelType[] memory _preferredChannels
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         bytes32 subscriptionId = keccak256(abi.encodePacked(
             msg.sender,
             block.timestamp
@@ -304,7 +304,7 @@ contract RealTimeMessaging is Ownable, ReentrancyGuard {
     /**
      * @notice Acknowledge message receipt
      */
-    function acknowledgeMessage(bytes32 _messageId) external validMessage(_messageId) {
+    function acknowledgeMessage(bytes32 _messageId) public validMessage(_messageId) {
         Message storage message = messages[_messageId];
         require(message.recipient == msg.sender, "Not message recipient");
         require(message.requiresAcknowledgment, "Acknowledgment not required");
@@ -323,7 +323,7 @@ contract RealTimeMessaging is Ownable, ReentrancyGuard {
         bytes32 _messageId,
         ChannelType _channel,
         DeliveryStatus _status
-    ) external validMessage(_messageId) {
+    ) public validMessage(_messageId) {
         Message storage message = messages[_messageId];
         require(channelHandlers[_channel] == msg.sender, "Not authorized channel handler");
 
@@ -344,14 +344,14 @@ contract RealTimeMessaging is Ownable, ReentrancyGuard {
     /**
      * @notice Register channel handler
      */
-    function registerChannelHandler(ChannelType _channel, address _handler) external onlyOwner {
+    function registerChannelHandler(ChannelType _channel, address _handler) public onlyOwner {
         channelHandlers[_channel] = _handler;
     }
 
     /**
      * @notice Process message queue
      */
-    function processMessageQueue(uint256 _maxMessages) external {
+    function processMessageQueue(uint256 _maxMessages) public {
         require(messageQueue.isActive, "Queue not active");
 
         uint256 messagesToProcess = _maxMessages < messageQueue.processingRate ?
@@ -370,9 +370,7 @@ contract RealTimeMessaging is Ownable, ReentrancyGuard {
     /**
      * @notice Get message details
      */
-    function getMessage(bytes32 _messageId)
-        external
-        view
+    function getMessage(bytes32 _messageId) public view
         returns (
             MessageType messageType,
             MessagePriority priority,
@@ -385,7 +383,7 @@ contract RealTimeMessaging is Ownable, ReentrancyGuard {
             bool acknowledged
         )
     {
-        Message memory message = messages[_messageId];
+        Message storage message = messages[_messageId];
         return (
             message.messageType,
             message.priority,
@@ -402,13 +400,11 @@ contract RealTimeMessaging is Ownable, ReentrancyGuard {
     /**
      * @notice Get message content
      */
-    function getMessageContent(bytes32 _messageId)
-        external
-        view
+    function getMessageContent(bytes32 _messageId) public view
         validMessage(_messageId)
         returns (string memory content, bytes32 contentHash)
     {
-        Message memory message = messages[_messageId];
+        Message storage message = messages[_messageId];
         // In production, would check access permissions
         return (message.content, message.contentHash);
     }
@@ -416,12 +412,10 @@ contract RealTimeMessaging is Ownable, ReentrancyGuard {
     /**
      * @notice Get message channels
      */
-    function getMessageChannels(bytes32 _messageId)
-        external
-        view
+    function getMessageChannels(bytes32 _messageId) public view
         returns (ChannelType[] memory channels, DeliveryStatus[] memory statuses)
     {
-        Message memory message = messages[_messageId];
+        Message storage message = messages[_messageId];
         DeliveryStatus[] memory channelStatuses = new DeliveryStatus[](message.channels.length);
 
         for (uint256 i = 0; i < message.channels.length; i++) {
@@ -434,9 +428,7 @@ contract RealTimeMessaging is Ownable, ReentrancyGuard {
     /**
      * @notice Get subscription details
      */
-    function getSubscription(bytes32 _subscriptionId)
-        external
-        view
+    function getSubscription(bytes32 _subscriptionId) public view
         returns (
             address subscriber,
             MessageType[] memory messageTypes,
@@ -445,7 +437,7 @@ contract RealTimeMessaging is Ownable, ReentrancyGuard {
             uint256 subscriptionEnd
         )
     {
-        Subscription memory subscription = subscriptions[_subscriptionId];
+        Subscription storage subscription = subscriptions[_subscriptionId];
         return (
             subscription.subscriber,
             subscription.messageTypes,
@@ -458,9 +450,7 @@ contract RealTimeMessaging is Ownable, ReentrancyGuard {
     /**
      * @notice Get user messages
      */
-    function getUserMessages(address _user, uint256 _offset, uint256 _limit)
-        external
-        view
+    function getUserMessages(address _user, uint256 _offset, uint256 _limit) public view
         returns (bytes32[] memory messageIds)
     {
         bytes32[] memory allMessages = userMessages[_user];
@@ -478,7 +468,7 @@ contract RealTimeMessaging is Ownable, ReentrancyGuard {
     /**
      * @notice Check if user is subscribed to message type
      */
-    function isSubscribedToType(address _user, MessageType _messageType) external view returns (bool) {
+    function isSubscribedToType(address _user, MessageType _messageType) public view returns (bool) {
         bytes32[] memory userSubs = userSubscriptions[_user];
         for (uint256 i = 0; i < userSubs.length; i++) {
             Subscription storage subscription = subscriptions[userSubs[i]];
@@ -498,7 +488,7 @@ contract RealTimeMessaging is Ownable, ReentrancyGuard {
         uint256 _maxQueueSize,
         uint256 _processingRate,
         uint256 _acknowledgmentTimeout
-    ) external onlyOwner {
+    ) public onlyOwner {
         defaultExpiry = _defaultExpiry;
         maxMessageSize = _maxMessageSize;
         maxQueueSize = _maxQueueSize;
@@ -512,9 +502,7 @@ contract RealTimeMessaging is Ownable, ReentrancyGuard {
     /**
      * @notice Get global messaging statistics
      */
-    function getGlobalStatistics()
-        external
-        view
+    function getGlobalStatistics() public view
         returns (
             uint256 _totalMessages,
             uint256 _totalTemplates,

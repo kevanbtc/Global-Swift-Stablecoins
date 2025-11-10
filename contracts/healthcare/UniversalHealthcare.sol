@@ -1,8 +1,8 @@
-ch/ SPDX-License-Identifier: MIT
+ // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title UniversalHealthcare
@@ -159,7 +159,7 @@ contract UniversalHealthcare is Ownable, ReentrancyGuard {
         string[] memory _specialties,
         string memory _jurisdiction,
         bytes32 _licenseHash
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         bytes32 providerId = keccak256(abi.encodePacked(
             _providerName,
             msg.sender,
@@ -195,7 +195,7 @@ contract UniversalHealthcare is Ownable, ReentrancyGuard {
         bytes32 _citizenId,
         HealthcareTier _tier,
         bytes32 _emergencyContact
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         require(patientIdByAddress[msg.sender] == bytes32(0), "Already enrolled");
 
         bytes32 patientId = keccak256(abi.encodePacked(
@@ -242,7 +242,7 @@ contract UniversalHealthcare is Ownable, ReentrancyGuard {
         bytes32 _diagnosisHash,
         bytes32 _treatmentHash,
         bool _isEmergency
-    ) external validPatient(_patientId) verifiedProvider(_getProviderId(msg.sender)) returns (bytes32) {
+    ) public validPatient(_patientId) verifiedProvider(_getProviderId(msg.sender)) returns (bytes32) {
         bytes32 providerId = _getProviderId(msg.sender);
         PatientRecord storage patient = patientRecords[_patientId];
         HealthcareProvider storage provider = healthcareProviders[providerId];
@@ -301,7 +301,7 @@ contract UniversalHealthcare is Ownable, ReentrancyGuard {
     /**
      * @notice Claim coverage for a service
      */
-    function claimCoverage(bytes32 _serviceId) external validPatient(_getPatientId(msg.sender)) nonReentrant {
+    function claimCoverage(bytes32 _serviceId) public validPatient(_getPatientId(msg.sender)) nonReentrant {
         bytes32 patientId = _getPatientId(msg.sender);
         HealthcareService storage service = healthcareServices[_serviceId];
 
@@ -313,7 +313,8 @@ contract UniversalHealthcare is Ownable, ReentrancyGuard {
         address providerAddress = healthcareProviders[service.providerId].providerAddress;
         payable(providerAddress).transfer(service.coveredAmount);
 
-        service.approvalProof = keccak256(abi.encodePacked(serviceId, block.timestamp));
+    // Use the provided service identifier to generate a claim proof
+    service.approvalProof = keccak256(abi.encodePacked(_serviceId, block.timestamp));
 
         emit CoverageClaimed(patientId, service.coveredAmount, _serviceId);
     }
@@ -325,7 +326,7 @@ contract UniversalHealthcare is Ownable, ReentrancyGuard {
         string memory _poolName,
         uint256 _monthlyBudget,
         bytes32[] memory _supportedServices
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         bytes32 poolId = keccak256(abi.encodePacked(
             _poolName,
             msg.sender,
@@ -346,7 +347,7 @@ contract UniversalHealthcare is Ownable, ReentrancyGuard {
     /**
      * @notice Fund a healthcare pool
      */
-    function fundPool(bytes32 _poolId) external payable {
+    function fundPool(bytes32 _poolId) public payable {
         HealthcarePool storage pool = healthcarePools[_poolId];
         require(pool.fundingSource != address(0), "Pool not found");
         pool.totalFunds += msg.value;
@@ -355,14 +356,14 @@ contract UniversalHealthcare is Ownable, ReentrancyGuard {
     /**
      * @notice Update provider verification status
      */
-    function updateProviderStatus(bytes32 _providerId, ProviderStatus _status) external onlyOwner validProvider(_providerId) {
+    function updateProviderStatus(bytes32 _providerId, ProviderStatus _status) public onlyOwner validProvider(_providerId) {
         healthcareProviders[_providerId].status = _status;
     }
 
     /**
      * @notice Set provider service offerings
      */
-    function setProviderServices(bytes32 _providerId, ServiceType[] memory _services, bool[] memory _offered) external validProvider(_providerId) {
+    function setProviderServices(bytes32 _providerId, ServiceType[] memory _services, bool[] memory _offered) public validProvider(_providerId) {
         require(msg.sender == healthcareProviders[_providerId].providerAddress, "Not provider");
         require(_services.length == _offered.length, "Array length mismatch");
 
@@ -374,7 +375,7 @@ contract UniversalHealthcare is Ownable, ReentrancyGuard {
     /**
      * @notice Set provider service fees
      */
-    function setProviderFees(bytes32 _providerId, HealthcareTier[] memory _tiers, uint256[] memory _fees) external validProvider(_providerId) {
+    function setProviderFees(bytes32 _providerId, HealthcareTier[] memory _tiers, uint256[] memory _fees) public validProvider(_providerId) {
         require(msg.sender == healthcareProviders[_providerId].providerAddress, "Not provider");
         require(_tiers.length == _fees.length, "Array length mismatch");
 
@@ -386,9 +387,7 @@ contract UniversalHealthcare is Ownable, ReentrancyGuard {
     /**
      * @notice Get provider details
      */
-    function getProvider(bytes32 _providerId)
-        external
-        view
+    function getProvider(bytes32 _providerId) public view
         returns (
             string memory providerName,
             ProviderStatus status,
@@ -397,7 +396,7 @@ contract UniversalHealthcare is Ownable, ReentrancyGuard {
             bool acceptsUniversalCoverage
         )
     {
-        HealthcareProvider memory provider = healthcareProviders[_providerId];
+        HealthcareProvider storage provider = healthcareProviders[_providerId];
         return (
             provider.providerName,
             provider.status,
@@ -410,9 +409,7 @@ contract UniversalHealthcare is Ownable, ReentrancyGuard {
     /**
      * @notice Get patient details
      */
-    function getPatient(bytes32 _patientId)
-        external
-        view
+    function getPatient(bytes32 _patientId) public view
         returns (
             HealthcareTier coverageTier,
             uint256 annualDeductible,
@@ -422,7 +419,7 @@ contract UniversalHealthcare is Ownable, ReentrancyGuard {
             bool isActive
         )
     {
-        PatientRecord memory patient = patientRecords[_patientId];
+        PatientRecord storage patient = patientRecords[_patientId];
         return (
             patient.coverageTier,
             patient.annualDeductible,
@@ -436,9 +433,7 @@ contract UniversalHealthcare is Ownable, ReentrancyGuard {
     /**
      * @notice Get healthcare service details
      */
-    function getHealthcareService(bytes32 _serviceId)
-        external
-        view
+    function getHealthcareService(bytes32 _serviceId) public view
         returns (
             bytes32 patientId,
             bytes32 providerId,
@@ -468,7 +463,7 @@ contract UniversalHealthcare is Ownable, ReentrancyGuard {
         uint256 _baseMonthlyPremium,
         uint256 _coverageRatio,
         uint256 _maxLifetimeCoverage
-    ) external onlyOwner {
+    ) public onlyOwner {
         baseMonthlyPremium = _baseMonthlyPremium;
         coverageRatio = _coverageRatio;
         maxLifetimeCoverage = _maxLifetimeCoverage;
@@ -477,9 +472,7 @@ contract UniversalHealthcare is Ownable, ReentrancyGuard {
     /**
      * @notice Get global healthcare statistics
      */
-    function getGlobalStatistics()
-        external
-        view
+    function getGlobalStatistics() public view
         returns (
             uint256 _totalProviders,
             uint256 _totalPatients,
@@ -497,7 +490,7 @@ contract UniversalHealthcare is Ownable, ReentrancyGuard {
         ServiceType _serviceType,
         bool _isEmergency
     ) internal view returns (uint256 covered, uint256 patientPay) {
-        PatientRecord memory patient = patientRecords[_patientId];
+        PatientRecord storage patient = patientRecords[_patientId];
 
         // Emergency care is fully covered
         if (_isEmergency) {

@@ -25,9 +25,9 @@ contract KYCRegistry {
 
     constructor(address _admin) { require(_admin != address(0), "KYC: admin 0"); admin = _admin; }
 
-    function transferAdmin(address to) external onlyAdmin { require(to != address(0), "KYC: 0"); emit AdminTransferred(admin, to); admin = to; }
+    function transferAdmin(address to) public onlyAdmin { require(to != address(0), "KYC: 0"); emit AdminTransferred(admin, to); admin = to; }
 
-    function set(address party, bool approved, bytes32 jurisdiction, bytes32 riskTier) external onlyAdmin {
+    function set(address party, bool approved, bytes32 jurisdiction, bytes32 riskTier) public onlyAdmin {
         records[party] = KYCRecord({approved: approved, jurisdiction: jurisdiction, riskTier: riskTier, updatedAt: uint64(block.timestamp)});
         emit KYCSet(party, approved, jurisdiction, riskTier);
     }

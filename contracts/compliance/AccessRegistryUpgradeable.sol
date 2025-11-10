@@ -6,7 +6,7 @@ import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/U
 import {AccessControlUpgradeable} from "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import {EIP712Upgradeable} from "@openzeppelin/contracts-upgradeable/utils/cryptography/EIP712Upgradeable.sol";
 import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
-import {Errors} from "../common/Errors.sol";
+import {CustomErrors} from "../common/Errors.sol";
 import {RoleIds} from "./RoleIds.sol";
 
 /// @notice Token-Based Access Control (TBAC) + jurisdiction & sanction gating + EIP-712 attestations
@@ -65,24 +65,24 @@ contract AccessRegistryUpgradeable is Initializable, UUPSUpgradeable, AccessCont
     function _authorizeUpgrade(address) internal override onlyRole(RoleIds.GOVERNOR_ROLE) {}
 
     // Expose the EIP-712 domain for off-chain signing helpers/tests
-    function DOMAIN_SEPARATOR() external view returns (bytes32) { return _domainSeparatorV4(); }
+    function DOMAIN_SEPARATOR() public view returns (bytes32) { return _domainSeparatorV4(); }
 
     // ---- GOVERNANCE ----
-    function setPaused(bool p) external onlyRole(RoleIds.GOVERNOR_ROLE) {
+    function setPaused(bool p) public onlyRole(RoleIds.GOVERNOR_ROLE) {
         paused = p; emit Paused(p);
     }
 
-    function setJurisdictionBlocked(uint16 iso, bool blocked) external onlyRole(RoleIds.OPERATOR_ROLE) {
+    function setJurisdictionBlocked(uint16 iso, bool blocked) public onlyRole(RoleIds.OPERATOR_ROLE) {
         isoBlocked[iso] = blocked; emit JurisdictionBlocked(iso, blocked);
     }
 
     // ---- DIRECT SET/REVOKE (ops/manual) ----
-    function setStatus(address subject, Status calldata s) external onlyRole(RoleIds.OPERATOR_ROLE) {
-        if (subject == address(0)) revert Errors.InvalidParam();
+    function setStatus(address subject, Status calldata s) public onlyRole(RoleIds.OPERATOR_ROLE) {
+        if (subject == address(0)) revert CustomErrors.InvalidParam();
         statusOf[subject] = s; emit StatusSet(subject, s);
     }
 
-    function revoke(address subject) external onlyRole(RoleIds.OPERATOR_ROLE) {
+    function revoke(address subject) public onlyRole(RoleIds.OPERATOR_ROLE) {
         delete statusOf[subject]; emit StatusRevoked(subject);
     }
 
@@ -105,14 +105,14 @@ contract AccessRegistryUpgradeable is Initializable, UUPSUpgradeable, AccessCont
         );
     }
 
-    function attestBySig(StatusAttestation calldata a, bytes calldata sig) external {
-        if (paused) revert Errors.Paused();
-        if (a.subject == address(0)) revert Errors.InvalidParam();
-        if (a.expiresAt < block.timestamp) revert Errors.Expired();
-        if (a.nonce != nonces[a.subject]) revert Errors.Replay();
+    function attestBySig(StatusAttestation calldata a, bytes calldata sig) public {
+        if (paused) revert CustomErrors.Paused();
+        if (a.subject == address(0)) revert CustomErrors.InvalidParam();
+        if (a.expiresAt < block.timestamp) revert CustomErrors.Expired();
+        if (a.nonce != nonces[a.subject]) revert CustomErrors.Replay();
 
     address signer = ECDSA.recover(_hashAttestation(a), sig);
-        if (!hasRole(RoleIds.SIGNER_ROLE, signer)) revert Errors.Signature();
+        if (!hasRole(RoleIds.SIGNER_ROLE, signer)) revert CustomErrors.Signature();
 
         nonces[a.subject] = a.nonce + 1;
         statusOf[a.subject] = a.s;
@@ -132,9 +132,9 @@ contract AccessRegistryUpgradeable is Initializable, UUPSUpgradeable, AccessCont
     function check(address subject, Gate gate) public view returns (bool) {
         Status memory s = statusOf[subject];
 
-        if (s.sanctioned) revert Errors.Sanctioned();
-        if (isoBlocked[s.countryISO]) revert Errors.JurisdictionBlocked();
-        if (s.expiresAt < block.timestamp) revert Errors.Expired();
+        if (s.sanctioned) revert CustomErrors.Sanctioned();
+        if (isoBlocked[s.countryISO]) revert CustomErrors.JurisdictionBlocked();
+        if (s.expiresAt < block.timestamp) revert CustomErrors.Expired();
 
         if (gate == Gate.VIEW) return true;
         if (gate == Gate.SECONDARY_MARKET) return s.kyc;

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 /// @notice Canonical minimal error library for the treasury platform
-library Errors {
+library CustomErrors {
     error Unauthorized();
     error NotAuthorized();
     error InvalidParam();

@@ -1,0 +1,32 @@
+```mermaid
+graph TB
+    subgraph AI Infrastructure
+        AI[AI Core] --> AM[Agent Manager]
+        AI --> MM[Model Manager]
+        AI --> DM[Decision Manager]
+    end
+    
+    subgraph Security Agents
+        AM --> TD[Threat Detection]
+        AM --> AD[Anomaly Detection]
+        AM --> IR[Incident Response]
+    end
+    
+    subgraph Market Agents
+        MM --> PA[Price Analysis]
+        MM --> RA[Risk Assessment]
+        MM --> MA[Market Analysis]
+    end
+    
+    subgraph Response Agents
+        DM --> CB[Circuit Breaker]
+        DM --> ER[Emergency Response]
+        DM --> AR[Auto Recovery]
+    end
+    
+    TD --> CB
+    AD --> ER
+    IR --> AR
+    PA --> CB
+    RA --> ER
+```

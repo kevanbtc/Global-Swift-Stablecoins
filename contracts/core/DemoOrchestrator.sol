@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {SystemBootstrap} from "./SystemBootstrap.sol";
 import {UnykornDNACore} from "./UnykornDNACore.sol";
 import {DNASequencer} from "./DNASequencer.sol";
@@ -120,7 +120,7 @@ contract DemoOrchestrator is Ownable, ReentrancyGuard {
     /**
      * @notice Start a demo session
      */
-    function startDemo(DemoType _demoType, string memory _description) external returns (bytes32) {
+    function startDemo(DemoType _demoType, string memory _description) public returns (bytes32) {
         bytes32 sessionId = keccak256(abi.encodePacked(
             _demoType, msg.sender, block.timestamp
         ));
@@ -147,9 +147,7 @@ contract DemoOrchestrator is Ownable, ReentrancyGuard {
     /**
      * @notice Execute demo step
      */
-    function executeDemoStep(bytes32 _sessionId, bytes32 _stepId, bytes memory _parameters)
-        external
-        validSession(_sessionId)
+    function executeDemoStep(bytes32 _sessionId, bytes32 _stepId, bytes memory _parameters) public validSession(_sessionId)
         demoActive(_sessionId)
         returns (bool)
     {
@@ -201,9 +199,7 @@ contract DemoOrchestrator is Ownable, ReentrancyGuard {
     /**
      * @notice Complete demo session
      */
-    function completeDemo(bytes32 _sessionId, string memory _ipfsRecordingHash)
-        external
-        validSession(_sessionId)
+    function completeDemo(bytes32 _sessionId, string memory _ipfsRecordingHash) public validSession(_sessionId)
     {
         DemoSession storage session = demoSessions[_sessionId];
         require(session.status == DemoStatus.RUNNING, "Demo not running");
@@ -229,9 +225,7 @@ contract DemoOrchestrator is Ownable, ReentrancyGuard {
     /**
      * @notice Get demo session details
      */
-    function getDemoSession(bytes32 _sessionId)
-        external
-        view
+    function getDemoSession(bytes32 _sessionId) public view
         returns (
             DemoType demoType,
             DemoStatus status,
@@ -241,7 +235,7 @@ contract DemoOrchestrator is Ownable, ReentrancyGuard {
             uint256 stepsCompleted
         )
     {
-        DemoSession memory session = demoSessions[_sessionId];
+        DemoSession storage session = demoSessions[_sessionId];
         uint256 stepsCompleted = 0;
 
         for (uint256 i = 0; i < session.demoSteps.length; i++) {
@@ -263,9 +257,7 @@ contract DemoOrchestrator is Ownable, ReentrancyGuard {
     /**
      * @notice Get demo step result
      */
-    function getDemoStepResult(bytes32 _sessionId, bytes32 _stepId)
-        external
-        view
+    function getDemoStepResult(bytes32 _sessionId, bytes32 _stepId) public view
         returns (
             bool success,
             string memory description,
@@ -285,14 +277,14 @@ contract DemoOrchestrator is Ownable, ReentrancyGuard {
     /**
      * @notice Get demo templates
      */
-    function getDemoTemplate(DemoType _demoType) external view returns (bytes32[] memory) {
+    function getDemoTemplate(DemoType _demoType) public view returns (bytes32[] memory) {
         return demoTemplates[_demoType];
     }
 
     /**
      * @notice Get demo metrics
      */
-    function getDemoMetrics() external view returns (
+    function getDemoMetrics() public view returns (
         uint256 totalSessions,
         uint256 successfulSessions,
         uint256 averageCompletionTime,
@@ -382,7 +374,7 @@ contract DemoOrchestrator is Ownable, ReentrancyGuard {
         bytes32 stepHash = keccak256(abi.encodePacked("Initialize DNA Core"));
         if (_stepId == stepHash) {
             // Check if DNA core is initialized
-            (uint256 totalGenes, uint256 activeGenes, , , ) = dnaCore.getNucleusStatus();
+            (, uint256 totalGenes, uint256 activeGenes, , , , ) = dnaCore.getNucleusStatus();
             bool initialized = totalGenes > 0;
             return (initialized, abi.encode(totalGenes, activeGenes), "DNA Core initialization check");
         }
@@ -446,7 +438,7 @@ contract DemoOrchestrator is Ownable, ReentrancyGuard {
         return (true, abi.encode("Demo step executed"), "Full system demo step");
     }
 
-    function _isDemoComplete(DemoSession memory _session) internal pure returns (bool) {
+    function _isDemoComplete(DemoSession storage _session) internal view returns (bool) {
         for (uint256 i = 0; i < _session.demoSteps.length; i++) {
             if (_session.stepResults[_session.demoSteps[i]].timestamp == 0) {
                 return false;
@@ -463,7 +455,7 @@ contract DemoOrchestrator is Ownable, ReentrancyGuard {
         metrics.successfulSessions++;
     }
 
-    function _calculateDemoSuccessRate(DemoSession memory _session) internal pure returns (uint256) {
+    function _calculateDemoSuccessRate(DemoSession storage _session) internal view returns (uint256) {
         uint256 successfulSteps = 0;
 
         for (uint256 i = 0; i < _session.demoSteps.length; i++) {
@@ -475,7 +467,7 @@ contract DemoOrchestrator is Ownable, ReentrancyGuard {
         return (_session.demoSteps.length > 0) ? (successfulSteps * 10000) / _session.demoSteps.length : 0;
     }
 
-    function _updateDemoMetrics(DemoSession memory _session) internal {
+    function _updateDemoMetrics(DemoSession storage _session) internal {
         // Update average completion time
         uint256 completionTime = _session.completedAt - _session.startedAt;
         metrics.averageCompletionTime = (metrics.averageCompletionTime + completionTime) / 2;

@@ -43,7 +43,7 @@ contract StableUSD is Initializable, ERC20Upgradeable, ERC20PermitUpgradeable, U
         address guardian,
         string memory name_,
         string memory symbol_
-    ) external initializer {
+    ) public initializer {
         __ERC20_init(name_, symbol_);
         __ERC20Permit_init(name_);
         __Pausable_init();
@@ -58,19 +58,19 @@ contract StableUSD is Initializable, ERC20Upgradeable, ERC20PermitUpgradeable, U
 
     function _authorizeUpgrade(address) internal override onlyRole(Roles.UPGRADER) {}
 
-    function bind(address guard_, address attest_, address reserve_) external onlyRole(Roles.GOVERNOR) {
+    function bind(address guard_, address attest_, address reserve_) public onlyRole(Roles.GOVERNOR) {
         guard = PolicyGuard(guard_);
         attest = AttestationRegistry(attest_);
         reserve = ReserveVault(reserve_);
         emit Bound(guard_, attest_, reserve_);
     }
 
-    function pause() external onlyRole(Roles.GUARDIAN) { _pause(); }
-    function unpause() external onlyRole(Roles.GUARDIAN) { _unpause(); }
+    function pause() public onlyRole(Roles.GUARDIAN) { _pause(); }
+    function unpause() public onlyRole(Roles.GUARDIAN) { _unpause(); }
 
     // --- mint/burn ---
 
-    function mint(address to, uint256 amount, bytes32 country) external onlyRole(Roles.MINTER) whenNotPaused {
+    function mint(address to, uint256 amount, bytes32 country) public onlyRole(Roles.MINTER) whenNotPaused {
         // Check policy: freshness & allocations (you can wire live allocation calc off-chain; here we only do freshness)
         (uint256 id, AttestationRegistry.Attestation memory a) = attest.latest();
         require(id != 0, "no_attestation");
@@ -83,7 +83,7 @@ contract StableUSD is Initializable, ERC20Upgradeable, ERC20PermitUpgradeable, U
         lastAttAsOf = a.asOf;
     }
 
-    function burn(address from, uint256 amount, bytes32 country) external onlyRole(Roles.BURNER) whenNotPaused {
+    function burn(address from, uint256 amount, bytes32 country) public onlyRole(Roles.BURNER) whenNotPaused {
         (bool ok,) = guard.check(OP_REDEEM, country, 0, 0, 0, PolicyGuard.AssetClass.CASH);
         require(ok, "policy_denied");
         _burn(from, amount);
@@ -91,7 +91,7 @@ contract StableUSD is Initializable, ERC20Upgradeable, ERC20PermitUpgradeable, U
     }
 
     // optional: record explicit anchoring of an attestation id (ops workflow)
-    function anchorAttestation(uint256 id) external onlyRole(Roles.AUDITOR) {
+    function anchorAttestation(uint256 id) public onlyRole(Roles.AUDITOR) {
         (, AttestationRegistry.Attestation memory a) = attest.latest();
         require(a.asOf != 0, "no_att");
         lastAttAsOf = a.asOf;

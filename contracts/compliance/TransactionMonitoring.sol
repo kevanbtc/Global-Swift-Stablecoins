@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title TransactionMonitoring
@@ -103,7 +103,7 @@ contract TransactionMonitoring is Ownable, ReentrancyGuard {
         address asset,
         string memory memo,
         bytes32 settlementId
-    ) external {
+    ) public {
         require(transactionRecords[txId].timestamp == 0, "Transaction already recorded");
 
         TransactionRecord memory record = TransactionRecord({
@@ -301,7 +301,7 @@ contract TransactionMonitoring is Ownable, ReentrancyGuard {
     /**
      * @notice File a SAR with regulatory authorities
      */
-    function fileSAR(bytes32 sarId, string memory filingReference) external onlyOwner {
+    function fileSAR(bytes32 sarId, string memory filingReference) public onlyOwner {
         require(suspiciousReports[sarId].reportTimestamp > 0, "SAR not found");
         require(!suspiciousReports[sarId].isFiled, "SAR already filed");
 
@@ -321,7 +321,7 @@ contract TransactionMonitoring is Ownable, ReentrancyGuard {
         uint256 threshold,
         bool isActive,
         string memory description
-    ) external onlyOwner {
+        ) public onlyOwner {
         monitoringRules[ruleId] = MonitoringRule({
             ruleId: ruleId,
             name: name,
@@ -350,7 +350,7 @@ contract TransactionMonitoring is Ownable, ReentrancyGuard {
     /**
      * @notice Get account monitoring profile
      */
-    function getAccountProfile(address account) external view returns (
+    function getAccountProfile(address account) public view returns (
         uint256 totalVolume30d,
         uint256 transactionCount30d,
         uint256 averageTransactionSize,
@@ -368,7 +368,7 @@ contract TransactionMonitoring is Ownable, ReentrancyGuard {
     /**
      * @notice Get pending SARs
      */
-    function getPendingSARs() external view returns (bytes32[] memory) {
+    function getPendingSARs() public view returns (bytes32[] memory) {
         return pendingSARs;
     }
 

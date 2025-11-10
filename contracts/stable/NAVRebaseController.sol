@@ -56,8 +56,7 @@ contract NAVRebaseController is Ownable, AccessControl {
     event EmergencyPauseActivated(address indexed activator);
     event EmergencyPauseDeactivated(address indexed deactivator);
 
-    constructor(address admin) {
-        _transferOwnership(admin);
+    constructor(address admin) Ownable(admin) {
         _grantRole(DEFAULT_ADMIN_ROLE, admin);
         _grantRole(REBASE_ADMIN_ROLE, admin);
         _grantRole(ORACLE_ROLE, admin);
@@ -73,7 +72,7 @@ contract NAVRebaseController is Ownable, AccessControl {
         uint256 rebaseThreshold,
         uint256 maxRebasePercent,
         uint256 rebaseCooldown
-    ) external onlyRole(REBASE_ADMIN_ROLE) {
+    ) public onlyRole(REBASE_ADMIN_ROLE) {
         require(stablecoin != address(0), "Invalid stablecoin address");
         require(targetPrice > 0, "Invalid target price");
         require(rebaseThreshold > 0 && rebaseThreshold <= 10000, "Invalid threshold"); // Max 100%
@@ -98,7 +97,7 @@ contract NAVRebaseController is Ownable, AccessControl {
     function executeRebase(
         address stablecoin,
         uint256 currentNav
-    ) external onlyRole(ORACLE_ROLE) returns (bool) {
+    ) public onlyRole(ORACLE_ROLE) returns (bool) {
         require(!emergencyPause, "Emergency pause active");
 
         RebaseConfig storage config = rebaseConfigs[stablecoin];
@@ -174,7 +173,7 @@ contract NAVRebaseController is Ownable, AccessControl {
     function shouldRebase(
         address stablecoin,
         uint256 currentNav
-    ) external view returns (bool needed, uint256 deviation, bool isAboveTarget) {
+    ) public view returns (bool needed, uint256 deviation, bool isAboveTarget) {
         RebaseConfig memory config = rebaseConfigs[stablecoin];
         if (!config.isActive) return (false, 0, false);
 
@@ -205,14 +204,14 @@ contract NAVRebaseController is Ownable, AccessControl {
     /**
      * @notice Get rebase configuration
      */
-    function getRebaseConfig(address stablecoin) external view returns (RebaseConfig memory) {
+    function getRebaseConfig(address stablecoin) public view returns (RebaseConfig memory) {
         return rebaseConfigs[stablecoin];
     }
 
     /**
      * @notice Get rebase execution details
      */
-    function getRebaseExecution(bytes32 executionId) external view returns (RebaseExecution memory) {
+    function getRebaseExecution(bytes32 executionId) public view returns (RebaseExecution memory) {
         return rebaseExecutions[executionId];
     }
 
@@ -222,7 +221,7 @@ contract NAVRebaseController is Ownable, AccessControl {
     function updateGlobalSettings(
         uint256 cooldown,
         uint256 maxRebasePercent
-    ) external onlyRole(REBASE_ADMIN_ROLE) {
+    ) public onlyRole(REBASE_ADMIN_ROLE) {
         globalRebaseCooldown = cooldown;
         globalMaxRebasePercent = maxRebasePercent;
     }
@@ -235,7 +234,7 @@ contract NAVRebaseController is Ownable, AccessControl {
         uint256 targetPrice,
         uint256 rebaseThreshold,
         uint256 maxRebasePercent
-    ) external onlyRole(REBASE_ADMIN_ROLE) {
+    ) public onlyRole(REBASE_ADMIN_ROLE) {
         RebaseConfig storage config = rebaseConfigs[stablecoin];
         require(config.isActive, "Rebase not configured");
 
@@ -247,14 +246,14 @@ contract NAVRebaseController is Ownable, AccessControl {
     /**
      * @notice Enable/disable rebase for stablecoin
      */
-    function setRebaseActive(address stablecoin, bool active) external onlyRole(REBASE_ADMIN_ROLE) {
+    function setRebaseActive(address stablecoin, bool active) public onlyRole(REBASE_ADMIN_ROLE) {
         rebaseConfigs[stablecoin].isActive = active;
     }
 
     /**
      * @notice Emergency pause all rebases
      */
-    function activateEmergencyPause() external onlyRole(EMERGENCY_ROLE) {
+    function activateEmergencyPause() public onlyRole(EMERGENCY_ROLE) {
         emergencyPause = true;
         emergencyPauseTime = block.timestamp;
         emit EmergencyPauseActivated(msg.sender);
@@ -263,7 +262,7 @@ contract NAVRebaseController is Ownable, AccessControl {
     /**
      * @notice Deactivate emergency pause
      */
-    function deactivateEmergencyPause() external onlyRole(EMERGENCY_ROLE) {
+    function deactivateEmergencyPause() public onlyRole(EMERGENCY_ROLE) {
         emergencyPause = false;
         emit EmergencyPauseDeactivated(msg.sender);
     }
@@ -271,14 +270,14 @@ contract NAVRebaseController is Ownable, AccessControl {
     /**
      * @notice Get emergency status
      */
-    function getEmergencyStatus() external view returns (bool paused, uint256 pauseTime) {
+    function getEmergencyStatus() public view returns (bool paused, uint256 pauseTime) {
         return (emergencyPause, emergencyPauseTime);
     }
 
     /**
      * @notice Get time until next allowed rebase
      */
-    function getTimeUntilNextRebase(address stablecoin) external view returns (uint256) {
+    function getTimeUntilNextRebase(address stablecoin) public view returns (uint256) {
         RebaseConfig memory config = rebaseConfigs[stablecoin];
         if (!config.isActive) return type(uint256).max;
 

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title QuantumResistantCryptography
@@ -97,7 +97,7 @@ contract QuantumResistantCryptography is Ownable, ReentrancyGuard {
     /**
      * @notice Generate Dilithium key pair for post-quantum signatures
      */
-    function generateDilithiumKeyPair() external returns (uint256) {
+    function generateDilithiumKeyPair() public returns (uint256) {
         require(dilithiumKeys[msg.sender].createdAt == 0 || 
                 block.timestamp > dilithiumKeys[msg.sender].createdAt + keyRotationPeriod,
                 "Key rotation not due");
@@ -132,7 +132,7 @@ contract QuantumResistantCryptography is Ownable, ReentrancyGuard {
     /**
      * @notice Generate Kyber key pair for post-quantum key encapsulation
      */
-    function generateKyberKeyPair() external returns (uint256) {
+    function generateKyberKeyPair() public returns (uint256) {
         require(kyberKeys[msg.sender].createdAt == 0 || 
                 block.timestamp > kyberKeys[msg.sender].createdAt + keyRotationPeriod,
                 "Key rotation not due");
@@ -165,7 +165,7 @@ contract QuantumResistantCryptography is Ownable, ReentrancyGuard {
     /**
      * @notice Generate XMSS key pair for hash-based signatures
      */
-    function generateXMSSKeyPair() external returns (uint256) {
+    function generateXMSSKeyPair() public returns (uint256) {
         require(xmssKeys[msg.sender].createdAt == 0 || 
                 block.timestamp > xmssKeys[msg.sender].createdAt + keyRotationPeriod,
                 "Key rotation not due");
@@ -205,7 +205,7 @@ contract QuantumResistantCryptography is Ownable, ReentrancyGuard {
         bytes memory data,
         address recipient,
         Algorithm algorithm
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         require(data.length > 0, "Empty data");
         require(kyberKeys[recipient].isActive, "Recipient has no active Kyber key");
 
@@ -231,17 +231,17 @@ contract QuantumResistantCryptography is Ownable, ReentrancyGuard {
         }
 
         // Encrypt data with shared secret (AES-GCM simulation)
-        bytes memory encryptedData = new bytes(data.length);
+        bytes memory ciphertextData = new bytes(data.length);
         bytes memory nonce = new bytes(12);
         bytes memory authTag = new bytes(16);
 
         // Mock AES-GCM encryption
         for (uint256 i = 0; i < data.length; i++) {
-            encryptedData[i] = data[i] ^ sharedSecret[i % 32];
+            ciphertextData[i] = data[i] ^ sharedSecret[i % 32];
         }
 
         encryptedData[dataId] = EncryptedData({
-            ciphertext: encryptedData,
+            ciphertext: ciphertextData,
             nonce: nonce,
             authTag: authTag,
             encryptor: msg.sender,
@@ -256,7 +256,7 @@ contract QuantumResistantCryptography is Ownable, ReentrancyGuard {
     /**
      * @notice Decrypt data using Kyber KEM + AES
      */
-    function decryptData(bytes32 dataId) external returns (bytes memory) {
+    function decryptData(bytes32 dataId) public returns (bytes memory) {
         EncryptedData memory encrypted = encryptedData[dataId];
         require(encrypted.encryptedAt > 0, "Data not found");
         require(msg.sender == encrypted.encryptor, "Not authorized to decrypt");
@@ -286,7 +286,7 @@ contract QuantumResistantCryptography is Ownable, ReentrancyGuard {
         bytes32 messageHash,
         bytes memory signature,
         address signer
-    ) external returns (bool) {
+    ) public returns (bool) {
         require(dilithiumKeys[signer].isActive, "Signer has no active Dilithium key");
         require(signature.length == DILITHIUM_SIGNATURE_SIZE, "Invalid signature size");
 
@@ -304,7 +304,7 @@ contract QuantumResistantCryptography is Ownable, ReentrancyGuard {
         bytes32 messageHash,
         bytes memory signature,
         address signer
-    ) external returns (bool) {
+    ) public returns (bool) {
         XMSSKeyPair storage keyPair = xmssKeys[signer];
         require(keyPair.isActive, "Signer has no active XMSS key");
         require(keyPair.remainingSignatures > 0, "No remaining signatures");
@@ -323,7 +323,7 @@ contract QuantumResistantCryptography is Ownable, ReentrancyGuard {
     /**
      * @notice Revoke a cryptographic key
      */
-    function revokeKey(bytes32 keyHash, string memory reason) external onlyOwner {
+    function revokeKey(bytes32 keyHash, string memory reason) public onlyOwner {
         revokedKeys[keyHash] = true;
         emit KeyRevoked(keyHash, reason);
     }
@@ -331,7 +331,7 @@ contract QuantumResistantCryptography is Ownable, ReentrancyGuard {
     /**
      * @notice Check if a key is compromised or expired
      */
-    function isKeyValid(address owner, Algorithm algorithm) external view returns (bool) {
+    function isKeyValid(address owner, Algorithm algorithm) public view returns (bool) {
         uint256 createdAt;
 
         if (algorithm == Algorithm.DILITHIUM) {
@@ -361,7 +361,7 @@ contract QuantumResistantCryptography is Ownable, ReentrancyGuard {
     function updateParameters(
         uint256 _keyRotationPeriod,
         uint256 _maxKeyAge
-    ) external onlyOwner {
+    ) public onlyOwner {
         require(_keyRotationPeriod > 0, "Invalid rotation period");
         require(_maxKeyAge > _keyRotationPeriod, "Max age must exceed rotation period");
 
@@ -372,9 +372,7 @@ contract QuantumResistantCryptography is Ownable, ReentrancyGuard {
     /**
      * @notice Get key information
      */
-    function getKeyInfo(address owner, Algorithm algorithm)
-        external
-        view
+    function getKeyInfo(address owner, Algorithm algorithm) public view
         returns (
             uint256 keyId,
             uint256 createdAt,
@@ -402,7 +400,7 @@ contract QuantumResistantCryptography is Ownable, ReentrancyGuard {
         // Simplified encryption - in production would use proper encryption
         bytes memory encrypted = new bytes(privateKey.length);
         for (uint256 i = 0; i < privateKey.length; i++) {
-            encrypted[i] = privateKey[i] ^ bytes1(uint8(uint256(owner) % 256));
+            encrypted[i] = privateKey[i] ^ bytes1(uint8(uint256(uint160(owner)) % 256));
         }
         return encrypted;
     }

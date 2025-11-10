@@ -69,7 +69,7 @@ contract NaturalResourceRightsToken is ERC721, AccessControl {
         bytes32 surveyHash,
         uint256 acreage,
         address owner
-    ) external onlyRole(REGISTRAR_ROLE) returns (uint256) {
+    ) public onlyRole(REGISTRAR_ROLE) returns (uint256) {
         uint256 tokenId = _nextTokenId++;
         
         resourceRights[tokenId] = ResourceRight({
@@ -101,7 +101,7 @@ contract NaturalResourceRightsToken is ERC721, AccessControl {
         string memory waterSource,
         uint256 priority,
         bool isSenior
-    ) external onlyRole(REGISTRAR_ROLE) {
+    ) public onlyRole(REGISTRAR_ROLE) {
         require(resourceRights[tokenId].resourceType == ResourceType.WATER, "Not a water right");
         
         waterRights[tokenId] = WaterRight({
@@ -123,7 +123,7 @@ contract NaturalResourceRightsToken is ERC721, AccessControl {
         string[] memory minerals,
         uint256 royaltyRate,
         bool includesSubsurface
-    ) external onlyRole(REGISTRAR_ROLE) {
+    ) public onlyRole(REGISTRAR_ROLE) {
         require(resourceRights[tokenId].resourceType == ResourceType.MINERAL, "Not a mineral right");
         
         mineralRights[tokenId] = MineralRight({
@@ -139,28 +139,28 @@ contract NaturalResourceRightsToken is ERC721, AccessControl {
     /**
      * @notice Update encumbrance status
      */
-    function setEncumbrance(uint256 tokenId, bool encumbered) external onlyRole(REGISTRAR_ROLE) {
+    function setEncumbrance(uint256 tokenId, bool encumbered) public onlyRole(REGISTRAR_ROLE) {
         resourceRights[tokenId].isEncumbered = encumbered;
     }
     
     /**
      * @notice Get resource right information
      */
-    function getResourceRight(uint256 tokenId) external view returns (ResourceRight memory) {
+    function getResourceRight(uint256 tokenId) public view returns (ResourceRight memory) {
         return resourceRights[tokenId];
     }
     
     /**
      * @notice Get water right information
      */
-    function getWaterRight(uint256 tokenId) external view returns (WaterRight memory) {
+    function getWaterRight(uint256 tokenId) public view returns (WaterRight memory) {
         return waterRights[tokenId];
     }
     
     /**
      * @notice Get mineral right information
      */
-    function getMineralRight(uint256 tokenId) external view returns (MineralRight memory) {
+    function getMineralRight(uint256 tokenId) public view returns (MineralRight memory) {
         return mineralRights[tokenId];
     }
     

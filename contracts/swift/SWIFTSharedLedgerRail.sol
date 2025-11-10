@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 
 import {IRail} from "../settlement/rails/IRail.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /// @title SWIFTSharedLedgerRail
 /// @notice SR-level rail for SWIFT shared ledger integration with Besu privacy groups.
@@ -29,29 +29,29 @@ contract SWIFTSharedLedgerRail is IRail, Ownable, ReentrancyGuard {
     constructor() Ownable(msg.sender) {}
     
     /// @notice Activate Besu privacy group
-    function activatePrivacyGroup(bytes32 groupId) external onlyOwner {
+    function activatePrivacyGroup(bytes32 groupId) public onlyOwner {
         activePrivacyGroups[groupId] = true;
         emit PrivacyGroupActivated(groupId);
     }
     
     /// @notice Set trusted executor
-    function setTrustedExecutor(address executor, bool trusted) external onlyOwner {
+    function setTrustedExecutor(address executor, bool trusted) public onlyOwner {
         trustedExecutors[executor] = trusted;
         emit TrustedExecutorSet(executor, trusted);
     }
     
     /// @notice Returns the rail kind
-    function kind() external pure override returns (Kind) {
+    function kind() public pure override returns (Kind) {
         return Kind.EXTERNAL;
     }
     
     /// @notice Generate transfer ID
-    function transferId(Transfer calldata t) external pure override returns (bytes32) {
+    function transferId(Transfer calldata t) public pure override returns (bytes32) {
         return keccak256(abi.encode(t.asset, t.from, t.to, t.amount, t.metadata));
     }
     
     /// @notice Prepare SWIFT shared ledger transfer
-    function prepare(Transfer calldata xfer) external payable override nonReentrant {
+    function prepare(Transfer calldata xfer) public payable override nonReentrant {
         bytes32 id = keccak256(abi.encode(xfer.asset, xfer.from, xfer.to, xfer.amount, xfer.metadata));
         require(transferStatus[id] == Status.NONE, "SSL: Already prepared");
         
@@ -70,7 +70,7 @@ contract SWIFTSharedLedgerRail is IRail, Ownable, ReentrancyGuard {
     }
     
     /// @notice Release transfer after receipt verification
-    function release(bytes32 id, Transfer calldata t) external override nonReentrant {
+    function release(bytes32 id, Transfer calldata t) public override nonReentrant {
         require(trustedExecutors[msg.sender], "SSL: Not trusted executor");
         require(transferStatus[id] == Status.PREPARED, "SSL: Not prepared");
         
@@ -88,7 +88,7 @@ contract SWIFTSharedLedgerRail is IRail, Ownable, ReentrancyGuard {
     }
     
     /// @notice Refund transfer
-    function refund(bytes32 id, Transfer calldata t) external override nonReentrant {
+    function refund(bytes32 id, Transfer calldata t) public override nonReentrant {
         require(trustedExecutors[msg.sender], "SSL: Not trusted executor");
         require(transferStatus[id] == Status.PREPARED, "SSL: Not prepared");
         
@@ -99,7 +99,7 @@ contract SWIFTSharedLedgerRail is IRail, Ownable, ReentrancyGuard {
     }
     
     /// @notice Get transfer status
-    function status(bytes32 id) external view override returns (Status) {
+    function status(bytes32 id) public view override returns (Status) {
         return transferStatus[id];
     }
 }

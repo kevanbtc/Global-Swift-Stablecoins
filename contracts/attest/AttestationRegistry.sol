@@ -38,7 +38,7 @@ contract AttestationRegistry is Initializable, UUPSUpgradeable, AccessControlUpg
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() { _disableInitializers(); }
 
-    function initialize(address governor) external initializer {
+    function initialize(address governor) public initializer {
         __AccessControl_init();
         __UUPSUpgradeable_init();
         __EIP712_init("AttestationRegistry", "1");
@@ -49,7 +49,7 @@ contract AttestationRegistry is Initializable, UUPSUpgradeable, AccessControlUpg
 
     function _authorizeUpgrade(address) internal override onlyRole(Roles.UPGRADER) {}
 
-    function setProvider(address provider, bool allowed) external onlyRole(Roles.GOVERNOR) {
+    function setProvider(address provider, bool allowed) public onlyRole(Roles.GOVERNOR) {
         providers[provider] = allowed;
         emit ProviderSet(provider, allowed);
     }
@@ -60,7 +60,7 @@ contract AttestationRegistry is Initializable, UUPSUpgradeable, AccessControlUpg
         uint64 asOf,
         string calldata uri,
         bytes calldata sig
-    ) external returns (uint256 id) {
+    ) public returns (uint256 id) {
         // recover signer
         bytes32 digest = _hashTypedDataV4(
             keccak256(abi.encode(TYPEHASH, schema, contentHash, asOf, keccak256(bytes(uri))))
@@ -73,7 +73,7 @@ contract AttestationRegistry is Initializable, UUPSUpgradeable, AccessControlUpg
         emit Attested(id, signer, schema, contentHash, asOf, uri);
     }
 
-    function latest() external view returns (uint256 id, Attestation memory a) {
+    function latest() public view returns (uint256 id, Attestation memory a) {
         id = lastId; a = atts[id];
     }
 }

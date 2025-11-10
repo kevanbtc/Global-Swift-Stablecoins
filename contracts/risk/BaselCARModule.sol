@@ -39,24 +39,24 @@ contract BaselCARModule is Initializable, AccessControlUpgradeable, UUPSUpgradea
 
     function _authorizeUpgrade(address) internal override onlyRole(DEFAULT_ADMIN_ROLE) {}
 
-    function setFeeds(address _risk, address _eligible) external onlyRole(ADMIN_ROLE) {
+    function setFeeds(address _risk, address _eligible) public onlyRole(ADMIN_ROLE) {
         riskWeights = IRiskWeights(_risk);
         eligibleReserve = IEligibleReserve(_eligible);
         emit RiskFeedsSet(_risk, _eligible);
     }
 
-    function setMinCAR(uint16 bps) external onlyRole(ADMIN_ROLE) {
+    function setMinCAR(uint16 bps) public onlyRole(ADMIN_ROLE) {
         minCARbps = bps;
         emit MinCARSet(bps);
     }
 
-    function pushLiabilitiesUSD(uint256 liab) external onlyRole(FEED_ROLE) {
+    function pushLiabilitiesUSD(uint256 liab) public onlyRole(FEED_ROLE) {
         liabilitiesUSD18 = liab;
         emit LiabilitiesUpdated(liab);
     }
 
     /// @notice Check CAR floor: eligibleReserves >= RWA * CAR
-    function checkCAR() external view returns (bool ok, uint256 reserves, uint256 required) {
+    function checkCAR() public view returns (bool ok, uint256 reserves, uint256 required) {
         reserves = eligibleReserve.eligibleValueUSD();
         // Simplified: use a single weight on liabilities proxy (extend per-asset if needed)
         uint16 rw = 10000; // default 100% if no per-asset breakdown; plug in per-asset sums in advanced mode

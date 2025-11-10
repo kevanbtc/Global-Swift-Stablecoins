@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title APIIntegrations
@@ -142,7 +142,7 @@ contract APIIntegrations is Ownable, ReentrancyGuard {
         uint256 _rateLimit,
         bool _requiresAuth,
         bytes32 _authToken
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         bytes32 endpointId = keccak256(abi.encodePacked(
             _name,
             _url,
@@ -178,7 +178,7 @@ contract APIIntegrations is Ownable, ReentrancyGuard {
         string memory _webhookUrl,
         bytes32[] memory _eventTypes,
         bytes32 _authToken
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         bytes32 subscriptionId = keccak256(abi.encodePacked(
             _webhookUrl,
             msg.sender,
@@ -208,7 +208,7 @@ contract APIIntegrations is Ownable, ReentrancyGuard {
         bytes32 _requestHash,
         uint256 _gasLimit,
         bool _isAsync
-    ) external validEndpoint(_endpointId) activeEndpoint(_endpointId) returns (bytes32) {
+    ) public validEndpoint(_endpointId) activeEndpoint(_endpointId) returns (bytes32) {
         APIEndpoint storage endpoint = apiEndpoints[_endpointId];
 
         // Check rate limit
@@ -250,7 +250,7 @@ contract APIIntegrations is Ownable, ReentrancyGuard {
         uint256 _statusCode,
         bytes32 _dataHash,
         bytes32 _errorMessage
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         APIRequest storage request = apiRequests[_requestId];
         require(request.requester != address(0), "Request not found");
         require(!request.fulfilled, "Request already fulfilled");
@@ -291,7 +291,7 @@ contract APIIntegrations is Ownable, ReentrancyGuard {
         bytes32 _subscriptionId,
         bytes32 _eventId,
         bytes32 _eventData
-    ) external {
+    ) public {
         WebhookSubscription storage subscription = webhookSubscriptions[_subscriptionId];
         require(subscription.subscriber != address(0), "Subscription not found");
         require(subscription.isActive, "Subscription not active");
@@ -317,7 +317,7 @@ contract APIIntegrations is Ownable, ReentrancyGuard {
     function updateEndpointStatus(
         bytes32 _endpointId,
         IntegrationStatus _status
-    ) external validEndpoint(_endpointId) authorizedCaller(_endpointId) {
+    ) public validEndpoint(_endpointId) authorizedCaller(_endpointId) {
         apiEndpoints[_endpointId].status = _status;
     }
 
@@ -327,7 +327,7 @@ contract APIIntegrations is Ownable, ReentrancyGuard {
     function updateSubscriptionStatus(
         bytes32 _subscriptionId,
         bool _isActive
-    ) external {
+    ) public {
         WebhookSubscription storage subscription = webhookSubscriptions[_subscriptionId];
         require(subscription.subscriber == msg.sender, "Not subscriber");
 
@@ -337,9 +337,7 @@ contract APIIntegrations is Ownable, ReentrancyGuard {
     /**
      * @notice Get cached response
      */
-    function getCachedResponse(bytes32 _endpointId, bytes32 _requestHash)
-        external
-        view
+    function getCachedResponse(bytes32 _endpointId, bytes32 _requestHash) public view
         returns (bytes32 responseHash, bool isCached)
     {
         APIEndpoint storage endpoint = apiEndpoints[_endpointId];
@@ -348,11 +346,9 @@ contract APIIntegrations is Ownable, ReentrancyGuard {
     }
 
     /**
-     * @notice Get endpoint details
+     * @notice Get API endpoint details
      */
-    function getEndpoint(bytes32 _endpointId)
-        external
-        view
+    function getEndpoint(bytes32 _endpointId) public view
         returns (
             string memory name,
             string memory url,
@@ -363,7 +359,7 @@ contract APIIntegrations is Ownable, ReentrancyGuard {
             bool requiresAuth
         )
     {
-        APIEndpoint memory endpoint = apiEndpoints[_endpointId];
+        APIEndpoint storage endpoint = apiEndpoints[_endpointId];
         return (
             endpoint.name,
             endpoint.url,
@@ -378,9 +374,7 @@ contract APIIntegrations is Ownable, ReentrancyGuard {
     /**
      * @notice Get webhook subscription details
      */
-    function getWebhookSubscription(bytes32 _subscriptionId)
-        external
-        view
+    function getWebhookSubscription(bytes32 _subscriptionId) public view
         returns (
             string memory webhookUrl,
             address subscriber,
@@ -402,9 +396,7 @@ contract APIIntegrations is Ownable, ReentrancyGuard {
     /**
      * @notice Get API request details
      */
-    function getAPIRequest(bytes32 _requestId)
-        external
-        view
+    function getAPIRequest(bytes32 _requestId) public view
         returns (
             bytes32 endpointId,
             address requester,
@@ -426,9 +418,7 @@ contract APIIntegrations is Ownable, ReentrancyGuard {
     /**
      * @notice Get API response details
      */
-    function getAPIResponse(bytes32 _responseId)
-        external
-        view
+    function getAPIResponse(bytes32 _responseId) public view
         returns (
             bytes32 requestId,
             uint256 statusCode,
@@ -455,7 +445,7 @@ contract APIIntegrations is Ownable, ReentrancyGuard {
         uint256 _maxGasLimit,
         uint256 _cacheExpiry,
         uint256 _maxRetries
-    ) external onlyOwner {
+    ) public onlyOwner {
         defaultRateLimit = _defaultRateLimit;
         maxGasLimit = _maxGasLimit;
         cacheExpiry = _cacheExpiry;
@@ -465,9 +455,7 @@ contract APIIntegrations is Ownable, ReentrancyGuard {
     /**
      * @notice Get global API integration statistics
      */
-    function getGlobalStatistics()
-        external
-        view
+    function getGlobalStatistics() public view
         returns (
             uint256 _totalEndpoints,
             uint256 _totalSubscriptions,

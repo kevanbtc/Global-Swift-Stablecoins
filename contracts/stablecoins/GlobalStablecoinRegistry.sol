@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title GlobalStablecoinRegistry
@@ -59,7 +59,8 @@ contract GlobalStablecoinRegistry is Ownable, ReentrancyGuard {
         AUD_FRAMEWORK,      // AUD stablecoins
         CAD_FRAMEWORK,      // CAD stablecoins
         SGD_FRAMEWORK,      // SGD stablecoins
-        CHF_FRAMEWORK       // CHF stablecoins
+        CHF_FRAMEWORK,      // CHF stablecoins
+        RLUSD_FRAMEWORK     // Ripple USD
     }
 
     struct StablecoinProfile {
@@ -153,7 +154,7 @@ contract GlobalStablecoinRegistry is Ownable, ReentrancyGuard {
         address _oracle,
         string memory _jurisdiction,
         string memory _ipfsMetadata
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         require(_contractAddress != address(0), "Invalid contract address");
         require(_peggedValue > 0, "Invalid pegged value");
         require(_collateralRatio >= minReserveRatio, "Collateral ratio too low");
@@ -217,7 +218,7 @@ contract GlobalStablecoinRegistry is Ownable, ReentrancyGuard {
         bytes32 _stablecoinId,
         uint256 _totalSupply,
         uint256 _marketCap
-    ) external onlyIssuer(_stablecoinId) validStablecoin(_stablecoinId) {
+    ) public onlyIssuer(_stablecoinId) validStablecoin(_stablecoinId) {
         StablecoinProfile storage profile = stablecoinProfiles[_stablecoinId];
 
         // Update global stats
@@ -237,7 +238,7 @@ contract GlobalStablecoinRegistry is Ownable, ReentrancyGuard {
         address[] memory _assets,
         uint256[] memory _amounts,
         uint256[] memory _weights
-    ) external onlyIssuer(_stablecoinId) validStablecoin(_stablecoinId) {
+    ) public onlyIssuer(_stablecoinId) validStablecoin(_stablecoinId) {
         require(_assets.length == _amounts.length && _amounts.length == _weights.length, "Array length mismatch");
 
         delete reserveCompositions[_stablecoinId];
@@ -282,7 +283,7 @@ contract GlobalStablecoinRegistry is Ownable, ReentrancyGuard {
     function grantRegulatoryApproval(
         bytes32 _stablecoinId,
         bytes32 _approvalHash
-    ) external onlyOwner validStablecoin(_stablecoinId) {
+    ) public onlyOwner validStablecoin(_stablecoinId) {
         StablecoinProfile storage profile = stablecoinProfiles[_stablecoinId];
         profile.isRegulatoryApproved = true;
         profile.regulatoryApprovalHash = _approvalHash;
@@ -297,7 +298,7 @@ contract GlobalStablecoinRegistry is Ownable, ReentrancyGuard {
     function deactivateStablecoin(
         bytes32 _stablecoinId,
         string memory _reason
-    ) external onlyOwner validStablecoin(_stablecoinId) {
+    ) public onlyOwner validStablecoin(_stablecoinId) {
         StablecoinProfile storage profile = stablecoinProfiles[_stablecoinId];
         profile.isActive = false;
 
@@ -311,9 +312,7 @@ contract GlobalStablecoinRegistry is Ownable, ReentrancyGuard {
     /**
      * @notice Get stablecoin profile
      */
-    function getStablecoinProfile(bytes32 _stablecoinId)
-        external
-        view
+    function getStablecoinProfile(bytes32 _stablecoinId) public view
         returns (
             string memory name,
             string memory symbol,
@@ -345,9 +344,7 @@ contract GlobalStablecoinRegistry is Ownable, ReentrancyGuard {
     /**
      * @notice Get reserve composition
      */
-    function getReserveComposition(bytes32 _stablecoinId)
-        external
-        view
+    function getReserveComposition(bytes32 _stablecoinId) public view
         returns (ReserveComposition[] memory)
     {
         return reserveCompositions[_stablecoinId];
@@ -356,9 +353,7 @@ contract GlobalStablecoinRegistry is Ownable, ReentrancyGuard {
     /**
      * @notice Get stablecoins by type
      */
-    function getStablecoinsByType(StablecoinType _type)
-        external
-        view
+    function getStablecoinsByType(StablecoinType _type) public view
         returns (bytes32[] memory)
     {
         return stablecoinsByType[_type];
@@ -367,9 +362,7 @@ contract GlobalStablecoinRegistry is Ownable, ReentrancyGuard {
     /**
      * @notice Get stablecoins by collateral
      */
-    function getStablecoinsByCollateral(CollateralType _collateral)
-        external
-        view
+    function getStablecoinsByCollateral(CollateralType _collateral) public view
         returns (bytes32[] memory)
     {
         return stablecoinsByCollateral[_collateral];
@@ -378,9 +371,7 @@ contract GlobalStablecoinRegistry is Ownable, ReentrancyGuard {
     /**
      * @notice Get stablecoins by regulatory framework
      */
-    function getStablecoinsByFramework(RegulatoryFramework _framework)
-        external
-        view
+    function getStablecoinsByFramework(RegulatoryFramework _framework) public view
         returns (bytes32[] memory)
     {
         return stablecoinsByFramework[_framework];
@@ -389,9 +380,7 @@ contract GlobalStablecoinRegistry is Ownable, ReentrancyGuard {
     /**
      * @notice Check if stablecoin meets regulatory requirements
      */
-    function checkRegulatoryCompliance(bytes32 _stablecoinId)
-        external
-        view
+    function checkRegulatoryCompliance(bytes32 _stablecoinId) public view
         returns (bool isCompliant, string memory reason)
     {
         StablecoinProfile memory profile = stablecoinProfiles[_stablecoinId];
@@ -422,7 +411,7 @@ contract GlobalStablecoinRegistry is Ownable, ReentrancyGuard {
         uint256 _minReserveRatio,
         uint256 _maxMintFee,
         uint256 _maxRedeemFee
-    ) external onlyOwner {
+    ) public onlyOwner {
         require(_minReserveRatio <= 20000, "Reserve ratio too high"); // Max 200%
         require(_maxMintFee <= 1000, "Max mint fee too high"); // Max 10%
         require(_maxRedeemFee <= 1000, "Max redeem fee too high"); // Max 10%
@@ -435,9 +424,7 @@ contract GlobalStablecoinRegistry is Ownable, ReentrancyGuard {
     /**
      * @notice Get global stablecoin statistics
      */
-    function getGlobalStatistics()
-        external
-        view
+    function getGlobalStatistics() public view
         returns (
             uint256 _totalStablecoins,
             uint256 _totalMarketCap,

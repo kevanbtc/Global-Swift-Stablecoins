@@ -70,8 +70,7 @@ contract StablecoinPolicyEngine is Ownable, AccessControl {
     event PolicyViolation(bytes32 indexed policyId, address indexed account, string reason);
     event DailyLimitReset(uint256 newLimit);
 
-    constructor(address admin) {
-        _transferOwnership(admin);
+    constructor(address admin) Ownable(admin) {
         _grantRole(DEFAULT_ADMIN_ROLE, admin);
         _grantRole(POLICY_ADMIN_ROLE, admin);
         _grantRole(COMPLIANCE_OFFICER_ROLE, admin);
@@ -94,7 +93,7 @@ contract StablecoinPolicyEngine is Ownable, AccessControl {
         bytes32[] memory requiredApprovals,
         bool requiresOracle,
         bool requiresCompliance
-    ) external onlyRole(POLICY_ADMIN_ROLE) {
+    ) public onlyRole(POLICY_ADMIN_ROLE) {
         require(policies[policyId].policyType == PolicyType.MINTING, "Policy already exists");
 
         policies[policyId] = Policy({
@@ -121,7 +120,7 @@ contract StablecoinPolicyEngine is Ownable, AccessControl {
         address target,
         uint256 amount,
         bytes32 txHash
-    ) external returns (bool) {
+    ) public returns (bool) {
         Policy memory policy = policies[policyId];
         require(policy.isActive, "Policy not active");
 
@@ -167,7 +166,7 @@ contract StablecoinPolicyEngine is Ownable, AccessControl {
     function approveExecution(
         bytes32 executionId,
         bytes32 approvalHash
-    ) external onlyRole(COMPLIANCE_OFFICER_ROLE) {
+    ) public onlyRole(COMPLIANCE_OFFICER_ROLE) {
         PolicyExecution storage execution = executions[executionId];
         require(execution.timestamp > 0, "Execution not found");
         require(!execution.approved, "Already approved");
@@ -189,7 +188,7 @@ contract StablecoinPolicyEngine is Ownable, AccessControl {
         bytes32 policyId,
         address account,
         uint256 amount
-    ) external view returns (bool allowed, string memory reason) {
+    ) public view returns (bool allowed, string memory reason) {
         Policy memory policy = policies[policyId];
 
         if (!policy.isActive) {
@@ -227,7 +226,7 @@ contract StablecoinPolicyEngine is Ownable, AccessControl {
         uint256 maxAmount,
         uint256 dailyLimit,
         uint256 cooldownPeriod
-    ) external onlyRole(POLICY_ADMIN_ROLE) {
+    ) public onlyRole(POLICY_ADMIN_ROLE) {
         Policy storage policy = policies[policyId];
         policy.maxAmount = maxAmount;
         policy.dailyLimit = dailyLimit;
@@ -237,7 +236,7 @@ contract StablecoinPolicyEngine is Ownable, AccessControl {
     /**
      * @notice Set global daily limit
      */
-    function setGlobalDailyLimit(uint256 limit) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function setGlobalDailyLimit(uint256 limit) public onlyRole(DEFAULT_ADMIN_ROLE) {
         globalDailyLimit = limit;
         emit DailyLimitReset(limit);
     }
@@ -245,7 +244,7 @@ contract StablecoinPolicyEngine is Ownable, AccessControl {
     /**
      * @notice Reset daily usage counters
      */
-    function resetDailyUsage() external onlyRole(AUDITOR_ROLE) {
+    function resetDailyUsage() public onlyRole(AUDITOR_ROLE) {
         // Reset all daily usage (this is a simplified version)
         // In production, you'd want to reset specific mappings
         lastResetTime = block.timestamp;
@@ -255,14 +254,14 @@ contract StablecoinPolicyEngine is Ownable, AccessControl {
     /**
      * @notice Get policy details
      */
-    function getPolicy(bytes32 policyId) external view returns (Policy memory) {
+    function getPolicy(bytes32 policyId) public view returns (Policy memory) {
         return policies[policyId];
     }
 
     /**
      * @notice Get execution details
      */
-    function getExecution(bytes32 executionId) external view returns (PolicyExecution memory) {
+    function getExecution(bytes32 executionId) public view returns (PolicyExecution memory) {
         return executions[executionId];
     }
 
@@ -293,14 +292,14 @@ contract StablecoinPolicyEngine is Ownable, AccessControl {
     /**
      * @notice Emergency disable policy
      */
-    function disablePolicy(bytes32 policyId) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function disablePolicy(bytes32 policyId) public onlyRole(DEFAULT_ADMIN_ROLE) {
         policies[policyId].isActive = false;
     }
 
     /**
      * @notice Re-enable policy
      */
-    function enablePolicy(bytes32 policyId) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function enablePolicy(bytes32 policyId) public onlyRole(DEFAULT_ADMIN_ROLE) {
         policies[policyId].isActive = true;
     }
 }

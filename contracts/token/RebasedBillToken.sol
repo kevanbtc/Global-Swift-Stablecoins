@@ -103,22 +103,22 @@ contract RebasedBillToken is
     }
 
     // ======== Admin config ========
-    function setPolicy(bytes32 pid) external onlyRole(ADMIN_ROLE) {
+    function setPolicy(bytes32 pid) public onlyRole(ADMIN_ROLE) {
         activePolicy = pid;
         emit PolicyChanged(pid);
     }
 
-    function setReserveOracle(address o) external onlyRole(ADMIN_ROLE) {
+    function setReserveOracle(address o) public onlyRole(ADMIN_ROLE) {
         reserveOracle = IReserveOracle(o);
         emit OracleSet(o);
     }
 
-    function setCARModule(address c) external onlyRole(ADMIN_ROLE) {
+    function setCARModule(address c) public onlyRole(ADMIN_ROLE) {
         carModule = BaselCARModule(c);
         emit CARModuleSet(c);
     }
 
-    function setTravelRule(address t, bool on, uint64 ttlSec) external onlyRole(ADMIN_ROLE) {
+    function setTravelRule(address t, bool on, uint64 ttlSec) public onlyRole(ADMIN_ROLE) {
         travelRule = ITravelRule(t);
         transfersRestricted = on;
         travelRuleTTLSeconds = ttlSec;
@@ -126,14 +126,14 @@ contract RebasedBillToken is
         emit TransfersRestricted(on, ttlSec);
     }
 
-    function setGuards(uint16 _maxRebaseStepBps, uint16 _minReserveRatioBps) external onlyRole(ADMIN_ROLE) {
+    function setGuards(uint16 _maxRebaseStepBps, uint16 _minReserveRatioBps) public onlyRole(ADMIN_ROLE) {
         require(_maxRebaseStepBps <= 2000, "rebase step too high");
         maxRebaseStepBps = _maxRebaseStepBps;
         minReserveRatioBps = _minReserveRatioBps;
     }
 
-    function pause() external onlyRole(ADMIN_ROLE) { _pause(); }
-    function unpause() external onlyRole(ADMIN_ROLE) { _unpause(); }
+    function pause() public onlyRole(ADMIN_ROLE) { _pause(); }
+    function unpause() public onlyRole(ADMIN_ROLE) { _unpause(); }
 
     // ======== Core mechanics ========
     function _beforeTokenTransfer(address from, address to, uint256, uint256) internal view {
@@ -169,7 +169,7 @@ contract RebasedBillToken is
     }
 
     // ======== Mint/Burn (roles) ========
-    function mint(address to, uint256 amount, bytes32 isoDocHash, string calldata uri, bytes32 lei) external onlyRole(MINT_ROLE) {
+    function mint(address to, uint256 amount, bytes32 isoDocHash, string calldata uri, bytes32 lei) public onlyRole(MINT_ROLE) {
         _preSolvencyGuards(amount, true);
         uint256 s = _toShares(amount);
         _totalShares += s;
@@ -184,7 +184,7 @@ contract RebasedBillToken is
         emit Transfer(address(0), to, amount);
     }
 
-    function burn(address from, uint256 amount, bytes32 isoDocHash, string calldata uri, bytes32 lei) external onlyRole(BURN_ROLE) {
+    function burn(address from, uint256 amount, bytes32 isoDocHash, string calldata uri, bytes32 lei) public onlyRole(BURN_ROLE) {
         uint256 s = _toShares(amount);
         require(_shares[from] >= s, "insufficient");
         _shares[from] -= s;
@@ -199,7 +199,7 @@ contract RebasedBillToken is
 
     // ======== Rebase (yield distribution) ========
     /// @param pctBps rebase percentage in basis points (e.g., +25 = +0.25% ; -10 = -0.10%)
-    function rebase(int256 pctBps, bytes32 stmtHash, string calldata uri) external onlyRole(REBASE_ROLE) {
+    function rebase(int256 pctBps, bytes32 stmtHash, string calldata uri) public onlyRole(REBASE_ROLE) {
     require(reserveOracle.isFresh(), "stale PoR");
     int256 step = int256(uint256(maxRebaseStepBps));
     require(pctBps <= step && pctBps >= -step, "step too large");

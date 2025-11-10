@@ -47,7 +47,7 @@ contract FnalitySettlementAdapter is Ownable {
         address tokenAddress,
         string memory currency,
         address centralBank
-    ) external onlyOwner {
+    ) public onlyOwner {
         fnalityTokens[tokenAddress] = FnalityToken({
             tokenAddress: tokenAddress,
             currency: currency,
@@ -69,7 +69,7 @@ contract FnalitySettlementAdapter is Ownable {
         uint256 amountB,
         address partyA,
         address partyB
-    ) external returns (bool) {
+    ) public returns (bool) {
         require(fnalityTokens[tokenA].isActive, "Token A not active");
         require(fnalityTokens[tokenB].isActive, "Token B not active");
         
@@ -93,7 +93,7 @@ contract FnalitySettlementAdapter is Ownable {
     /**
      * @notice Complete Fnality PvP settlement (called by oracle/executor)
      */
-    function completeFnalityPvP(bytes32 settlementId) external onlyOwner {
+    function completeFnalityPvP(bytes32 settlementId) public onlyOwner {
         FnalityPvP storage pvp = pvpSettlements[settlementId];
         require(!pvp.isCompleted, "Already completed");
         require(pvp.timestamp > 0, "Settlement not found");
@@ -109,21 +109,21 @@ contract FnalitySettlementAdapter is Ownable {
     /**
      * @notice Deactivate a Fnality token
      */
-    function deactivateFnalityToken(address tokenAddress) external onlyOwner {
+    function deactivateFnalityToken(address tokenAddress) public onlyOwner {
         fnalityTokens[tokenAddress].isActive = false;
     }
     
     /**
      * @notice Get Fnality token information
      */
-    function getFnalityToken(address tokenAddress) external view returns (FnalityToken memory) {
+    function getFnalityToken(address tokenAddress) public view returns (FnalityToken memory) {
         return fnalityTokens[tokenAddress];
     }
     
     /**
      * @notice Get PvP settlement information
      */
-    function getPvPSettlement(bytes32 settlementId) external view returns (FnalityPvP memory) {
+    function getPvPSettlement(bytes32 settlementId) public view returns (FnalityPvP memory) {
         return pvpSettlements[settlementId];
     }
 }

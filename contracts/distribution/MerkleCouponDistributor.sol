@@ -61,13 +61,13 @@ contract MerkleCouponDistributor is AccessControl, Pausable {
     }
 
     // ---------- Admin ----------
-    function setCompliance(IComplianceRegistry reg) external onlyRole(ROLE_ADMIN) {
+    function setCompliance(IComplianceRegistry reg) public onlyRole(ROLE_ADMIN) {
         compliance = reg;
         emit ComplianceSet(address(reg));
     }
 
-    function pause() external onlyRole(ROLE_ADMIN) { _pause(); emit Paused(); }
-    function unpause() external onlyRole(ROLE_ADMIN) { _unpause(); emit Unpaused(); }
+    function pause() public onlyRole(ROLE_ADMIN) { _pause(); emit Paused(); }
+    function unpause() public onlyRole(ROLE_ADMIN) { _unpause(); emit Unpaused(); }
 
     // ---------- Distribution lifecycle ----------
     function createDistribution(
@@ -78,7 +78,7 @@ contract MerkleCouponDistributor is AccessControl, Pausable {
         uint64 deadline,
         string calldata uri,
         address fundFrom
-    ) external onlyRole(ROLE_MANAGER) whenNotPaused returns (uint256 id) {
+    ) public onlyRole(ROLE_MANAGER) whenNotPaused returns (uint256 id) {
         require(address(asset) != address(0), "asset=0");
         require(merkleRoot != bytes32(0), "root=0");
         require(totalAmount > 0, "amount=0");
@@ -101,7 +101,7 @@ contract MerkleCouponDistributor is AccessControl, Pausable {
         emit DistributionCreated(id, address(asset), partition, merkleRoot, totalAmount, deadline, uri);
     }
 
-    function sweep(uint256 id, address to) external onlyRole(ROLE_MANAGER) whenNotPaused {
+    function sweep(uint256 id, address to) public onlyRole(ROLE_MANAGER) whenNotPaused {
         Distribution storage d = dists[id];
         require(d.active, "inactive");
         if (d.deadline != 0) require(block.timestamp > d.deadline, "not expired");
@@ -140,7 +140,7 @@ contract MerkleCouponDistributor is AccessControl, Pausable {
         address account,
         uint256 amount,
         bytes32[] calldata merkleProof
-    ) external whenNotPaused {
+    ) public whenNotPaused {
         Distribution storage d = dists[id];
         require(d.active, "inactive");
         if (d.deadline != 0) require(block.timestamp <= d.deadline, "expired");

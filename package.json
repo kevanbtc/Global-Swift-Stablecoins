@@ -17,27 +17,40 @@
     "test:foundry": "forge test -vv",
     "exec:ccip": "hardhat run --no-compile cli/executors/ccip-executor.ts",
     "exec:cctp": "hardhat run --no-compile cli/executors/cctp-executor.ts",
-    "exec:eip712": "hardhat run --no-compile cli/executors/eip712-signer.ts"
+    "exec:eip712": "hardhat run --no-compile cli/executors/eip712-signer.ts",
+    "typecheck": "tsc -p .",
+    "lint": "eslint . --ext .ts",
+    "check": "npm run lint && npm run typecheck && npm run test:foundry"
   },
   "dependencies": {
-    "@chainlink/contracts": "^0.8.0",
-    "@chainlink/contracts-ccip": "^0.8.0"
+    "@chainlink/contracts": "^1.5.0",
+    "@chainlink/contracts-ccip": "^1.4.0",
+    "hardhat-deploy": "^0.12.4"
   },
   "devDependencies": {
-    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "@nomicfoundation/hardhat-toolbox": "^6.1.0",
     "@openzeppelin/contracts": "^5.4.0",
     "@openzeppelin/contracts-upgradeable": "^5.4.0",
     "@openzeppelin/hardhat-upgrades": "^3.0.1",
     "@types/js-yaml": "^4.0.9",
+    "@typescript-eslint/eslint-plugin": "^8.46.3",
+    "@typescript-eslint/parser": "^8.46.3",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "csv-parse": "^6.1.0",
     "date-fns": "^4.1.0",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
     "hardhat": "^2.19.1",
+    "hardhat-gas-reporter": "^2.3.0",
     "hardhat-storage-layout": "^0.1.7",
+    "hardhat-tracer": "^3.4.0",
     "js-yaml": "^4.1.0",
+    "solidity-coverage": "^0.8.16",
     "tsx": "^4.20.6",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "typescript-eslint": "^8.46.3"
   },
   "main": "hardhat.config.js",
   "directories": {

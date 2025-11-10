@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {ChainInfrastructure} from "../core/ChainInfrastructure.sol";
@@ -197,7 +197,7 @@ contract UnykornExplorer is Ownable, ReentrancyGuard {
         TimeRange _timeRange,
         ChainInfrastructure.PrivacyLevel _privacyLevel,
         bool _realTime
-    ) external validAccess(msg.sender, _privacyLevel) returns (bytes32) {
+    ) public validAccess(msg.sender, _privacyLevel) returns (bytes32) {
         bytes32 queryId = keccak256(abi.encodePacked(
             msg.sender, _dataType, _filters.length, _timeRange, block.timestamp
         ));
@@ -251,7 +251,7 @@ contract UnykornExplorer is Ownable, ReentrancyGuard {
         uint256 _gasUsed,
         uint256 _gasLimit,
         bytes32[] memory _transactionHashes
-    ) external onlyAuthorizedIndexer {
+    ) public onlyAuthorizedIndexer {
         BlockData storage blockData = blocks[_blockNumber];
         blockData.blockNumber = _blockNumber;
         blockData.blockHash = _blockHash;
@@ -292,7 +292,7 @@ contract UnykornExplorer is Ownable, ReentrancyGuard {
         bool _success,
         string memory _methodName,
         bytes32[] memory _eventLogs
-    ) external onlyAuthorizedIndexer {
+    ) public onlyAuthorizedIndexer {
         TransactionData storage txData = transactions[_txHash];
         txData.txHash = _txHash;
         txData.blockNumber = _blockNumber;
@@ -331,7 +331,7 @@ contract UnykornExplorer is Ownable, ReentrancyGuard {
         string memory _compilerVersion,
         string[] memory _functions,
         bytes32 _ipfsMetadataHash
-    ) external onlyAuthorizedIndexer {
+    ) public onlyAuthorizedIndexer {
         ContractData storage contractData = contracts[_contractAddress];
         contractData.contractAddress = _contractAddress;
         contractData.name = _name;
@@ -369,7 +369,7 @@ contract UnykornExplorer is Ownable, ReentrancyGuard {
         uint256 _totalSupply,
         address _owner,
         bytes32 _ipfsMetadataHash
-    ) external onlyAuthorizedIndexer {
+    ) public onlyAuthorizedIndexer {
         TokenData storage tokenData = tokens[_tokenAddress];
         tokenData.tokenAddress = _tokenAddress;
         tokenData.name = _name;
@@ -397,7 +397,7 @@ contract UnykornExplorer is Ownable, ReentrancyGuard {
         uint256 _marketCap,
         uint256 _tvl,
         uint256 _activeAddresses
-    ) external onlyAuthorizedIndexer {
+    ) public onlyAuthorizedIndexer {
         networkStats.tps24h = _tps24h;
         networkStats.gasUsed24h = _gasUsed24h;
         networkStats.marketCap = _marketCap;
@@ -410,9 +410,7 @@ contract UnykornExplorer is Ownable, ReentrancyGuard {
     /**
      * @notice Get block data
      */
-    function getBlockData(uint256 _blockNumber)
-        external
-        view
+    function getBlockData(uint256 _blockNumber) public view
         returns (
             bytes32 blockHash,
             address miner,
@@ -438,9 +436,7 @@ contract UnykornExplorer is Ownable, ReentrancyGuard {
     /**
      * @notice Get transaction data
      */
-    function getTransactionData(bytes32 _txHash)
-        external
-        view
+    function getTransactionData(bytes32 _txHash) public view
         returns (
             uint256 blockNumber,
             address from,
@@ -470,9 +466,7 @@ contract UnykornExplorer is Ownable, ReentrancyGuard {
     /**
      * @notice Get contract data
      */
-    function getContractData(address _contractAddress)
-        external
-        view
+    function getContractData(address _contractAddress) public view
         returns (
             string memory name,
             string memory description,
@@ -483,7 +477,7 @@ contract UnykornExplorer is Ownable, ReentrancyGuard {
             ChainInfrastructure.PrivacyLevel privacyLevel
         )
     {
-        ContractData memory contractData = contracts[_contractAddress];
+        ContractData storage contractData = contracts[_contractAddress];
         return (
             contractData.name,
             contractData.description,
@@ -498,9 +492,7 @@ contract UnykornExplorer is Ownable, ReentrancyGuard {
     /**
      * @notice Get token data
      */
-    function getTokenData(address _tokenAddress)
-        external
-        view
+    function getTokenData(address _tokenAddress) public view
         returns (
             string memory name,
             string memory symbol,
@@ -530,9 +522,7 @@ contract UnykornExplorer is Ownable, ReentrancyGuard {
     /**
      * @notice Get address data
      */
-    function getAddressData(address _accountAddress)
-        external
-        view
+    function getAddressData(address _accountAddress) public view
         returns (
             uint256 balance,
             uint256 transactionCount,
@@ -556,9 +546,7 @@ contract UnykornExplorer is Ownable, ReentrancyGuard {
     /**
      * @notice Get network statistics
      */
-    function getNetworkStats()
-        external
-        view
+    function getNetworkStats() public view
         returns (
             uint256 totalBlocks,
             uint256 totalTransactions,
@@ -587,9 +575,7 @@ contract UnykornExplorer is Ownable, ReentrancyGuard {
     /**
      * @notice Get recent blocks
      */
-    function getRecentBlocks(uint256 _limit)
-        external
-        view
+    function getRecentBlocks(uint256 _limit) public view
         returns (uint256[] memory blockNumbers, bytes32[] memory blockHashes, uint256[] memory timestamps)
     {
         uint256 count = _limit > networkStats.recentBlocks.length ? networkStats.recentBlocks.length : _limit;
@@ -610,9 +596,7 @@ contract UnykornExplorer is Ownable, ReentrancyGuard {
     /**
      * @notice Get top tokens
      */
-    function getTopTokens(uint256 _limit)
-        external
-        view
+    function getTopTokens(uint256 _limit) public view
         returns (address[] memory tokenAddresses, string[] memory names, string[] memory symbols)
     {
         uint256 count = _limit > networkStats.topTokens.length ? networkStats.topTokens.length : _limit;
@@ -633,9 +617,7 @@ contract UnykornExplorer is Ownable, ReentrancyGuard {
     /**
      * @notice Search contracts by name
      */
-    function searchContracts(string memory _searchTerm, uint256 _limit)
-        external
-        view
+    function searchContracts(string memory _searchTerm, uint256 _limit) public view
         returns (address[] memory contractAddresses, string[] memory names)
     {
         // Simplified search - in production would use more sophisticated indexing
@@ -645,7 +627,7 @@ contract UnykornExplorer is Ownable, ReentrancyGuard {
 
         for (uint256 i = 0; i < verifiedContracts.length && found < 10; i++) {
             address contractAddr = address(uint160(uint256(verifiedContracts[i])));
-            ContractData memory contractData = contracts[contractAddr];
+            ContractData storage contractData = contracts[contractAddr];
 
             // Simple string matching
             if (_containsString(contractData.name, _searchTerm)) {
@@ -670,14 +652,14 @@ contract UnykornExplorer is Ownable, ReentrancyGuard {
     /**
      * @notice Set user access level
      */
-    function setUserAccessLevel(address _user, ChainInfrastructure.PrivacyLevel _level) external onlyOwner {
+    function setUserAccessLevel(address _user, ChainInfrastructure.PrivacyLevel _level) public onlyOwner {
         userAccessLevel[_user] = _level;
     }
 
     /**
      * @notice Authorize indexer
      */
-    function authorizeIndexer(address _indexer, bool _authorized) external onlyOwner {
+    function authorizeIndexer(address _indexer, bool _authorized) public onlyOwner {
         authorizedIndexers[_indexer] = _authorized;
     }
 
@@ -689,7 +671,7 @@ contract UnykornExplorer is Ownable, ReentrancyGuard {
         uint256 _maxQueryResults,
         uint256 _realTimeUpdateInterval,
         uint256 _analyticsUpdateInterval
-    ) external onlyOwner {
+    ) public onlyOwner {
         queryCacheTime = _queryCacheTime;
         maxQueryResults = _maxQueryResults;
         realTimeUpdateInterval = _realTimeUpdateInterval;

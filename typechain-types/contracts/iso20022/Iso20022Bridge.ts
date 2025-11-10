@@ -3,6 +3,7 @@
 /* eslint-disable */
 import type {
   BaseContract,
+  BigNumberish,
   BytesLike,
   FunctionFragment,
   Result,
@@ -28,12 +29,19 @@ export interface Iso20022BridgeInterface extends Interface {
       | "admin"
       | "bind"
       | "bindings"
+      | "emitGPIStatus"
+      | "emitGPITracker"
       | "emitMessage"
       | "transferAdmin"
   ): FunctionFragment;
 
   getEvent(
-    nameOrSignatureOrTopic: "AdminTransferred" | "IsoBound" | "IsoEvent"
+    nameOrSignatureOrTopic:
+      | "AdminTransferred"
+      | "GPIPaymentStatusUpdate"
+      | "GPITrackerUpdate"
+      | "IsoBound"
+      | "IsoEvent"
   ): EventFragment;
 
   encodeFunctionData(functionFragment: "admin", values?: undefined): string;
@@ -42,6 +50,14 @@ export interface Iso20022BridgeInterface extends Interface {
     values: [BytesLike, BytesLike, BytesLike, BytesLike]
   ): string;
   encodeFunctionData(functionFragment: "bindings", values: [BytesLike]): string;
+  encodeFunctionData(
+    functionFragment: "emitGPIStatus",
+    values: [BytesLike, BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "emitGPITracker",
+    values: [BytesLike, BytesLike, string, BytesLike]
+  ): string;
   encodeFunctionData(
     functionFragment: "emitMessage",
     values: [BytesLike, BytesLike, string, BytesLike]
@@ -54,6 +70,14 @@ export interface Iso20022BridgeInterface extends Interface {
   decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "bind", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "bindings", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "emitGPIStatus",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "emitGPITracker",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "emitMessage",
     data: BytesLike
@@ -70,6 +94,56 @@ export namespace AdminTransferredEvent {
   export interface OutputObject {
     from: string;
     to: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace GPIPaymentStatusUpdateEvent {
+  export type InputTuple = [
+    id: BytesLike,
+    uetr: BytesLike,
+    status: string,
+    timestamp: BigNumberish
+  ];
+  export type OutputTuple = [
+    id: string,
+    uetr: string,
+    status: string,
+    timestamp: bigint
+  ];
+  export interface OutputObject {
+    id: string;
+    uetr: string;
+    status: string;
+    timestamp: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace GPITrackerUpdateEvent {
+  export type InputTuple = [
+    id: BytesLike,
+    uetr: BytesLike,
+    trackerEventCode: string,
+    eventData: BytesLike
+  ];
+  export type OutputTuple = [
+    id: string,
+    uetr: string,
+    trackerEventCode: string,
+    eventData: string
+  ];
+  export interface OutputObject {
+    id: string;
+    uetr: string;
+    trackerEventCode: string;
+    eventData: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -196,6 +270,23 @@ export interface Iso20022Bridge extends BaseContract {
     "view"
   >;
 
+  emitGPIStatus: TypedContractMethod<
+    [id: BytesLike, uetr: BytesLike, status: string],
+    [void],
+    "nonpayable"
+  >;
+
+  emitGPITracker: TypedContractMethod<
+    [
+      id: BytesLike,
+      uetr: BytesLike,
+      trackerEventCode: string,
+      eventData: BytesLike
+    ],
+    [void],
+    "nonpayable"
+  >;
+
   emitMessage: TypedContractMethod<
     [
       id: BytesLike,
@@ -243,6 +334,25 @@ export interface Iso20022Bridge extends BaseContract {
     "view"
   >;
   getFunction(
+    nameOrSignature: "emitGPIStatus"
+  ): TypedContractMethod<
+    [id: BytesLike, uetr: BytesLike, status: string],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "emitGPITracker"
+  ): TypedContractMethod<
+    [
+      id: BytesLike,
+      uetr: BytesLike,
+      trackerEventCode: string,
+      eventData: BytesLike
+    ],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
     nameOrSignature: "emitMessage"
   ): TypedContractMethod<
     [
@@ -264,6 +374,20 @@ export interface Iso20022Bridge extends BaseContract {
     AdminTransferredEvent.InputTuple,
     AdminTransferredEvent.OutputTuple,
     AdminTransferredEvent.OutputObject
+  >;
+  getEvent(
+    key: "GPIPaymentStatusUpdate"
+  ): TypedContractEvent<
+    GPIPaymentStatusUpdateEvent.InputTuple,
+    GPIPaymentStatusUpdateEvent.OutputTuple,
+    GPIPaymentStatusUpdateEvent.OutputObject
+  >;
+  getEvent(
+    key: "GPITrackerUpdate"
+  ): TypedContractEvent<
+    GPITrackerUpdateEvent.InputTuple,
+    GPITrackerUpdateEvent.OutputTuple,
+    GPITrackerUpdateEvent.OutputObject
   >;
   getEvent(
     key: "IsoBound"
@@ -290,6 +414,28 @@ export interface Iso20022Bridge extends BaseContract {
       AdminTransferredEvent.InputTuple,
       AdminTransferredEvent.OutputTuple,
       AdminTransferredEvent.OutputObject
+    >;
+
+    "GPIPaymentStatusUpdate(bytes32,bytes16,string,uint256)": TypedContractEvent<
+      GPIPaymentStatusUpdateEvent.InputTuple,
+      GPIPaymentStatusUpdateEvent.OutputTuple,
+      GPIPaymentStatusUpdateEvent.OutputObject
+    >;
+    GPIPaymentStatusUpdate: TypedContractEvent<
+      GPIPaymentStatusUpdateEvent.InputTuple,
+      GPIPaymentStatusUpdateEvent.OutputTuple,
+      GPIPaymentStatusUpdateEvent.OutputObject
+    >;
+
+    "GPITrackerUpdate(bytes32,bytes16,string,bytes32)": TypedContractEvent<
+      GPITrackerUpdateEvent.InputTuple,
+      GPITrackerUpdateEvent.OutputTuple,
+      GPITrackerUpdateEvent.OutputObject
+    >;
+    GPITrackerUpdate: TypedContractEvent<
+      GPITrackerUpdateEvent.InputTuple,
+      GPITrackerUpdateEvent.OutputTuple,
+      GPITrackerUpdateEvent.OutputObject
     >;
 
     "IsoBound(bytes32,bytes16,bytes32,bytes32)": TypedContractEvent<

@@ -1,44 +1,30 @@
-# Update Unykorn L1 Configuration to Real Values
+# Compilation Fixes and Repairs for Unykorn Contracts
 
-## Information Gathered
-- Real chain ID: 7777
-- Real RPC URL: http://localhost:8545
-- Real network name: Unykorn L1
-- Real currency: Unykorn Ether (UNYETH)
-- Funded dev accounts: 0xdd2f1e6e4b28d1766f482b22e8a405423f1eddfd, 0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199
-- Remove fake URLs like https://rpc.unykorn.layer1.network
+## Current Status
+- Compilation failing with syntax errors in LifeLineOrchestrator.sol and UniversalDeployer.sol
+- OpenZeppelin dependencies partially installed but remappings may need adjustment
+- Multiple contracts need fixes for imports, implementations, and syntax
 
 ## Plan
-1. Update scripts/DeploymentSummary.s.sol
-   - Change chain name to "Unykorn L1"
-   - Change currency to "Unykorn Ether (UNYETH)"
-   - Change RPC to "http://localhost:8545"
-   - Remove fake URLs (explorer, websocket, IPFS)
 
-2. Update scripts/DeployUnykornChain.s.sol
-   - Change CHAIN_ID to 7777
-   - Change CHAIN_NAME to "Unykorn L1"
-   - Update explorer URL to remove fake domain
+### 1. Fix Syntax Errors in Core Contracts
+- [ ] Fix LifeLineOrchestrator.sol: Remove invalid "memory" keyword from mapping declaration
+- [ ] Fix UniversalDeployer.sol: Correct invalid "type(bytes).memory" usage
 
-3. Update scripts/DeployExplorer.s.sol
-   - Remove fake URLs for explorer, API, websocket
+### 2. Install Missing Dependencies
+- [ ] Properly install OpenZeppelin contracts (resolve existing directory conflict)
+- [ ] Ensure Chainlink contracts are accessible via remappings
 
-4. Update foundry.toml
-   - Change chain_id to 7777
-   - Change eth_rpc_url to "http://localhost:8545"
+### 3. Fix Import and Implementation Issues
+- [ ] Add missing imports for Types.sol, Roles.sol, Errors.sol in affected contracts
+- [ ] Implement missing IRail interfaces in settlement contracts
+- [ ] Fix Ownable constructor issues
+- [ ] Resolve parameter conflicts in oracle contracts
 
-5. Update hardhat.config.ts
-   - Change chainId to 7777
-   - Change url to "http://localhost:8545"
+### 4. Test Compilation
+- [ ] Run forge build to verify all fixes
+- [ ] Address any remaining errors iteratively
 
-## Dependent Files to be edited
-- scripts/DeploymentSummary.s.sol
-- scripts/DeployUnykornChain.s.sol
-- scripts/DeployExplorer.s.sol
-- foundry.toml
-- hardhat.config.ts
-
-## Followup steps
-- Verify configurations are updated correctly
-- Test deployment scripts with real chain ID and RPC
-- Update any environment variables or deployment guides
+### 5. Deployment Preparation
+- [ ] Ensure all contracts can be compiled successfully
+- [ ] Verify contract interactions and dependencies

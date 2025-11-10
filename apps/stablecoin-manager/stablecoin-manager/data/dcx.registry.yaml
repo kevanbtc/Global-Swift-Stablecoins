@@ -1,0 +1,90 @@
+# Digital Currency Registry
+- id: "USDC"
+  name: "USD Coin"
+  type: "private"
+  issuer: "Circle"
+  custodian: "BNY Mellon"
+  peg: "USD"
+  chains:
+    - chain: ethereum
+      standard: ERC-20
+      address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+  attestation:
+    url: "https://status.circle.com/reserves"
+    cadence: "monthly"
+    auditor: "Deloitte"
+    lastAttestedAt: "2025-10-15"
+  policy:
+    kyc: "retail"
+    sanctions: "multi"
+    redemption: "t+1"
+    jurisdiction: "NYDFS"
+
+- id: "USDT"
+  name: "Tether USD"
+  type: "private"
+  issuer: "Tether Limited"
+  custodian: "Cantor Fitzgerald"
+  peg: "USD"
+  chains:
+    - chain: ethereum
+      standard: ERC-20
+      address: "0xdAC17F958D2ee523a2206206994597C13D831ec7"
+
+- id: "DAI"
+  name: "Dai Stablecoin"
+  type: "defi"
+  issuer: "MakerDAO"
+  peg: "USD"
+  chains:
+    - chain: ethereum
+      standard: ERC-20
+      address: "0x6B175474E89094C44Da98b954EedeAC495271d0F"
+
+- id: "STBT"
+  name: "Matrixdock Short-term Treasury Bill Token"
+  type: "private"
+  issuer: "Matrixdock"
+  custodian: "Various"
+  peg: "USD"
+  chains:
+    - chain: ethereum
+      standard: ERC-1400
+      address: "0xSTBTcontractaddress"
+    - chain: ethereum
+      standard: ERC-20
+      address: "0x288A8005C53632d920045b7C7c2e54A3f1Bc4C83"
+      notes: "wrapped non-rebasing"
+
+- id: "XAUm"
+  name: "Matrixdock Gold"
+  type: "platform"
+  issuer: "Matrixdock"
+  peg: "XAU"
+  chains:
+    - chain: ethereum
+      standard: ERC-20
+      address: "0xXAUMethaddress"
+    - chain: polygon
+      standard: ERC-20
+      address: "0xXAUMpolygonaddress"
+    - chain: sui
+      standard: "sui-coin"
+      address: "0xXAUMsuiaddress"
+
+- id: "e-CNY"
+  name: "Digital Yuan"
+  type: "cbdc"
+  issuer: "People's Bank of China"
+  custodian: "PBOC"
+  peg: "CNY"
+  chains: []
+
+- id: "Fnality-USC"
+  name: "Fnality Utility Settlement Coin"
+  type: "wholesale"
+  issuer: "Fnality International"
+  peg: "USD"
+  chains:
+    - chain: "fnality"
+      standard: "bank-ledger"

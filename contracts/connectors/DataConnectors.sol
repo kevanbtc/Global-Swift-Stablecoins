@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title DataConnectors
@@ -142,7 +142,7 @@ contract DataConnectors is Ownable, ReentrancyGuard {
         uint256 _updateFrequency,
         DataQuality _quality,
         uint256 _feePerQuery
-    ) external returns (bytes32) {
+    ) public returns (bytes32) {
         require(_updateFrequency >= minUpdateFrequency, "Update frequency too low");
         require(_updateFrequency <= maxUpdateFrequency, "Update frequency too high");
 
@@ -182,7 +182,7 @@ contract DataConnectors is Ownable, ReentrancyGuard {
         bytes32 _feedId,
         bytes32 _dataKey,
         bytes32 _dataHash
-    ) external validFeed(_feedId) onlyProvider(_feedId) activeFeed(_feedId) {
+    ) public validFeed(_feedId) onlyProvider(_feedId) activeFeed(_feedId) {
         DataFeed storage feed = dataFeeds[_feedId];
         feed.dataStore[_dataKey] = _dataHash;
         feed.lastUpdate = block.timestamp;
@@ -199,7 +199,7 @@ contract DataConnectors is Ownable, ReentrancyGuard {
         bytes32 _feedId,
         uint256 _duration,
         bool _autoRenew
-    ) external payable validFeed(_feedId) activeFeed(_feedId) returns (bytes32) {
+    ) public payable validFeed(_feedId) activeFeed(_feedId) returns (bytes32) {
         uint256 requiredPayment = subscriptionFee * (_duration / 30 days);
         require(msg.value >= requiredPayment, "Insufficient payment");
 
@@ -231,8 +231,8 @@ contract DataConnectors is Ownable, ReentrancyGuard {
     function queryData(
         bytes32 _feedId,
         bytes32 _dataKey
-    ) external payable validFeed(_feedId) activeFeed(_feedId) returns (bytes32) {
-        DataFeed memory feed = dataFeeds[_feedId];
+    ) public payable validFeed(_feedId) activeFeed(_feedId) returns (bytes32) {
+        DataFeed storage feed = dataFeeds[_feedId];
         require(msg.value >= feed.feePerQuery, "Insufficient query fee");
 
         // Check subscription or pay per query
@@ -276,7 +276,7 @@ contract DataConnectors is Ownable, ReentrancyGuard {
     function updateFeedQuality(
         bytes32 _feedId,
         DataQuality _quality
-    ) external onlyOwner validFeed(_feedId) {
+    ) public onlyOwner validFeed(_feedId) {
         dataFeeds[_feedId].quality = _quality;
         emit FeedQualityUpdated(_feedId, _quality);
     }
@@ -284,21 +284,17 @@ contract DataConnectors is Ownable, ReentrancyGuard {
     /**
      * @notice Get data from a feed
      */
-    function getData(bytes32 _feedId, bytes32 _dataKey)
-        external
-        view
+    function getData(bytes32 _feedId, bytes32 _dataKey) public view
         returns (bytes32 dataHash, uint256 lastUpdate, DataQuality quality)
     {
-        DataFeed memory feed = dataFeeds[_feedId];
+        DataFeed storage feed = dataFeeds[_feedId];
         return (feed.dataStore[_dataKey], feed.lastUpdate, feed.quality);
     }
 
     /**
      * @notice Get feed details
      */
-    function getFeedDetails(bytes32 _feedId)
-        external
-        view
+    function getFeedDetails(bytes32 _feedId) public view
         returns (
             DataSource source,
             DataType dataType,
@@ -309,7 +305,7 @@ contract DataConnectors is Ownable, ReentrancyGuard {
             bool isActive
         )
     {
-        DataFeed memory feed = dataFeeds[_feedId];
+        DataFeed storage feed = dataFeeds[_feedId];
         return (
             feed.source,
             feed.dataType,
@@ -324,9 +320,7 @@ contract DataConnectors is Ownable, ReentrancyGuard {
     /**
      * @notice Get subscription details
      */
-    function getSubscription(bytes32 _subscriptionId)
-        external
-        view
+    function getSubscription(bytes32 _subscriptionId) public view
         returns (
             address subscriber,
             bytes32 feedId,
@@ -350,9 +344,7 @@ contract DataConnectors is Ownable, ReentrancyGuard {
     /**
      * @notice Get query response
      */
-    function getQueryResponse(bytes32 _queryId)
-        external
-        view
+    function getQueryResponse(bytes32 _queryId) public view
         returns (
             bytes32 responseHash,
             uint256 responseTimestamp,
@@ -370,9 +362,7 @@ contract DataConnectors is Ownable, ReentrancyGuard {
     /**
      * @notice Get feeds by source
      */
-    function getFeedsBySource(DataSource _source)
-        external
-        view
+    function getFeedsBySource(DataSource _source) public view
         returns (bytes32[] memory)
     {
         return sourceFeeds[_source];
@@ -381,9 +371,7 @@ contract DataConnectors is Ownable, ReentrancyGuard {
     /**
      * @notice Get feeds by type
      */
-    function getFeedsByType(DataType _type)
-        external
-        view
+    function getFeedsByType(DataType _type) public view
         returns (bytes32[] memory)
     {
         return typeFeeds[_type];
@@ -397,7 +385,7 @@ contract DataConnectors is Ownable, ReentrancyGuard {
         uint256 _maxUpdateFrequency,
         uint256 _subscriptionFee,
         uint256 _queryFee
-    ) external onlyOwner {
+    ) public onlyOwner {
         minUpdateFrequency = _minUpdateFrequency;
         maxUpdateFrequency = _maxUpdateFrequency;
         subscriptionFee = _subscriptionFee;
@@ -407,9 +395,7 @@ contract DataConnectors is Ownable, ReentrancyGuard {
     /**
      * @notice Get global data connector statistics
      */
-    function getGlobalStatistics()
-        external
-        view
+    function getGlobalStatistics() public view
         returns (
             uint256 _totalFeeds,
             uint256 _totalSubscriptions,

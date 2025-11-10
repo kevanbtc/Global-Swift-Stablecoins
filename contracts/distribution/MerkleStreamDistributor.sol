@@ -38,8 +38,7 @@ contract MerkleStreamDistributor is AccessControl {
         _grantRole(GOVERNOR_ROLE, governor);
     }
 
-    function createEpoch(bytes32 root, address token, uint64 start, uint64 end, uint256 total)
-        external onlyRole(GOVERNOR_ROLE) returns (uint256 id)
+    function createEpoch(bytes32 root, address token, uint64 start, uint64 end, uint256 total) public onlyRole(GOVERNOR_ROLE) returns (uint256 id)
     {
         require(end > start, "time");
         id = ++epochCount;
@@ -62,7 +61,7 @@ contract MerkleStreamDistributor is AccessControl {
         address account,
         uint256 totalAmount,
         bytes32[] calldata proof
-    ) external {
+    ) public {
         Epoch memory e = epochs[id];
         require(e.active && e.root != 0, "epoch");
         // Verify proof

@@ -65,7 +65,7 @@ contract ReserveVault is Initializable, UUPSUpgradeable, PausableUpgradeable, Ac
         address oracle_,
         address cashToken_,
         uint8   cashDecimals_
-    ) external initializer {
+    ) public initializer {
         __Pausable_init();
         __AccessControl_init();
         __UUPSUpgradeable_init();
@@ -89,8 +89,8 @@ contract ReserveVault is Initializable, UUPSUpgradeable, PausableUpgradeable, Ac
 
     function _authorizeUpgrade(address) internal override onlyRole(Roles.UPGRADER) {}
 
-    function pause() external onlyRole(Roles.GUARDIAN) { _pause(); }
-    function unpause() external onlyRole(Roles.GUARDIAN) { _unpause(); }
+    function pause() public onlyRole(Roles.GUARDIAN) { _pause(); }
+    function unpause() public onlyRole(Roles.GUARDIAN) { _unpause(); }
 
     // --- positions ---
 
@@ -100,7 +100,7 @@ contract ReserveVault is Initializable, UUPSUpgradeable, PausableUpgradeable, Ac
         uint128 qty,
         uint128 pxMinor,
         PolicyGuard.AssetClass cls
-    ) external onlyRole(Roles.TREASURER) whenNotPaused returns (uint256 id) {
+    ) public onlyRole(Roles.TREASURER) whenNotPaused returns (uint256 id) {
         id = ++lastId;
         positions[id] = Position({
             symbol: symbol,
@@ -118,7 +118,7 @@ contract ReserveVault is Initializable, UUPSUpgradeable, PausableUpgradeable, Ac
         uint128 qty,
         uint128 pxMinor,
         uint64  asOf
-    ) external onlyRole(Roles.TREASURER) whenNotPaused {
+    ) public onlyRole(Roles.TREASURER) whenNotPaused {
         Position storage p = positions[id];
         require(p.asOf != 0, "no_position");
         p.qty = qty;
@@ -129,7 +129,7 @@ contract ReserveVault is Initializable, UUPSUpgradeable, PausableUpgradeable, Ac
 
     // --- pricing & NAV ---
 
-    function syncNAV(bytes32[] calldata symbols) external whenNotPaused {
+    function syncNAV(bytes32[] calldata symbols) public whenNotPaused {
         uint256 newNav;
         for (uint256 i; i < symbols.length; i++) {
             bytes32 sym = symbols[i];
@@ -161,7 +161,7 @@ contract ReserveVault is Initializable, UUPSUpgradeable, PausableUpgradeable, Ac
         emit NAVSynced(newNav, uint64(block.timestamp));
     }
 
-    function nav() external view returns (uint256) { return navMinor; }
+    function nav() public view returns (uint256) { return navMinor; }
 
     // --- helpers ---
 

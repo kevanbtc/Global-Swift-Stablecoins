@@ -29,15 +29,13 @@ contract ReserveManager is AccessControl {
         _grantRole(GOVERNOR_ROLE, governor);
     }
 
-    function setLimit(Bucket b, uint16 maxBps) external onlyRole(GOVERNOR_ROLE) {
+    function setLimit(Bucket b, uint16 maxBps) public onlyRole(GOVERNOR_ROLE) {
         require(maxBps <= 10_000, "bps");
         limits[b] = Limits({maxBps: maxBps});
         emit LimitsSet(b, maxBps);
     }
 
-    function attest(uint256 total, uint256[5] calldata byBucket, uint64 ts, bytes32 proofCid)
-        external
-        onlyRole(ATTESTOR_ROLE)
+    function attest(uint256 total, uint256[5] calldata byBucket, uint64 ts, bytes32 proofCid) public onlyRole(ATTESTOR_ROLE)
     {
         require(total > 0, "total=0");
         uint256 sum;
@@ -59,7 +57,7 @@ contract ReserveManager is AccessControl {
         emit ReservesAttested(total, byBucket, ts, proofCid);
     }
 
-    function coverageBps(uint256 liabilities) external view returns (uint16 cov) {
+    function coverageBps(uint256 liabilities) public view returns (uint16 cov) {
         if (liabilities == 0) return type(uint16).max;
         uint256 c = (last.total * 10_000) / liabilities;
         cov = c > type(uint16).max ? type(uint16).max : uint16(c);

@@ -24,22 +24,22 @@ contract CourtOrderRegistryUpgradeable is Initializable, UUPSUpgradeable, Access
 
 	function _authorizeUpgrade(address) internal override onlyRole(GOVERNOR_ROLE) {}
 
-	function setOrder(bytes32 id, bool on) external onlyRole(GOVERNOR_ROLE) {
+	function setOrder(bytes32 id, bool on) public onlyRole(GOVERNOR_ROLE) {
 		activeOrder[id] = on;
 		emit OrderSet(id, on);
 	}
 
-	function setGlobalFreeze(address token, bool on) external onlyRole(GOVERNOR_ROLE) {
+	function setGlobalFreeze(address token, bool on) public onlyRole(GOVERNOR_ROLE) {
 		tokenGlobalFreeze[token] = on;
 		emit GlobalFreezeSet(token, on);
 	}
 
 	// Interfaces consumed by PolicyEngine
-	function globalFreeze(address token) external view returns (bool) {
+	function globalFreeze(address token) public view returns (bool) {
 		return tokenGlobalFreeze[token];
 	}
 
-	function isActive(bytes32 orderId) external view returns (bool) {
+	function isActive(bytes32 orderId) public view returns (bool) {
 		return activeOrder[orderId];
 	}
 }

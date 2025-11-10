@@ -29,12 +29,12 @@ contract ShareMaturityOracleCatalog is IShareMaturityOracle, AccessControl {
         _grantRole(WRITER, governor);
     }
 
-    function clear(address instrument) external onlyRole(ADMIN) {
+    function clear(address instrument) public onlyRole(ADMIN) {
         delete _lots[instrument];
         emit Cleared(instrument);
     }
 
-    function setLots(address instrument, LotInfo[] calldata lotInfos) external onlyRole(WRITER) {
+    function setLots(address instrument, LotInfo[] calldata lotInfos) public onlyRole(WRITER) {
         delete _lots[instrument];
         for (uint256 i; i < lotInfos.length; ++i) {
             require(lotInfos[i].maturity > 0 && lotInfos[i].weight > 0, "bad_lot");
@@ -43,18 +43,18 @@ contract ShareMaturityOracleCatalog is IShareMaturityOracle, AccessControl {
         emit LotsSet(instrument, lotInfos.length, uint64(block.timestamp));
     }
 
-    function pushLot(address instrument, uint64 maturity, uint128 weight) external onlyRole(WRITER) {
+    function pushLot(address instrument, uint64 maturity, uint128 weight) public onlyRole(WRITER) {
         require(maturity > 0 && weight > 0, "bad_lot");
         _lots[instrument].push(LotInfo(maturity, weight));
         emit LotPushed(instrument, maturity, weight);
     }
 
-    function lots(address instrument) external view returns (LotInfo[] memory) {
+    function lots(address instrument) public view returns (LotInfo[] memory) {
         return _lots[instrument];
     }
 
     /// @inheritdoc IShareMaturityOracle
-    function daysToMaturity(address instrument) external view returns (uint16) {
+    function daysToMaturity(address instrument) public view returns (uint16) {
         LotInfo[] memory L = _lots[instrument];
         if (L.length == 0) return 0;
 

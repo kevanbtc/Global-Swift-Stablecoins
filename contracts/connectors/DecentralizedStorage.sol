@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title DecentralizedStorage
@@ -152,7 +152,7 @@ contract DecentralizedStorage is Ownable, ReentrancyGuard {
         uint256 _rateLimit,
         uint256 _storageFee,
         uint256 _retrievalFee
-    ) external onlyOwner {
+    ) public onlyOwner {
         ProviderConfig storage config = providerConfigs[_provider];
         config.provider = _provider;
         config.apiEndpoint = _apiEndpoint;
@@ -175,7 +175,7 @@ contract DecentralizedStorage is Ownable, ReentrancyGuard {
         uint256 _size,
         bytes32 _checksum,
         uint256 _duration
-    ) external payable activeProvider(_provider) returns (bytes32) {
+    ) public payable activeProvider(_provider) returns (bytes32) {
         require(_size <= maxFileSize, "File too large");
         require(bytes(_cid).length > 0, "Invalid CID");
         require(cidToFileId[_cid] == bytes32(0), "CID already exists");
@@ -225,7 +225,7 @@ contract DecentralizedStorage is Ownable, ReentrancyGuard {
         ContentType _contentType,
         uint256 _maxSize,
         uint256 _maxDuration
-    ) external payable activeProvider(_provider) returns (bytes32) {
+    ) public payable activeProvider(_provider) returns (bytes32) {
         require(_maxSize <= maxFileSize, "Size too large");
 
         uint256 fee = calculateStorageFee(_provider, _maxSize, _maxDuration);
@@ -257,9 +257,7 @@ contract DecentralizedStorage is Ownable, ReentrancyGuard {
     /**
      * @notice Access file content
      */
-    function accessFile(bytes32 _fileId)
-        external
-        validFile(_fileId)
+    function accessFile(bytes32 _fileId) public payable validFile(_fileId)
         authorizedViewer(_fileId)
         returns (string memory cid, string memory url, bytes32 checksum)
     {
@@ -283,7 +281,7 @@ contract DecentralizedStorage is Ownable, ReentrancyGuard {
     /**
      * @notice Grant access to file
      */
-    function grantAccess(bytes32 _fileId, address _viewer) external validFile(_fileId) {
+    function grantAccess(bytes32 _fileId, address _viewer) public validFile(_fileId) {
         StorageFile storage file = storageFiles[_fileId];
         require(file.uploader == msg.sender, "Not file owner");
 
@@ -293,7 +291,7 @@ contract DecentralizedStorage is Ownable, ReentrancyGuard {
     /**
      * @notice Revoke access to file
      */
-    function revokeAccess(bytes32 _fileId, address _viewer) external validFile(_fileId) {
+    function revokeAccess(bytes32 _fileId, address _viewer) public validFile(_fileId) {
         StorageFile storage file = storageFiles[_fileId];
         require(file.uploader == msg.sender, "Not file owner");
 
@@ -303,7 +301,7 @@ contract DecentralizedStorage is Ownable, ReentrancyGuard {
     /**
      * @notice Update file metadata
      */
-    function updateMetadata(bytes32 _fileId, bytes32 _key, bytes32 _value) external validFile(_fileId) {
+    function updateMetadata(bytes32 _fileId, bytes32 _key, bytes32 _value) public validFile(_fileId) {
         StorageFile storage file = storageFiles[_fileId];
         require(file.uploader == msg.sender, "Not file owner");
 
@@ -313,7 +311,7 @@ contract DecentralizedStorage is Ownable, ReentrancyGuard {
     /**
      * @notice Extend file storage duration
      */
-    function extendStorage(bytes32 _fileId, uint256 _additionalDuration) external payable validFile(_fileId) {
+    function extendStorage(bytes32 _fileId, uint256 _additionalDuration) public payable validFile(_fileId) {
         StorageFile storage file = storageFiles[_fileId];
         require(file.uploader == msg.sender, "Not file owner");
 
@@ -326,7 +324,7 @@ contract DecentralizedStorage is Ownable, ReentrancyGuard {
     /**
      * @notice Delete file (mark as deleted)
      */
-    function deleteFile(bytes32 _fileId) external validFile(_fileId) {
+    function deleteFile(bytes32 _fileId) public validFile(_fileId) {
         StorageFile storage file = storageFiles[_fileId];
         require(file.uploader == msg.sender, "Not file owner");
 
@@ -340,7 +338,7 @@ contract DecentralizedStorage is Ownable, ReentrancyGuard {
     /**
      * @notice Fulfill storage request
      */
-    function fulfillStorageRequest(bytes32 _requestId, bytes32 _fileId) external {
+    function fulfillStorageRequest(bytes32 _requestId, bytes32 _fileId) public {
         StorageRequest storage request = storageRequests[_requestId];
         require(request.requester != address(0), "Request not found");
         require(!request.fulfilled, "Request already fulfilled");
@@ -355,9 +353,7 @@ contract DecentralizedStorage is Ownable, ReentrancyGuard {
     /**
      * @notice Get file details
      */
-    function getFile(bytes32 _fileId)
-        external
-        view
+    function getFile(bytes32 _fileId) public view
         returns (
             string memory cid,
             StorageProvider provider,
@@ -368,7 +364,7 @@ contract DecentralizedStorage is Ownable, ReentrancyGuard {
             uint256 accessCount
         )
     {
-        StorageFile memory file = storageFiles[_fileId];
+        StorageFile storage file = storageFiles[_fileId];
         return (
             file.cid,
             file.provider,
@@ -383,16 +379,14 @@ contract DecentralizedStorage is Ownable, ReentrancyGuard {
     /**
      * @notice Get file metadata
      */
-    function getFileMetadata(bytes32 _fileId, bytes32 _key) external view returns (bytes32) {
+    function getFileMetadata(bytes32 _fileId, bytes32 _key) public view returns (bytes32) {
         return storageFiles[_fileId].metadata[_key];
     }
 
     /**
      * @notice Get provider configuration
      */
-    function getProviderConfig(StorageProvider _provider)
-        external
-        view
+    function getProviderConfig(StorageProvider _provider) public view
         returns (
             string memory apiEndpoint,
             uint256 rateLimit,
@@ -418,14 +412,14 @@ contract DecentralizedStorage is Ownable, ReentrancyGuard {
     /**
      * @notice Get user files
      */
-    function getUserFiles(address _user) external view returns (bytes32[] memory) {
+    function getUserFiles(address _user) public view returns (bytes32[] memory) {
         return userFiles[_user];
     }
 
     /**
      * @notice Check if viewer is authorized
      */
-    function isAuthorizedViewer(bytes32 _fileId, address _viewer) external view returns (bool) {
+    function isAuthorizedViewer(bytes32 _fileId, address _viewer) public view returns (bool) {
         StorageFile storage file = storageFiles[_fileId];
         return file.uploader == _viewer || file.authorizedViewers[_viewer] || _viewer == owner();
     }
@@ -439,7 +433,7 @@ contract DecentralizedStorage is Ownable, ReentrancyGuard {
         uint256 _maxFileSize,
         uint256 _defaultExpiry,
         uint256 _replicationFactor
-    ) external onlyOwner {
+    ) public onlyOwner {
         baseStorageFee = _baseStorageFee;
         baseRetrievalFee = _baseRetrievalFee;
         maxFileSize = _maxFileSize;
@@ -450,9 +444,7 @@ contract DecentralizedStorage is Ownable, ReentrancyGuard {
     /**
      * @notice Get global storage statistics
      */
-    function getGlobalStatistics()
-        external
-        view
+    function getGlobalStatistics() public view
         returns (
             uint256 _totalFiles,
             uint256 _totalStorage,

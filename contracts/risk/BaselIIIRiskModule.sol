@@ -60,20 +60,20 @@ contract BaselIIIRiskModule is Ownable {
     }
     
     /// @notice Update risk weight for category
-    function setRiskWeight(RiskCategory category, uint16 weight) external onlyOwner {
+    function setRiskWeight(RiskCategory category, uint16 weight) public onlyOwner {
         require(weight <= 65535, "BRIII: Weight too high"); // Max uint16
         riskWeights[category] = weight;
         emit RiskWeightUpdated(category, weight);
     }
     
     /// @notice Classify asset into risk category
-    function classifyAsset(address asset, RiskCategory category) external onlyOwner {
+    function classifyAsset(address asset, RiskCategory category) public onlyOwner {
         assetRiskCategory[asset] = category;
         emit AssetClassified(asset, category);
     }
     
     /// @notice Update asset exposure
-    function updateExposure(address asset, uint256 exposure) external onlyOwner {
+    function updateExposure(address asset, uint256 exposure) public onlyOwner {
         assetExposure[asset] = exposure;
         emit ExposureUpdated(asset, exposure);
         
@@ -82,7 +82,7 @@ contract BaselIIIRiskModule is Ownable {
     }
     
     /// @notice Update capital (Tier 1 and Tier 2)
-    function updateCapital(uint256 tier1, uint256 tier2) external onlyOwner {
+    function updateCapital(uint256 tier1, uint256 tier2) public onlyOwner {
         capitalReq.tier1Capital = tier1;
         capitalReq.tier2Capital = tier2;
         
@@ -91,7 +91,7 @@ contract BaselIIIRiskModule is Ownable {
     }
     
     /// @notice Set minimum CAR requirement
-    function setMinimumCAR(uint256 minCAR) external onlyOwner {
+    function setMinimumCAR(uint256 minCAR) public onlyOwner {
         require(minCAR >= 800, "BRIII: Below Basel III minimum"); // 8% minimum
         capitalReq.minimumCAR = minCAR;
     }
@@ -150,7 +150,7 @@ contract BaselIIIRiskModule is Ownable {
     }
     
     /// @notice Get capital requirement details
-    function getCapitalRequirement() external view returns (CapitalRequirement memory) {
+    function getCapitalRequirement() public view returns (CapitalRequirement memory) {
         return capitalReq;
     }
 }

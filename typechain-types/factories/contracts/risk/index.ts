@@ -2,3 +2,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export { BaselCARModule__factory } from "./BaselCARModule__factory";
+export { BaselIIIComplianceEngine__factory } from "./BaselIIIComplianceEngine__factory";
+export { BaselIIIRiskModule__factory } from "./BaselIIIRiskModule__factory";
+export { PortfolioRiskEngine__factory } from "./PortfolioRiskEngine__factory";

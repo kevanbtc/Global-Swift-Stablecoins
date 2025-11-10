@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title RegulatoryReporting
@@ -109,7 +109,7 @@ contract RegulatoryReporting is Ownable, ReentrancyGuard {
         string memory reportData,
         bytes32 dataHash,
         bool encryptData
-    ) external onlyOwner returns (bytes32) {
+    ) public onlyOwner returns (bytes32) {
         require(jurisdictionConfigs[jurisdiction].isActive, "Jurisdiction not configured");
 
         bytes32 reportId = keccak256(abi.encodePacked(
@@ -165,7 +165,7 @@ contract RegulatoryReporting is Ownable, ReentrancyGuard {
         ReportStatus newStatus,
         string memory referenceNumber,
         string memory rejectionReason
-    ) external onlyOwner {
+    ) public onlyOwner {
         require(regulatoryReports[reportId].submissionTimestamp > 0, "Report not found");
 
         RegulatoryReport storage report = regulatoryReports[reportId];
@@ -191,7 +191,7 @@ contract RegulatoryReporting is Ownable, ReentrancyGuard {
         uint256 amount,
         address asset,
         string memory memo
-    ) external view returns (bool needsReporting, ReportType[] memory reportTypes) {
+    ) public view returns (bool needsReporting, ReportType[] memory reportTypes) {
         ReportType[] memory potentialReports = new ReportType[](8);
         uint256 reportCount = 0;
 
@@ -242,7 +242,7 @@ contract RegulatoryReporting is Ownable, ReentrancyGuard {
         string memory apiEndpoint,
         bytes32 encryptionKey,
         uint256 maxReportSize
-    ) external onlyOwner {
+    ) public onlyOwner {
         JurisdictionConfig storage config = jurisdictionConfigs[jurisdiction];
         config.jurisdiction = jurisdiction;
         config.regulatorAddress = regulatorAddress;
@@ -263,7 +263,7 @@ contract RegulatoryReporting is Ownable, ReentrancyGuard {
         uint256 threshold,
         uint256 deadline,
         string memory description
-    ) external onlyOwner returns (bytes32) {
+        ) public onlyOwner returns (bytes32) {
         bytes32 obligationId = keccak256(abi.encodePacked(
             reportType,
             jurisdiction,
@@ -291,14 +291,14 @@ contract RegulatoryReporting is Ownable, ReentrancyGuard {
     /**
      * @notice Get pending reports
      */
-    function getPendingReports() external view returns (bytes32[] memory) {
+    function getPendingReports() public view returns (bytes32[] memory) {
         return pendingReports;
     }
 
     /**
      * @notice Get report details
      */
-    function getReport(bytes32 reportId) external view returns (
+    function getReport(bytes32 reportId) public view returns (
         ReportType reportType,
         Jurisdiction jurisdiction,
         ReportStatus status,
@@ -375,7 +375,7 @@ contract RegulatoryReporting is Ownable, ReentrancyGuard {
         );
     }
 
-    function _encryptReportData(string memory data, bytes32 key) internal pure returns (string) {
+    function _encryptReportData(string memory data, bytes32 key) internal pure returns (string memory) {
         // Simplified encryption - in production would use proper encryption
         // This is just a placeholder for the concept
         return string(abi.encodePacked("ENCRYPTED:", data));

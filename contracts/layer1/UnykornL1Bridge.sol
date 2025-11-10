@@ -5,7 +5,7 @@ import {IRail} from "../settlement/rails/IRail.sol";
 import {RailRegistry} from "../settlement/rails/RailRegistry.sol";
 import {Types} from "../common/Types.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /// @title UnykornL1Bridge
 /// @notice Bridge contract for cross-chain settlement on Unykorn L1 via Besu.
@@ -29,7 +29,7 @@ contract UnykornL1Bridge is Ownable, ReentrancyGuard {
         address node,
         Types.BesuPermission permission,
         bytes32 privacyGroup
-    ) external onlyOwner {
+    ) public onlyOwner {
         besuNodes[node] = Types.BesuNode({
             nodeAddress: node,
             permission: permission,
@@ -47,7 +47,7 @@ contract UnykornL1Bridge is Ownable, ReentrancyGuard {
         address from,
         address to,
         uint256 amount
-    ) external nonReentrant {
+    ) public nonReentrant {
         address railAddr = registry.get(railKey);
         require(railAddr != address(0), "UL1B: Rail not found");
 
@@ -67,7 +67,7 @@ contract UnykornL1Bridge is Ownable, ReentrancyGuard {
     }
 
     /// @notice Check if a node has admin permission.
-    function hasAdminPermission(address node) external view returns (bool) {
+    function hasAdminPermission(address node) public view returns (bool) {
         return besuNodes[node].permission == Types.BesuPermission.ADMIN;
     }
 }

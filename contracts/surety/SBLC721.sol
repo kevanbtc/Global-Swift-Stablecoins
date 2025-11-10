@@ -34,8 +34,8 @@ contract SBLC721 is ERC721, AccessControl, Pausable {
         _grantRole(PolicyRoles.ROLE_GUARDIAN, admin);
     }
 
-    function pause() external onlyRole(PolicyRoles.ROLE_GUARDIAN) { _pause(); }
-    function unpause() external onlyRole(PolicyRoles.ROLE_GUARDIAN) { _unpause(); }
+    function pause() public onlyRole(PolicyRoles.ROLE_GUARDIAN) { _pause(); }
+    function unpause() public onlyRole(PolicyRoles.ROLE_GUARDIAN) { _unpause(); }
 
     function issue(
         bytes32 issuerLEI,
@@ -43,7 +43,7 @@ contract SBLC721 is ERC721, AccessControl, Pausable {
         uint256 faceValue,
         uint64 issueDate,
         uint64 expiry
-    ) external onlyRole(PolicyRoles.ROLE_ISSUER) whenNotPaused returns (uint256 tokenId) {
+    ) public onlyRole(PolicyRoles.ROLE_ISSUER) whenNotPaused returns (uint256 tokenId) {
         require(issueDate < expiry, "bad dates");
         tokenId = ++_id;
         letters[tokenId] = SBLC(issuerLEI, beneficiary, faceValue, issueDate, expiry, Status.Active);
@@ -51,7 +51,7 @@ contract SBLC721 is ERC721, AccessControl, Pausable {
         emit LetterIssued(tokenId, issuerLEI, beneficiary, faceValue);
     }
 
-    function draw(uint256 tokenId) external onlyRole(PolicyRoles.ROLE_ADMIN) whenNotPaused {
+    function draw(uint256 tokenId) public onlyRole(PolicyRoles.ROLE_ADMIN) whenNotPaused {
         SBLC storage letter = letters[tokenId];
         require(letter.status == Status.Active, "not active");
         require(block.timestamp <= letter.expiry, "expired");
@@ -59,7 +59,7 @@ contract SBLC721 is ERC721, AccessControl, Pausable {
         emit LetterDrawn(tokenId);
     }
 
-    function expire(uint256 tokenId) external onlyRole(PolicyRoles.ROLE_ADMIN) {
+    function expire(uint256 tokenId) public onlyRole(PolicyRoles.ROLE_ADMIN) {
         SBLC storage letter = letters[tokenId];
         require(letter.status == Status.Active, "not active");
         require(block.timestamp > letter.expiry, "not expired");
@@ -67,7 +67,7 @@ contract SBLC721 is ERC721, AccessControl, Pausable {
         emit LetterExpired(tokenId);
     }
 
-    function cancel(uint256 tokenId) external onlyRole(PolicyRoles.ROLE_ADMIN) {
+    function cancel(uint256 tokenId) public onlyRole(PolicyRoles.ROLE_ADMIN) {
         SBLC storage letter = letters[tokenId];
         require(letter.status == Status.Active, "not active");
         letter.status = Status.Cancelled;

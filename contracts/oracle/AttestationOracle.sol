@@ -21,7 +21,7 @@ contract AttestationOracle is AccessControl, IAttestationOracle {
         _grantRole(PolicyRoles.ROLE_ORACLE, admin);
     }
 
-    function setQuorum(bytes32 reserveId, uint8 threshold, address[] calldata signers) external onlyRole(PolicyRoles.ROLE_ADMIN) {
+    function setQuorum(bytes32 reserveId, uint8 threshold, address[] calldata signers) public onlyRole(PolicyRoles.ROLE_ADMIN) {
         require(threshold > 0 && threshold <= signers.length, "bad quorum");
         QuorumCfg storage q = _quorum[reserveId];
         // reset
@@ -32,7 +32,7 @@ contract AttestationOracle is AccessControl, IAttestationOracle {
         emit QuorumSet(reserveId, threshold, signers);
     }
 
-    function submit(ReserveReport calldata rr, address[] calldata signersApproved) external onlyRole(PolicyRoles.ROLE_ORACLE) {
+    function submit(ReserveReport calldata rr, address[] calldata signersApproved) public onlyRole(PolicyRoles.ROLE_ORACLE) {
         // lightweight "quorum evidence": the caller declares which approved signers pre-validated the payload
         QuorumCfg storage q = _quorum[rr.reserveId];
         require(q.threshold > 0, "no quorum");
@@ -45,12 +45,12 @@ contract AttestationOracle is AccessControl, IAttestationOracle {
         emit ReportSubmitted(rr.reserveId, rr.timestamp, rr.totalLiabilities, rr.totalReserves, rr.uri);
     }
 
-    function latest(bytes32 reserveId) external view returns (ReserveReport memory ok, bool exists) {
+    function latest(bytes32 reserveId) public view returns (ReserveReport memory ok, bool exists) {
         ReserveReport memory r = _latest[reserveId];
         return (r, r.timestamp != 0);
     }
 
-    function hasQuorum(bytes32 reserveId) external view returns (bool) {
+    function hasQuorum(bytes32 reserveId) public view returns (bool) {
         return _quorum[reserveId].threshold > 0;
     }
 }

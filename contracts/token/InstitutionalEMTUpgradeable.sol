@@ -10,7 +10,7 @@ import {AccessControlUpgradeable} from "@openzeppelin/contracts-upgradeable/acce
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 
 import {Types} from "../common/Types.sol";
-import {Errors} from "../common/Errors.sol";
+import {CustomErrors} from "../common/Errors.sol";
 
 interface IPolicyEngine {
     function checkTransfer(Types.TransferContext calldata ctx) external view;
@@ -64,35 +64,33 @@ contract InstitutionalEMTUpgradeable is
 
     // --- Admin controls ---
 
-    function setPolicy(address policy_) external onlyRole(GOVERNOR_ROLE) {
+    function setPolicy(address policy_) public onlyRole(GOVERNOR_ROLE) {
         policy = IPolicyEngine(policy_);
     }
 
-    function pause() external onlyRole(PAUSER_ROLE) { _pause(); }
-    function unpause() external onlyRole(PAUSER_ROLE) { _unpause(); }
+    function pause() public onlyRole(PAUSER_ROLE) { _pause(); }
+    function unpause() public onlyRole(PAUSER_ROLE) { _unpause(); }
     // Snapshot feature removed in this build due to OZ v5 package layout; can be re-enabled with a local snapshot mixin
 
     // --- Mint/Redeem (issuance ops) ---
 
-    function mint(address to, uint256 amt) external onlyRole(MINTER_ROLE) nonReentrant {
+    function mint(address to, uint256 amt) public onlyRole(MINTER_ROLE) nonReentrant {
         _mint(to, amt);
     }
 
-    function redeem(uint256 amt) external nonReentrant {
+    function redeem(uint256 amt) public nonReentrant {
         _burn(msg.sender, amt);
         // off-chain settlement wiring goes here (hook/event)
     }
 
     // --- ERC-1644 hooks (called by external controller that holds CONTROLLER_ROLE on this token) ---
 
-    function controllerTransfer(address from, address to, uint256 value, bytes calldata /*data*/)
-        external onlyRole(CONTROLLER_ROLE)
+    function controllerTransfer(address from, address to, uint256 value, bytes calldata /*data*/) public onlyRole(CONTROLLER_ROLE)
     {
         _update(from, to, value);
     }
 
-    function controllerRedeem(address from, uint256 value, bytes calldata /*data*/)
-        external onlyRole(CONTROLLER_ROLE)
+    function controllerRedeem(address from, uint256 value, bytes calldata /*data*/) public onlyRole(CONTROLLER_ROLE)
     {
         _burn(from, value);
     }

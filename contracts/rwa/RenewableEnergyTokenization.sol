@@ -2,8 +2,8 @@
 pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import {Pausable} from "@openzeppelin/contracts/security/Pausable.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
@@ -155,7 +155,7 @@ contract RenewableEnergyTokenization is Ownable, ReentrancyGuard, Pausable {
         uint256 _totalCapacity,
         uint256 _tokenPrice,
         string memory _ipfsMetadata
-    ) external whenNotPaused returns (bytes32) {
+    ) public whenNotPaused returns (bytes32) {
         require(_totalCapacity > 0, "Invalid capacity");
         require(bytes(_projectName).length > 0, "Invalid project name");
         require(bytes(_location).length > 0, "Invalid location");
@@ -206,7 +206,7 @@ contract RenewableEnergyTokenization is Ownable, ReentrancyGuard, Pausable {
         uint256 _certificationDate,
         uint256 _expiryDate,
         bytes32 _environmentalImpactHash
-    ) external onlyOwner validProject(_projectId) {
+    ) public onlyOwner validProject(_projectId) {
         RenewableProject storage project = renewableProjects[_projectId];
         require(project.status == ProjectStatus.PROPOSED, "Project not in proposed status");
         require(_expiryDate > block.timestamp, "Invalid expiry date");
@@ -224,7 +224,7 @@ contract RenewableEnergyTokenization is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Activate a certified project
      */
-    function activateProject(bytes32 _projectId) external onlyProjectOwner(_projectId) validProject(_projectId) {
+    function activateProject(bytes32 _projectId) public onlyProjectOwner(_projectId) validProject(_projectId) {
         RenewableProject storage project = renewableProjects[_projectId];
         require(project.status == ProjectStatus.VERIFIED, "Project not verified");
         require(project.certificationDate > 0, "Project not certified");
@@ -241,7 +241,7 @@ contract RenewableEnergyTokenization is Ownable, ReentrancyGuard, Pausable {
         address _recipient,
         uint256 _amount,
         uint256 _vestingPeriod
-    ) external onlyProjectOwner(_projectId) projectActive(_projectId) whenNotPaused returns (bytes32) {
+    ) public payable onlyProjectOwner(_projectId) projectActive(_projectId) whenNotPaused returns (bytes32) {
         RenewableProject storage project = renewableProjects[_projectId];
         require(_amount > 0, "Invalid amount");
         require(project.mintedTokens + _amount <= project.totalCapacity, "Exceeds project capacity");
@@ -292,7 +292,7 @@ contract RenewableEnergyTokenization is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Burn energy tokens (retire carbon credits)
      */
-    function burnEnergyTokens(bytes32 _tokenId, uint256 _amount) external whenNotPaused {
+    function burnEnergyTokens(bytes32 _tokenId, uint256 _amount) public whenNotPaused {
         EnergyToken storage token = energyTokens[_tokenId];
         require(token.owner == msg.sender, "Not token owner");
         require(token.amount >= _amount, "Insufficient token balance");
@@ -339,7 +339,7 @@ contract RenewableEnergyTokenization is Ownable, ReentrancyGuard, Pausable {
         bytes32 _projectId,
         uint256 _totalYield,
         address _yieldToken
-    ) external onlyProjectOwner(_projectId) projectActive(_projectId) whenNotPaused {
+    ) public onlyProjectOwner(_projectId) projectActive(_projectId) whenNotPaused {
         require(_totalYield > 0, "Invalid yield amount");
 
         YieldDistribution storage distribution = yieldDistributions[_projectId];
@@ -361,7 +361,7 @@ contract RenewableEnergyTokenization is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Claim accumulated yield
      */
-    function claimYield(bytes32 _tokenId) external whenNotPaused {
+    function claimYield(bytes32 _tokenId) public whenNotPaused {
         EnergyToken storage token = energyTokens[_tokenId];
         require(token.owner == msg.sender, "Not token owner");
         require(token.isRebasing, "Token not yield-bearing");
@@ -382,7 +382,7 @@ contract RenewableEnergyTokenization is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Transfer energy tokens
      */
-    function transferTokens(bytes32 _tokenId, address _to, uint256 _amount) external whenNotPaused {
+    function transferTokens(bytes32 _tokenId, address _to, uint256 _amount) public whenNotPaused {
         EnergyToken storage token = energyTokens[_tokenId];
         require(token.owner == msg.sender, "Not token owner");
         require(token.amount >= _amount, "Insufficient balance");
@@ -418,9 +418,7 @@ contract RenewableEnergyTokenization is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Get project details
      */
-    function getProject(bytes32 _projectId)
-        external
-        view
+    function getProject(bytes32 _projectId) public view
         returns (
             string memory projectName,
             EnergyType energyType,
@@ -444,9 +442,7 @@ contract RenewableEnergyTokenization is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Get token details
      */
-    function getToken(bytes32 _tokenId)
-        external
-        view
+    function getToken(bytes32 _tokenId) public view
         returns (
             bytes32 projectId,
             address owner,
@@ -468,9 +464,7 @@ contract RenewableEnergyTokenization is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Get yield distribution info
      */
-    function getYieldDistribution(bytes32 _projectId)
-        external
-        view
+    function getYieldDistribution(bytes32 _projectId) public view
         returns (
             uint256 totalYield,
             uint256 distributedYield,
@@ -490,7 +484,7 @@ contract RenewableEnergyTokenization is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Update project verification
      */
-    function updateProjectVerification(bytes32 _projectId) external onlyOwner validProject(_projectId) {
+    function updateProjectVerification(bytes32 _projectId) public onlyOwner validProject(_projectId) {
         RenewableProject storage project = renewableProjects[_projectId];
         project.lastVerification = block.timestamp;
     }
@@ -498,7 +492,7 @@ contract RenewableEnergyTokenization is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Retire a project
      */
-    function retireProject(bytes32 _projectId) external onlyProjectOwner(_projectId) validProject(_projectId) {
+    function retireProject(bytes32 _projectId) public onlyProjectOwner(_projectId) validProject(_projectId) {
         RenewableProject storage project = renewableProjects[_projectId];
         project.status = ProjectStatus.RETIRED;
         project.isRetired = true;
@@ -511,7 +505,7 @@ contract RenewableEnergyTokenization is Ownable, ReentrancyGuard, Pausable {
         uint256 _minCertificationValidity,
         uint256 _maxTokenSupply,
         uint256 _minVerificationFrequency
-    ) external onlyOwner {
+    ) public onlyOwner {
         minCertificationValidity = _minCertificationValidity;
         maxTokenSupply = _maxTokenSupply;
         minVerificationFrequency = _minVerificationFrequency;
@@ -520,23 +514,21 @@ contract RenewableEnergyTokenization is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Emergency pause
      */
-    function emergencyPause() external onlyOwner {
+    function emergencyPause() public onlyOwner {
         _pause();
     }
 
     /**
      * @notice Emergency unpause
      */
-    function emergencyUnpause() external onlyOwner {
+    function emergencyUnpause() public onlyOwner {
         _unpause();
     }
 
     /**
      * @notice Get global statistics
      */
-    function getGlobalStatistics()
-        external
-        view
+    function getGlobalStatistics() public view
         returns (
             uint256 _totalProjects,
             uint256 _totalCapacity,

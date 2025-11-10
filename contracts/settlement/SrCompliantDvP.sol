@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {Initializable} from "lib/openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
-import {ReentrancyGuardUpgradeable} from "lib/openzeppelin-contracts-upgradeable/contracts/security/ReentrancyGuardUpgradeable.sol";
-import {PausableUpgradeable} from "lib/openzeppelin-contracts-upgradeable/contracts/utils/PausableUpgradeable.sol";
-import {AccessControlUpgradeable} from "lib/openzeppelin-contracts-upgradeable/contracts/access/AccessControlUpgradeable.sol";
-import {UUPSUpgradeable} from "lib/openzeppelin-contracts-upgradeable/contracts/proxy/utils/UUPSUpgradeable.sol";
+import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+import {PausableUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
+import {AccessControlUpgradeable} from "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
 interface IERC20 { function transfer(address to, uint256 value) external returns (bool); function transferFrom(address from, address to, uint256 value) external returns (bool); }
 interface IERC20Permit { function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external; }
@@ -55,7 +55,7 @@ contract SrCompliantDvP is Initializable, ReentrancyGuardUpgradeable, PausableUp
 
     modifier onlyExisting(bytes32 id) { require(instructions[id].createdAt != 0, "SR: unknown id"); _; }
 
-    function initialize(address admin, address _compliance, address _sanctions, uint16 feeBps, address feeRecipient) external initializer {
+    function initialize(address admin, address _compliance, address _sanctions, uint16 feeBps, address feeRecipient) public initializer {
         __ReentrancyGuard_init(); __Pausable_init(); __AccessControl_init(); __UUPSUpgradeable_init();
         _grantRole(DEFAULT_ADMIN_ROLE, admin); _grantRole(PAUSER_ROLE, admin); _grantRole(SETTLER_ROLE, admin);
         if (_compliance != address(0)) compliance = IComplianceGate(_compliance);
@@ -65,15 +65,15 @@ contract SrCompliantDvP is Initializable, ReentrancyGuardUpgradeable, PausableUp
 
     function _authorizeUpgrade(address) internal override onlyRole(DEFAULT_ADMIN_ROLE) {}
 
-    function pause() external onlyRole(PAUSER_ROLE) { _pause(); }
-    function unpause() external onlyRole(PAUSER_ROLE) { _unpause(); }
+    function pause() public onlyRole(PAUSER_ROLE) { _pause(); }
+    function unpause() public onlyRole(PAUSER_ROLE) { _unpause(); }
 
-    function setComplianceModule(address m) external onlyRole(DEFAULT_ADMIN_ROLE) { compliance = IComplianceGate(m); emit ComplianceModuleUpdated(m); }
-    function setSanctionsOracle(address o) external onlyRole(DEFAULT_ADMIN_ROLE) { sanctions = ISanctionsOracle(o); emit SanctionsOracleUpdated(o); }
-    function setFee(uint16 bps, address recipient) external onlyRole(DEFAULT_ADMIN_ROLE) { _setFee(bps, recipient); }
+    function setComplianceModule(address m) public onlyRole(DEFAULT_ADMIN_ROLE) { compliance = IComplianceGate(m); emit ComplianceModuleUpdated(m); }
+    function setSanctionsOracle(address o) public onlyRole(DEFAULT_ADMIN_ROLE) { sanctions = ISanctionsOracle(o); emit SanctionsOracleUpdated(o); }
+    function setFee(uint16 bps, address recipient) public onlyRole(DEFAULT_ADMIN_ROLE) { _setFee(bps, recipient); }
     function _setFee(uint16 bps, address recipient) internal { require(bps <= 2000, "SR: fee high"); require(recipient != address(0), "SR: fee to"); fee = FeeCfg({bps: bps, recipient: recipient}); emit FeeUpdated(bps, recipient); }
 
-    function createPvP20(bytes32 id, IsoRefs calldata isoRefs, address partyA, address tokenA, uint256 amtA, address partyB, address tokenB, uint256 amtB, uint64 deadline, bytes calldata complianceCtx) external whenNotPaused nonReentrant onlyRole(SETTLER_ROLE) {
+    function createPvP20(bytes32 id, IsoRefs calldata isoRefs, address partyA, address tokenA, uint256 amtA, address partyB, address tokenB, uint256 amtB, uint64 deadline, bytes calldata complianceCtx) public whenNotPaused nonReentrant onlyRole(SETTLER_ROLE) {
         require(instructions[id].createdAt == 0, "SR: id exists"); _sanctionsCheck(partyA); _sanctionsCheck(partyB);
         Instruction storage ins = instructions[id];
         ins.kind = Kind.PVP_ERC20; ins.state = State.Open; ins.createdAt = uint64(block.timestamp); ins.deadline = deadline; ins.iso = isoRefs; ins.complianceCtx = complianceCtx;
@@ -82,7 +82,7 @@ contract SrCompliantDvP is Initializable, ReentrancyGuardUpgradeable, PausableUp
         emit IsoRefsUpdated(id, isoRefs.uetr, isoRefs.e2eIdHash, isoRefs.isoPayloadHash);
     }
 
-    function createDvP721(bytes32 id, IsoRefs calldata isoRefs, address seller, address nft, uint256 tokenId, address buyer, address payToken, uint256 price, uint64 deadline, bytes calldata complianceCtx) external whenNotPaused nonReentrant onlyRole(SETTLER_ROLE) {
+    function createDvP721(bytes32 id, IsoRefs calldata isoRefs, address seller, address nft, uint256 tokenId, address buyer, address payToken, uint256 price, uint64 deadline, bytes calldata complianceCtx) public whenNotPaused nonReentrant onlyRole(SETTLER_ROLE) {
         require(instructions[id].createdAt == 0, "SR: id exists"); _sanctionsCheck(seller); _sanctionsCheck(buyer);
         Instruction storage ins = instructions[id];
         ins.kind = Kind.DVP_ERC721_FOR_ERC20; ins.state = State.Open; ins.createdAt = uint64(block.timestamp); ins.deadline = deadline; ins.iso = isoRefs; ins.complianceCtx = complianceCtx;
@@ -91,7 +91,7 @@ contract SrCompliantDvP is Initializable, ReentrancyGuardUpgradeable, PausableUp
         emit IsoRefsUpdated(id, isoRefs.uetr, isoRefs.e2eIdHash, isoRefs.isoPayloadHash);
     }
 
-    function createDvP1155(bytes32 id, IsoRefs calldata isoRefs, address seller, address nft, uint256 tokenId, uint256 amount, address buyer, address payToken, uint256 price, uint64 deadline, bytes calldata complianceCtx) external whenNotPaused nonReentrant onlyRole(SETTLER_ROLE) {
+    function createDvP1155(bytes32 id, IsoRefs calldata isoRefs, address seller, address nft, uint256 tokenId, uint256 amount, address buyer, address payToken, uint256 price, uint64 deadline, bytes calldata complianceCtx) public whenNotPaused nonReentrant onlyRole(SETTLER_ROLE) {
         require(instructions[id].createdAt == 0, "SR: id exists"); _sanctionsCheck(seller); _sanctionsCheck(buyer);
         Instruction storage ins = instructions[id];
         ins.kind = Kind.DVP_ERC1155_FOR_ERC20; ins.state = State.Open; ins.createdAt = uint64(block.timestamp); ins.deadline = deadline; ins.iso = isoRefs; ins.complianceCtx = complianceCtx;
@@ -112,7 +112,7 @@ contract SrCompliantDvP is Initializable, ReentrancyGuardUpgradeable, PausableUp
         }
     }
 
-    function fundErc20WithPermit(bytes32 id, bool sideA, uint256 amount, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external nonReentrant whenNotPaused onlyExisting(id) {
+    function fundErc20WithPermit(bytes32 id, bool sideA, uint256 amount, uint256 deadline, uint8 v, bytes32 r, bytes32 s) public nonReentrant whenNotPaused onlyExisting(id) {
         Instruction storage ins = instructions[id]; address token; address owner;
         if (ins.kind == Kind.PVP_ERC20) { if (sideA) { token = ins.pvp.tokenA; owner = ins.pvp.partyA; require(owner == msg.sender, "SR: not A"); } else { token = ins.pvp.tokenB; owner = ins.pvp.partyB; require(owner == msg.sender, "SR: not B"); } }
         else if (ins.kind == Kind.DVP_ERC721_FOR_ERC20) { token = ins.dvp721.payToken; owner = ins.dvp721.buyer; require(owner == msg.sender, "SR: not buyer"); }
@@ -120,20 +120,20 @@ contract SrCompliantDvP is Initializable, ReentrancyGuardUpgradeable, PausableUp
         IERC20Permit(token).permit(owner, address(this), amount, deadline, v, r, s); fundErc20(id, amount, sideA);
     }
 
-    function depositERC721(bytes32 id) external nonReentrant whenNotPaused onlyExisting(id) {
+    function depositERC721(bytes32 id) public nonReentrant whenNotPaused onlyExisting(id) {
         Instruction storage ins = instructions[id]; _requireOpen(ins); require(ins.kind == Kind.DVP_ERC721_FOR_ERC20, "SR: not 721"); require(msg.sender == ins.dvp721.seller, "SR: not seller");
         _preflightCompliance(msg.sender, ins.dvp721.buyer, ins.dvp721.nft, 1, ins.complianceCtx);
         address nft = ins.dvp721.nft; uint256 tid = ins.dvp721.tokenId; require(_isNftApprovedFor(address(this), nft, msg.sender, tid), "SR: approve NFT first");
         IERC721(nft).transferFrom(msg.sender, address(this), tid); ins.nftEscrowed = true; emit EscrowedERC721(id, msg.sender, nft, tid);
     }
 
-    function depositERC1155(bytes32 id) external nonReentrant whenNotPaused onlyExisting(id) {
+    function depositERC1155(bytes32 id) public nonReentrant whenNotPaused onlyExisting(id) {
         Instruction storage ins = instructions[id]; _requireOpen(ins); require(ins.kind == Kind.DVP_ERC1155_FOR_ERC20, "SR: not 1155"); require(msg.sender == ins.dvp1155.seller, "SR: not seller");
         _preflightCompliance(msg.sender, ins.dvp1155.buyer, ins.dvp1155.nft, ins.dvp1155.amount, ins.complianceCtx);
         IERC1155(ins.dvp1155.nft).safeTransferFrom(msg.sender, address(this), ins.dvp1155.tokenId, ins.dvp1155.amount, ""); ins.nftEscrowed = true; emit EscrowedERC1155(id, msg.sender, ins.dvp1155.nft, ins.dvp1155.tokenId, ins.dvp1155.amount);
     }
 
-    function settle(bytes32 id) external nonReentrant whenNotPaused onlyExisting(id) {
+    function settle(bytes32 id) public nonReentrant whenNotPaused onlyExisting(id) {
         Instruction storage ins = instructions[id]; _requireOpen(ins); require(block.timestamp <= ins.deadline, "SR: expired");
         if (ins.kind == Kind.PVP_ERC20) { require(ins.erc20FundedSideA && ins.erc20FundedSideB, "SR: fund both"); _payoutERC20(ins.pvp.tokenA, ins.pvp.partyB, ins.pvp.amtA); _payoutERC20(ins.pvp.tokenB, ins.pvp.partyA, ins.pvp.amtB); }
         else if (ins.kind == Kind.DVP_ERC721_FOR_ERC20) { require(ins.erc20FundedSideA && ins.nftEscrowed, "SR: not funded"); IERC721(ins.dvp721.nft).transferFrom(address(this), ins.dvp721.buyer, ins.dvp721.tokenId); _payoutERC20(ins.dvp721.payToken, ins.dvp721.seller, ins.dvp721.price); }
@@ -141,7 +141,7 @@ contract SrCompliantDvP is Initializable, ReentrancyGuardUpgradeable, PausableUp
         ins.state = State.Settled; emit Settled(id, ins.iso.uetr, msg.sender);
     }
 
-    function cancel(bytes32 id) external nonReentrant whenNotPaused onlyExisting(id) {
+    function cancel(bytes32 id) public nonReentrant whenNotPaused onlyExisting(id) {
         Instruction storage ins = instructions[id]; require(ins.state == State.Open, "SR: not open"); bool admin = hasRole(DEFAULT_ADMIN_ROLE, msg.sender) || hasRole(SETTLER_ROLE, msg.sender); bool byParty = _isParty(ins, msg.sender); require(admin || byParty || block.timestamp > ins.deadline, "SR: no cancel");
         if (ins.kind == Kind.PVP_ERC20) { if (ins.erc20FundedSideA) { IERC20(ins.pvp.tokenA).transfer(ins.pvp.partyA, ins.pvp.amtA); } if (ins.erc20FundedSideB) { IERC20(ins.pvp.tokenB).transfer(ins.pvp.partyB, ins.pvp.amtB); } }
         else if (ins.kind == Kind.DVP_ERC721_FOR_ERC20) { if (ins.erc20FundedSideA) { IERC20(ins.dvp721.payToken).transfer(ins.dvp721.buyer, ins.dvp721.price); } if (ins.nftEscrowed) { IERC721(ins.dvp721.nft).transferFrom(address(this), ins.dvp721.seller, ins.dvp721.tokenId); } }
@@ -149,7 +149,7 @@ contract SrCompliantDvP is Initializable, ReentrancyGuardUpgradeable, PausableUp
         ins.state = (block.timestamp > ins.deadline) ? State.Expired : State.Cancelled; emit Cancelled(id, msg.sender, ins.state);
     }
 
-    function updateIsoRefs(bytes32 id, IsoRefs calldata isoRefs) external onlyRole(SETTLER_ROLE) onlyExisting(id) { Instruction storage ins = instructions[id]; require(ins.state == State.Open, "SR: locked"); ins.iso = isoRefs; emit IsoRefsUpdated(id, isoRefs.uetr, isoRefs.e2eIdHash, isoRefs.isoPayloadHash); }
+    function updateIsoRefs(bytes32 id, IsoRefs calldata isoRefs) public onlyRole(SETTLER_ROLE) onlyExisting(id) { Instruction storage ins = instructions[id]; require(ins.state == State.Open, "SR: locked"); ins.iso = isoRefs; emit IsoRefsUpdated(id, isoRefs.uetr, isoRefs.e2eIdHash, isoRefs.isoPayloadHash); }
 
     function _preflightCompliance(address from, address to, address asset, uint256 amount, bytes memory ctx) internal view {
         _sanctionsCheck(from); _sanctionsCheck(to);
@@ -172,6 +172,6 @@ contract SrCompliantDvP is Initializable, ReentrancyGuardUpgradeable, PausableUp
         return false;
     }
 
-    function onERC1155Received(address, address, uint256, uint256, bytes calldata) external pure returns (bytes4) { return this.onERC1155Received.selector; }
-    function onERC1155BatchReceived(address, address, uint256[] calldata, uint256[] calldata, bytes calldata) external pure returns (bytes4) { return this.onERC1155BatchReceived.selector; }
+    function onERC1155Received(address, address, uint256, uint256, bytes calldata) public pure returns (bytes4) { return this.onERC1155Received.selector; }
+    function onERC1155BatchReceived(address, address, uint256[] calldata, uint256[] calldata, bytes calldata) public pure returns (bytes4) { return this.onERC1155BatchReceived.selector; }
 }

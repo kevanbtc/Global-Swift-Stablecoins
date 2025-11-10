@@ -14,9 +14,29 @@ import * as Contracts from ".";
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
+      name: "IAny2EVMMessageReceiver",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IAny2EVMMessageReceiver__factory>;
+    getContractFactory(
+      name: "IRouterClient",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IRouterClient__factory>;
+    getContractFactory(
+      name: "Client",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Client__factory>;
+    getContractFactory(
+      name: "AggregatorV3Interface",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AggregatorV3Interface__factory>;
+    getContractFactory(
       name: "AccessControlUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.AccessControlUpgradeable__factory>;
+    getContractFactory(
+      name: "OwnableUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.OwnableUpgradeable__factory>;
     getContractFactory(
       name: "Initializable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -66,9 +86,21 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.AccessControl__factory>;
     getContractFactory(
+      name: "AccessControlEnumerable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AccessControlEnumerable__factory>;
+    getContractFactory(
+      name: "IAccessControlEnumerable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IAccessControlEnumerable__factory>;
+    getContractFactory(
       name: "IAccessControl",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IAccessControl__factory>;
+    getContractFactory(
+      name: "Ownable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Ownable__factory>;
     getContractFactory(
       name: "TimelockController",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -114,9 +146,33 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IBeacon__factory>;
     getContractFactory(
+      name: "Clones",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Clones__factory>;
+    getContractFactory(
+      name: "ERC1967Proxy",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC1967Proxy__factory>;
+    getContractFactory(
       name: "ERC1967Utils",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC1967Utils__factory>;
+    getContractFactory(
+      name: "Proxy",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Proxy__factory>;
+    getContractFactory(
+      name: "ProxyAdmin",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ProxyAdmin__factory>;
+    getContractFactory(
+      name: "ITransparentUpgradeableProxy",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ITransparentUpgradeableProxy__factory>;
+    getContractFactory(
+      name: "TransparentUpgradeableProxy",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TransparentUpgradeableProxy__factory>;
     getContractFactory(
       name: "IERC1155Receiver",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -129,6 +185,10 @@ declare module "hardhat/types/runtime" {
       name: "ERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC20__factory>;
+    getContractFactory(
+      name: "ERC20Permit",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC20Permit__factory>;
     getContractFactory(
       name: "ERC4626",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -178,6 +238,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Address__factory>;
     getContractFactory(
+      name: "Create2",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Create2__factory>;
+    getContractFactory(
       name: "ECDSA",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ECDSA__factory>;
@@ -206,6 +270,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.SafeCast__factory>;
     getContractFactory(
+      name: "Nonces",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Nonces__factory>;
+    getContractFactory(
       name: "Pausable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Pausable__factory>;
@@ -222,9 +290,33 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Strings__factory>;
     getContractFactory(
+      name: "AgoraTokenizedDepositAdapter",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AgoraTokenizedDepositAdapter__factory>;
+    getContractFactory(
+      name: "AIAgentRegistry",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AIAgentRegistry__factory>;
+    getContractFactory(
+      name: "AIAgentSwarm",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AIAgentSwarm__factory>;
+    getContractFactory(
+      name: "AIMonitoringEngine",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AIMonitoringEngine__factory>;
+    getContractFactory(
+      name: "ArbitrageEngine",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ArbitrageEngine__factory>;
+    getContractFactory(
       name: "AttestationRegistry",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.AttestationRegistry__factory>;
+    getContractFactory(
+      name: "SWIFTGPIAdapter",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SWIFTGPIAdapter__factory>;
     getContractFactory(
       name: "BootstrapExample",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -250,6 +342,30 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.WormholeMintProxy__factory>;
     getContractFactory(
+      name: "CarbonFootprintTracker",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CarbonFootprintTracker__factory>;
+    getContractFactory(
+      name: "CBDCBridge",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CBDCBridge__factory>;
+    getContractFactory(
+      name: "CBDCInfrastructure",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CBDCInfrastructure__factory>;
+    getContractFactory(
+      name: "CBDCIntegrationHub",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CBDCIntegrationHub__factory>;
+    getContractFactory(
+      name: "PolicyEngine",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.PolicyEngine__factory>;
+    getContractFactory(
+      name: "TieredWallet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TieredWallet__factory>;
+    getContractFactory(
       name: "IReserveQuorumView",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IReserveQuorumView__factory>;
@@ -262,9 +378,13 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.PorBroadcaster__factory>;
     getContractFactory(
-      name: "Errors",
+      name: "ChainInfrastructure",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Errors__factory>;
+    ): Promise<Contracts.ChainInfrastructure__factory>;
+    getContractFactory(
+      name: "CustomErrors",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CustomErrors__factory>;
     getContractFactory(
       name: "ISO20022Events",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -277,6 +397,10 @@ declare module "hardhat/types/runtime" {
       name: "AccessRegistryUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.AccessRegistryUpgradeable__factory>;
+    getContractFactory(
+      name: "AdvancedSanctionsEngine",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AdvancedSanctionsEngine__factory>;
     getContractFactory(
       name: "ComplianceModuleRBAC",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -298,6 +422,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ComplianceRegistryUpgradeable__factory>;
     getContractFactory(
+      name: "CrossBorderCompliance",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CrossBorderCompliance__factory>;
+    getContractFactory(
       name: "KYCRegistry",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.KYCRegistry__factory>;
@@ -314,6 +442,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.PolicyEngineUpgradeable__factory>;
     getContractFactory(
+      name: "RegulatoryReporting",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.RegulatoryReporting__factory>;
+    getContractFactory(
       name: "RoleIds",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.RoleIds__factory>;
@@ -321,6 +453,38 @@ declare module "hardhat/types/runtime" {
       name: "SanctionsOracleDenylist",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.SanctionsOracleDenylist__factory>;
+    getContractFactory(
+      name: "TransactionMonitoring",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TransactionMonitoring__factory>;
+    getContractFactory(
+      name: "TravelRuleEngine",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TravelRuleEngine__factory>;
+    getContractFactory(
+      name: "APIIntegrations",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.APIIntegrations__factory>;
+    getContractFactory(
+      name: "BlockchainInteroperability",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.BlockchainInteroperability__factory>;
+    getContractFactory(
+      name: "DataConnectors",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.DataConnectors__factory>;
+    getContractFactory(
+      name: "DecentralizedStorage",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.DecentralizedStorage__factory>;
+    getContractFactory(
+      name: "LegacySystemAdapters",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.LegacySystemAdapters__factory>;
+    getContractFactory(
+      name: "RealTimeMessaging",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.RealTimeMessaging__factory>;
     getContractFactory(
       name: "CourtOrderRegistry",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -341,6 +505,42 @@ declare module "hardhat/types/runtime" {
       name: "IERC20Forceable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20Forceable__factory>;
+    getContractFactory(
+      name: "BlockchainExplorer",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.BlockchainExplorer__factory>;
+    getContractFactory(
+      name: "ChainInfrastructure",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ChainInfrastructure__factory>;
+    getContractFactory(
+      name: "DemoOrchestrator",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.DemoOrchestrator__factory>;
+    getContractFactory(
+      name: "DNASequencer",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.DNASequencer__factory>;
+    getContractFactory(
+      name: "LifeLineOrchestrator",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.LifeLineOrchestrator__factory>;
+    getContractFactory(
+      name: "SystemBootstrap",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SystemBootstrap__factory>;
+    getContractFactory(
+      name: "UnykornDNACore",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.UnykornDNACore__factory>;
+    getContractFactory(
+      name: "InstitutionalDeFiHub",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.InstitutionalDeFiHub__factory>;
+    getContractFactory(
+      name: "InstitutionalLendingProtocol",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.InstitutionalLendingProtocol__factory>;
     getContractFactory(
       name: "IComplianceRegistry",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -366,6 +566,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MerkleStreamDistributorUpgradeable__factory>;
     getContractFactory(
+      name: "DNASequencer",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.DNASequencer__factory>;
+    getContractFactory(
       name: "IERC1400",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC1400__factory>;
@@ -390,9 +594,45 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MultiAssetEscrow__factory>;
     getContractFactory(
+      name: "UnykornExplorer",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.UnykornExplorer__factory>;
+    getContractFactory(
+      name: "ContractAccessFee",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ContractAccessFee__factory>;
+    getContractFactory(
+      name: "FnalitySettlementAdapter",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.FnalitySettlementAdapter__factory>;
+    getContractFactory(
+      name: "FractionalAssetProtocol",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.FractionalAssetProtocol__factory>;
+    getContractFactory(
+      name: "GlobalFinancialInstitutions",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.GlobalFinancialInstitutions__factory>;
+    getContractFactory(
+      name: "GlobalInfrastructureCodex",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.GlobalInfrastructureCodex__factory>;
+    getContractFactory(
+      name: "MultiSigWallet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MultiSigWallet__factory>;
+    getContractFactory(
       name: "PolicyRoles",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.PolicyRoles__factory>;
+    getContractFactory(
+      name: "UniversalHealthcare",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.UniversalHealthcare__factory>;
+    getContractFactory(
+      name: "UniversalDeployer",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.UniversalDeployer__factory>;
     getContractFactory(
       name: "InsurancePolicyNFT",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -426,6 +666,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IComplianceRegistryV2__factory>;
     getContractFactory(
+      name: "IPriceOracle",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IPriceOracle__factory>;
+    getContractFactory(
       name: "IProofOfReserves",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IProofOfReserves__factory>;
@@ -433,6 +677,10 @@ declare module "hardhat/types/runtime" {
       name: "IQuoteAdapter",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IQuoteAdapter__factory>;
+    getContractFactory(
+      name: "IReserveManager",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IReserveManager__factory>;
     getContractFactory(
       name: "IShareMaturityOracle",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -446,6 +694,26 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ISO20022EventEmitter__factory>;
     getContractFactory(
+      name: "ISO20022MessageHandler",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ISO20022MessageHandler__factory>;
+    getContractFactory(
+      name: "UnykornL1Bridge",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.UnykornL1Bridge__factory>;
+    getContractFactory(
+      name: "L1L2Bridge",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.L1L2Bridge__factory>;
+    getContractFactory(
+      name: "OptimisticSequencer",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.OptimisticSequencer__factory>;
+    getContractFactory(
+      name: "ZKSequencer",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ZKSequencer__factory>;
+    getContractFactory(
       name: "ReserveManager",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ReserveManager__factory>;
@@ -454,6 +722,18 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ReserveManagerUpgradeable__factory>;
     getContractFactory(
+      name: "IMidnightBridge",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IMidnightBridge__factory>;
+    getContractFactory(
+      name: "IMidnightProofVerifier",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IMidnightProofVerifier__factory>;
+    getContractFactory(
+      name: "MidnightSettlementAdapter",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MidnightSettlementAdapter__factory>;
+    getContractFactory(
       name: "MockComplianceRegistry",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MockComplianceRegistry__factory>;
@@ -461,6 +741,26 @@ declare module "hardhat/types/runtime" {
       name: "MockMintableERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MockMintableERC20__factory>;
+    getContractFactory(
+      name: "FundUsageTracker",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.FundUsageTracker__factory>;
+    getContractFactory(
+      name: "NetworkHealth",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.NetworkHealth__factory>;
+    getContractFactory(
+      name: "SequencerMetrics",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SequencerMetrics__factory>;
+    getContractFactory(
+      name: "SystemAnalytics",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SystemAnalytics__factory>;
+    getContractFactory(
+      name: "DeploymentProofNFT",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.DeploymentProofNFT__factory>;
     getContractFactory(
       name: "CircuitBreaker",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -502,6 +802,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.PythQuoteAdapter__factory>;
     getContractFactory(
+      name: "AdvancedPriceOracle",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AdvancedPriceOracle__factory>;
+    getContractFactory(
       name: "AttestationOracle",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.AttestationOracle__factory>;
@@ -509,6 +813,10 @@ declare module "hardhat/types/runtime" {
       name: "BankAccountProofOracle",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.BankAccountProofOracle__factory>;
+    getContractFactory(
+      name: "DecentralizedOracleNetwork",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.DecentralizedOracleNetwork__factory>;
     getContractFactory(
       name: "IPriceOracle",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -558,6 +866,26 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.PolicyGuard__factory>;
     getContractFactory(
+      name: "ImplementationProcedures",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ImplementationProcedures__factory>;
+    getContractFactory(
+      name: "OperationalProtocols",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.OperationalProtocols__factory>;
+    getContractFactory(
+      name: "QuantumGovernance",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.QuantumGovernance__factory>;
+    getContractFactory(
+      name: "QuantumResistantCryptography",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.QuantumResistantCryptography__factory>;
+    getContractFactory(
+      name: "MasterRegistry",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MasterRegistry__factory>;
+    getContractFactory(
       name: "CustodianNavReporter",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.CustodianNavReporter__factory>;
@@ -590,9 +918,73 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.BaselCARModule__factory>;
     getContractFactory(
+      name: "BaselIIIComplianceEngine",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.BaselIIIComplianceEngine__factory>;
+    getContractFactory(
+      name: "BaselIIIRiskModule",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.BaselIIIRiskModule__factory>;
+    getContractFactory(
+      name: "PortfolioRiskEngine",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.PortfolioRiskEngine__factory>;
+    getContractFactory(
+      name: "RLNMultiCBDCAdapter",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.RLNMultiCBDCAdapter__factory>;
+    getContractFactory(
+      name: "GoldRWAToken",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.GoldRWAToken__factory>;
+    getContractFactory(
+      name: "NaturalResourceRightsToken",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.NaturalResourceRightsToken__factory>;
+    getContractFactory(
+      name: "RenewableEnergyTokenization",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.RenewableEnergyTokenization__factory>;
+    getContractFactory(
       name: "RWAVaultNFT",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.RWAVaultNFT__factory>;
+    getContractFactory(
+      name: "AIEnhancedSecurity",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AIEnhancedSecurity__factory>;
+    getContractFactory(
+      name: "CircuitBreaker",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CircuitBreaker__factory>;
+    getContractFactory(
+      name: "DecentralizedIdentity",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.DecentralizedIdentity__factory>;
+    getContractFactory(
+      name: "PrivacyLayer",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.PrivacyLayer__factory>;
+    getContractFactory(
+      name: "QuantumResistantCryptography",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.QuantumResistantCryptography__factory>;
+    getContractFactory(
+      name: "RateLimiter",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.RateLimiter__factory>;
+    getContractFactory(
+      name: "SequencerRegistry",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SequencerRegistry__factory>;
+    getContractFactory(
+      name: "AtomicCrossAssetSettlement",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AtomicCrossAssetSettlement__factory>;
+    getContractFactory(
+      name: "EmergencyCircuitBreaker",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.EmergencyCircuitBreaker__factory>;
     getContractFactory(
       name: "FxPvPRouter",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -613,6 +1005,10 @@ declare module "hardhat/types/runtime" {
       name: "NettingPool",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.NettingPool__factory>;
+    getContractFactory(
+      name: "QuantumResistantZKSettlement",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.QuantumResistantZKSettlement__factory>;
     getContractFactory(
       name: "ERC20Rail",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -706,9 +1102,37 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.StablecoinRouter__factory>;
     getContractFactory(
+      name: "UnykornStableRail",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.UnykornStableRail__factory>;
+    getContractFactory(
+      name: "CompliantStable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CompliantStable__factory>;
+    getContractFactory(
+      name: "FeeRouter",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.FeeRouter__factory>;
+    getContractFactory(
+      name: "NAVRebaseController",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.NAVRebaseController__factory>;
+    getContractFactory(
+      name: "StablecoinPolicyEngine",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.StablecoinPolicyEngine__factory>;
+    getContractFactory(
       name: "StableUSD",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.StableUSD__factory>;
+    getContractFactory(
+      name: "GlobalStablecoinRegistry",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.GlobalStablecoinRegistry__factory>;
+    getContractFactory(
+      name: "StakeholderRegistry",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.StakeholderRegistry__factory>;
     getContractFactory(
       name: "IERC4626Lite",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -721,6 +1145,22 @@ declare module "hardhat/types/runtime" {
       name: "SuretyBondNFT",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.SuretyBondNFT__factory>;
+    getContractFactory(
+      name: "SWIFTGPIAdapter",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SWIFTGPIAdapter__factory>;
+    getContractFactory(
+      name: "SWIFTIntegrationBridge",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SWIFTIntegrationBridge__factory>;
+    getContractFactory(
+      name: "SWIFTSharedLedgerRail",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SWIFTSharedLedgerRail__factory>;
+    getContractFactory(
+      name: "SystemBootstrap",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SystemBootstrap__factory>;
     getContractFactory(
       name: "InstitutionalEMTUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -750,6 +1190,42 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.WrappedShares4626__factory>;
     getContractFactory(
+      name: "GlobalDEX",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.GlobalDEX__factory>;
+    getContractFactory(
+      name: "InstitutionalDEX",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.InstitutionalDEX__factory>;
+    getContractFactory(
+      name: "AssetBasket",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AssetBasket__factory>;
+    getContractFactory(
+      name: "ETFWrapper",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ETFWrapper__factory>;
+    getContractFactory(
+      name: "MMFVault",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MMFVault__factory>;
+    getContractFactory(
+      name: "TBillVault",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TBillVault__factory>;
+    getContractFactory(
+      name: "UniversalBasicIncome",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.UniversalBasicIncome__factory>;
+    getContractFactory(
+      name: "UniversalDeployer",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.UniversalDeployer__factory>;
+    getContractFactory(
+      name: "UnykornL1Bridge",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.UnykornL1Bridge__factory>;
+    getContractFactory(
       name: "GuardedUUPS",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.GuardedUUPS__factory>;
@@ -758,47 +1234,48 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ISO20022Emitter__factory>;
     getContractFactory(
-      name: "IAny2EVMMessageReceiver",
+      name: "AlgorithmicVerification",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IAny2EVMMessageReceiver__factory>;
+    ): Promise<Contracts.AlgorithmicVerification__factory>;
     getContractFactory(
-      name: "IRouterClient",
+      name: "SystemStateMachines",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IRouterClient__factory>;
+    ): Promise<Contracts.SystemStateMachines__factory>;
     getContractFactory(
-      name: "AccessControlUpgradeable",
+      name: "ThirdPartyValidation",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.AccessControlUpgradeable__factory>;
-    getContractFactory(
-      name: "Initializable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Initializable__factory>;
-    getContractFactory(
-      name: "UUPSUpgradeable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.UUPSUpgradeable__factory>;
-    getContractFactory(
-      name: "ContextUpgradeable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ContextUpgradeable__factory>;
-    getContractFactory(
-      name: "ERC165Upgradeable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC165Upgradeable__factory>;
-    getContractFactory(
-      name: "PausableUpgradeable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.PausableUpgradeable__factory>;
-    getContractFactory(
-      name: "ReentrancyGuardUpgradeable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ReentrancyGuardUpgradeable__factory>;
+    ): Promise<Contracts.ThirdPartyValidation__factory>;
 
+    getContractAt(
+      name: "IAny2EVMMessageReceiver",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IAny2EVMMessageReceiver>;
+    getContractAt(
+      name: "IRouterClient",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IRouterClient>;
+    getContractAt(
+      name: "Client",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Client>;
+    getContractAt(
+      name: "AggregatorV3Interface",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AggregatorV3Interface>;
     getContractAt(
       name: "AccessControlUpgradeable",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.AccessControlUpgradeable>;
+    getContractAt(
+      name: "OwnableUpgradeable",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.OwnableUpgradeable>;
     getContractAt(
       name: "Initializable",
       address: string | ethers.Addressable,
@@ -860,10 +1337,25 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.AccessControl>;
     getContractAt(
+      name: "AccessControlEnumerable",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AccessControlEnumerable>;
+    getContractAt(
+      name: "IAccessControlEnumerable",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IAccessControlEnumerable>;
+    getContractAt(
       name: "IAccessControl",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.IAccessControl>;
+    getContractAt(
+      name: "Ownable",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Ownable>;
     getContractAt(
       name: "TimelockController",
       address: string | ethers.Addressable,
@@ -920,10 +1412,40 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IBeacon>;
     getContractAt(
+      name: "Clones",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Clones>;
+    getContractAt(
+      name: "ERC1967Proxy",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC1967Proxy>;
+    getContractAt(
       name: "ERC1967Utils",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC1967Utils>;
+    getContractAt(
+      name: "Proxy",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Proxy>;
+    getContractAt(
+      name: "ProxyAdmin",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ProxyAdmin>;
+    getContractAt(
+      name: "ITransparentUpgradeableProxy",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ITransparentUpgradeableProxy>;
+    getContractAt(
+      name: "TransparentUpgradeableProxy",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TransparentUpgradeableProxy>;
     getContractAt(
       name: "IERC1155Receiver",
       address: string | ethers.Addressable,
@@ -939,6 +1461,11 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC20>;
+    getContractAt(
+      name: "ERC20Permit",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC20Permit>;
     getContractAt(
       name: "ERC4626",
       address: string | ethers.Addressable,
@@ -1000,6 +1527,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Address>;
     getContractAt(
+      name: "Create2",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Create2>;
+    getContractAt(
       name: "ECDSA",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -1035,6 +1567,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.SafeCast>;
     getContractAt(
+      name: "Nonces",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Nonces>;
+    getContractAt(
       name: "Pausable",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -1055,10 +1592,40 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Strings>;
     getContractAt(
+      name: "AgoraTokenizedDepositAdapter",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AgoraTokenizedDepositAdapter>;
+    getContractAt(
+      name: "AIAgentRegistry",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AIAgentRegistry>;
+    getContractAt(
+      name: "AIAgentSwarm",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AIAgentSwarm>;
+    getContractAt(
+      name: "AIMonitoringEngine",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AIMonitoringEngine>;
+    getContractAt(
+      name: "ArbitrageEngine",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ArbitrageEngine>;
+    getContractAt(
       name: "AttestationRegistry",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.AttestationRegistry>;
+    getContractAt(
+      name: "SWIFTGPIAdapter",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SWIFTGPIAdapter>;
     getContractAt(
       name: "BootstrapExample",
       address: string | ethers.Addressable,
@@ -1090,6 +1657,36 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.WormholeMintProxy>;
     getContractAt(
+      name: "CarbonFootprintTracker",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CarbonFootprintTracker>;
+    getContractAt(
+      name: "CBDCBridge",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CBDCBridge>;
+    getContractAt(
+      name: "CBDCInfrastructure",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CBDCInfrastructure>;
+    getContractAt(
+      name: "CBDCIntegrationHub",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CBDCIntegrationHub>;
+    getContractAt(
+      name: "PolicyEngine",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.PolicyEngine>;
+    getContractAt(
+      name: "TieredWallet",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TieredWallet>;
+    getContractAt(
       name: "IReserveQuorumView",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -1105,10 +1702,15 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.PorBroadcaster>;
     getContractAt(
-      name: "Errors",
+      name: "ChainInfrastructure",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.Errors>;
+    ): Promise<Contracts.ChainInfrastructure>;
+    getContractAt(
+      name: "CustomErrors",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CustomErrors>;
     getContractAt(
       name: "ISO20022Events",
       address: string | ethers.Addressable,
@@ -1124,6 +1726,11 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.AccessRegistryUpgradeable>;
+    getContractAt(
+      name: "AdvancedSanctionsEngine",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AdvancedSanctionsEngine>;
     getContractAt(
       name: "ComplianceModuleRBAC",
       address: string | ethers.Addressable,
@@ -1150,6 +1757,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ComplianceRegistryUpgradeable>;
     getContractAt(
+      name: "CrossBorderCompliance",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CrossBorderCompliance>;
+    getContractAt(
       name: "KYCRegistry",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -1170,6 +1782,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.PolicyEngineUpgradeable>;
     getContractAt(
+      name: "RegulatoryReporting",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.RegulatoryReporting>;
+    getContractAt(
       name: "RoleIds",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -1179,6 +1796,46 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.SanctionsOracleDenylist>;
+    getContractAt(
+      name: "TransactionMonitoring",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TransactionMonitoring>;
+    getContractAt(
+      name: "TravelRuleEngine",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TravelRuleEngine>;
+    getContractAt(
+      name: "APIIntegrations",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.APIIntegrations>;
+    getContractAt(
+      name: "BlockchainInteroperability",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.BlockchainInteroperability>;
+    getContractAt(
+      name: "DataConnectors",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.DataConnectors>;
+    getContractAt(
+      name: "DecentralizedStorage",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.DecentralizedStorage>;
+    getContractAt(
+      name: "LegacySystemAdapters",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.LegacySystemAdapters>;
+    getContractAt(
+      name: "RealTimeMessaging",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.RealTimeMessaging>;
     getContractAt(
       name: "CourtOrderRegistry",
       address: string | ethers.Addressable,
@@ -1204,6 +1861,51 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC20Forceable>;
+    getContractAt(
+      name: "BlockchainExplorer",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.BlockchainExplorer>;
+    getContractAt(
+      name: "ChainInfrastructure",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ChainInfrastructure>;
+    getContractAt(
+      name: "DemoOrchestrator",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.DemoOrchestrator>;
+    getContractAt(
+      name: "DNASequencer",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.DNASequencer>;
+    getContractAt(
+      name: "LifeLineOrchestrator",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.LifeLineOrchestrator>;
+    getContractAt(
+      name: "SystemBootstrap",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SystemBootstrap>;
+    getContractAt(
+      name: "UnykornDNACore",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.UnykornDNACore>;
+    getContractAt(
+      name: "InstitutionalDeFiHub",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.InstitutionalDeFiHub>;
+    getContractAt(
+      name: "InstitutionalLendingProtocol",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.InstitutionalLendingProtocol>;
     getContractAt(
       name: "IComplianceRegistry",
       address: string | ethers.Addressable,
@@ -1235,6 +1937,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.MerkleStreamDistributorUpgradeable>;
     getContractAt(
+      name: "DNASequencer",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.DNASequencer>;
+    getContractAt(
       name: "IERC1400",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -1265,10 +1972,55 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.MultiAssetEscrow>;
     getContractAt(
+      name: "UnykornExplorer",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.UnykornExplorer>;
+    getContractAt(
+      name: "ContractAccessFee",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ContractAccessFee>;
+    getContractAt(
+      name: "FnalitySettlementAdapter",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.FnalitySettlementAdapter>;
+    getContractAt(
+      name: "FractionalAssetProtocol",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.FractionalAssetProtocol>;
+    getContractAt(
+      name: "GlobalFinancialInstitutions",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.GlobalFinancialInstitutions>;
+    getContractAt(
+      name: "GlobalInfrastructureCodex",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.GlobalInfrastructureCodex>;
+    getContractAt(
+      name: "MultiSigWallet",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MultiSigWallet>;
+    getContractAt(
       name: "PolicyRoles",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.PolicyRoles>;
+    getContractAt(
+      name: "UniversalHealthcare",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.UniversalHealthcare>;
+    getContractAt(
+      name: "UniversalDeployer",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.UniversalDeployer>;
     getContractAt(
       name: "InsurancePolicyNFT",
       address: string | ethers.Addressable,
@@ -1310,6 +2062,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IComplianceRegistryV2>;
     getContractAt(
+      name: "IPriceOracle",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IPriceOracle>;
+    getContractAt(
       name: "IProofOfReserves",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -1319,6 +2076,11 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.IQuoteAdapter>;
+    getContractAt(
+      name: "IReserveManager",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IReserveManager>;
     getContractAt(
       name: "IShareMaturityOracle",
       address: string | ethers.Addressable,
@@ -1335,6 +2097,31 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ISO20022EventEmitter>;
     getContractAt(
+      name: "ISO20022MessageHandler",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ISO20022MessageHandler>;
+    getContractAt(
+      name: "UnykornL1Bridge",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.UnykornL1Bridge>;
+    getContractAt(
+      name: "L1L2Bridge",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.L1L2Bridge>;
+    getContractAt(
+      name: "OptimisticSequencer",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.OptimisticSequencer>;
+    getContractAt(
+      name: "ZKSequencer",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ZKSequencer>;
+    getContractAt(
       name: "ReserveManager",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -1345,6 +2132,21 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ReserveManagerUpgradeable>;
     getContractAt(
+      name: "IMidnightBridge",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IMidnightBridge>;
+    getContractAt(
+      name: "IMidnightProofVerifier",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IMidnightProofVerifier>;
+    getContractAt(
+      name: "MidnightSettlementAdapter",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MidnightSettlementAdapter>;
+    getContractAt(
       name: "MockComplianceRegistry",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -1354,6 +2156,31 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.MockMintableERC20>;
+    getContractAt(
+      name: "FundUsageTracker",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.FundUsageTracker>;
+    getContractAt(
+      name: "NetworkHealth",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.NetworkHealth>;
+    getContractAt(
+      name: "SequencerMetrics",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SequencerMetrics>;
+    getContractAt(
+      name: "SystemAnalytics",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SystemAnalytics>;
+    getContractAt(
+      name: "DeploymentProofNFT",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.DeploymentProofNFT>;
     getContractAt(
       name: "CircuitBreaker",
       address: string | ethers.Addressable,
@@ -1405,6 +2232,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.PythQuoteAdapter>;
     getContractAt(
+      name: "AdvancedPriceOracle",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AdvancedPriceOracle>;
+    getContractAt(
       name: "AttestationOracle",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -1414,6 +2246,11 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.BankAccountProofOracle>;
+    getContractAt(
+      name: "DecentralizedOracleNetwork",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.DecentralizedOracleNetwork>;
     getContractAt(
       name: "IPriceOracle",
       address: string | ethers.Addressable,
@@ -1475,6 +2312,31 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.PolicyGuard>;
     getContractAt(
+      name: "ImplementationProcedures",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ImplementationProcedures>;
+    getContractAt(
+      name: "OperationalProtocols",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.OperationalProtocols>;
+    getContractAt(
+      name: "QuantumGovernance",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.QuantumGovernance>;
+    getContractAt(
+      name: "QuantumResistantCryptography",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.QuantumResistantCryptography>;
+    getContractAt(
+      name: "MasterRegistry",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MasterRegistry>;
+    getContractAt(
       name: "CustodianNavReporter",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -1515,10 +2377,90 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.BaselCARModule>;
     getContractAt(
+      name: "BaselIIIComplianceEngine",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.BaselIIIComplianceEngine>;
+    getContractAt(
+      name: "BaselIIIRiskModule",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.BaselIIIRiskModule>;
+    getContractAt(
+      name: "PortfolioRiskEngine",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.PortfolioRiskEngine>;
+    getContractAt(
+      name: "RLNMultiCBDCAdapter",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.RLNMultiCBDCAdapter>;
+    getContractAt(
+      name: "GoldRWAToken",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.GoldRWAToken>;
+    getContractAt(
+      name: "NaturalResourceRightsToken",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.NaturalResourceRightsToken>;
+    getContractAt(
+      name: "RenewableEnergyTokenization",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.RenewableEnergyTokenization>;
+    getContractAt(
       name: "RWAVaultNFT",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.RWAVaultNFT>;
+    getContractAt(
+      name: "AIEnhancedSecurity",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AIEnhancedSecurity>;
+    getContractAt(
+      name: "CircuitBreaker",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CircuitBreaker>;
+    getContractAt(
+      name: "DecentralizedIdentity",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.DecentralizedIdentity>;
+    getContractAt(
+      name: "PrivacyLayer",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.PrivacyLayer>;
+    getContractAt(
+      name: "QuantumResistantCryptography",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.QuantumResistantCryptography>;
+    getContractAt(
+      name: "RateLimiter",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.RateLimiter>;
+    getContractAt(
+      name: "SequencerRegistry",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SequencerRegistry>;
+    getContractAt(
+      name: "AtomicCrossAssetSettlement",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AtomicCrossAssetSettlement>;
+    getContractAt(
+      name: "EmergencyCircuitBreaker",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.EmergencyCircuitBreaker>;
     getContractAt(
       name: "FxPvPRouter",
       address: string | ethers.Addressable,
@@ -1544,6 +2486,11 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.NettingPool>;
+    getContractAt(
+      name: "QuantumResistantZKSettlement",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.QuantumResistantZKSettlement>;
     getContractAt(
       name: "ERC20Rail",
       address: string | ethers.Addressable,
@@ -1660,10 +2607,45 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.StablecoinRouter>;
     getContractAt(
+      name: "UnykornStableRail",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.UnykornStableRail>;
+    getContractAt(
+      name: "CompliantStable",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CompliantStable>;
+    getContractAt(
+      name: "FeeRouter",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.FeeRouter>;
+    getContractAt(
+      name: "NAVRebaseController",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.NAVRebaseController>;
+    getContractAt(
+      name: "StablecoinPolicyEngine",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.StablecoinPolicyEngine>;
+    getContractAt(
       name: "StableUSD",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.StableUSD>;
+    getContractAt(
+      name: "GlobalStablecoinRegistry",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.GlobalStablecoinRegistry>;
+    getContractAt(
+      name: "StakeholderRegistry",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.StakeholderRegistry>;
     getContractAt(
       name: "IERC4626Lite",
       address: string | ethers.Addressable,
@@ -1679,6 +2661,26 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.SuretyBondNFT>;
+    getContractAt(
+      name: "SWIFTGPIAdapter",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SWIFTGPIAdapter>;
+    getContractAt(
+      name: "SWIFTIntegrationBridge",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SWIFTIntegrationBridge>;
+    getContractAt(
+      name: "SWIFTSharedLedgerRail",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SWIFTSharedLedgerRail>;
+    getContractAt(
+      name: "SystemBootstrap",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SystemBootstrap>;
     getContractAt(
       name: "InstitutionalEMTUpgradeable",
       address: string | ethers.Addressable,
@@ -1715,6 +2717,51 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.WrappedShares4626>;
     getContractAt(
+      name: "GlobalDEX",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.GlobalDEX>;
+    getContractAt(
+      name: "InstitutionalDEX",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.InstitutionalDEX>;
+    getContractAt(
+      name: "AssetBasket",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AssetBasket>;
+    getContractAt(
+      name: "ETFWrapper",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ETFWrapper>;
+    getContractAt(
+      name: "MMFVault",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MMFVault>;
+    getContractAt(
+      name: "TBillVault",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TBillVault>;
+    getContractAt(
+      name: "UniversalBasicIncome",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.UniversalBasicIncome>;
+    getContractAt(
+      name: "UniversalDeployer",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.UniversalDeployer>;
+    getContractAt(
+      name: "UnykornL1Bridge",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.UnykornL1Bridge>;
+    getContractAt(
       name: "GuardedUUPS",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -1725,55 +2772,45 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ISO20022Emitter>;
     getContractAt(
-      name: "IAny2EVMMessageReceiver",
+      name: "AlgorithmicVerification",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.IAny2EVMMessageReceiver>;
+    ): Promise<Contracts.AlgorithmicVerification>;
     getContractAt(
-      name: "IRouterClient",
+      name: "SystemStateMachines",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.IRouterClient>;
+    ): Promise<Contracts.SystemStateMachines>;
     getContractAt(
-      name: "AccessControlUpgradeable",
+      name: "ThirdPartyValidation",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.AccessControlUpgradeable>;
-    getContractAt(
-      name: "Initializable",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Initializable>;
-    getContractAt(
-      name: "UUPSUpgradeable",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.UUPSUpgradeable>;
-    getContractAt(
-      name: "ContextUpgradeable",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ContextUpgradeable>;
-    getContractAt(
-      name: "ERC165Upgradeable",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ERC165Upgradeable>;
-    getContractAt(
-      name: "PausableUpgradeable",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.PausableUpgradeable>;
-    getContractAt(
-      name: "ReentrancyGuardUpgradeable",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ReentrancyGuardUpgradeable>;
+    ): Promise<Contracts.ThirdPartyValidation>;
 
+    deployContract(
+      name: "IAny2EVMMessageReceiver",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IAny2EVMMessageReceiver>;
+    deployContract(
+      name: "IRouterClient",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IRouterClient>;
+    deployContract(
+      name: "Client",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Client>;
+    deployContract(
+      name: "AggregatorV3Interface",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AggregatorV3Interface>;
     deployContract(
       name: "AccessControlUpgradeable",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.AccessControlUpgradeable>;
+    deployContract(
+      name: "OwnableUpgradeable",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.OwnableUpgradeable>;
     deployContract(
       name: "Initializable",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -1823,9 +2860,21 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.AccessControl>;
     deployContract(
+      name: "AccessControlEnumerable",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AccessControlEnumerable>;
+    deployContract(
+      name: "IAccessControlEnumerable",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IAccessControlEnumerable>;
+    deployContract(
       name: "IAccessControl",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IAccessControl>;
+    deployContract(
+      name: "Ownable",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Ownable>;
     deployContract(
       name: "TimelockController",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -1871,9 +2920,33 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IBeacon>;
     deployContract(
+      name: "Clones",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Clones>;
+    deployContract(
+      name: "ERC1967Proxy",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC1967Proxy>;
+    deployContract(
       name: "ERC1967Utils",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ERC1967Utils>;
+    deployContract(
+      name: "Proxy",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Proxy>;
+    deployContract(
+      name: "ProxyAdmin",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ProxyAdmin>;
+    deployContract(
+      name: "ITransparentUpgradeableProxy",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ITransparentUpgradeableProxy>;
+    deployContract(
+      name: "TransparentUpgradeableProxy",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.TransparentUpgradeableProxy>;
     deployContract(
       name: "IERC1155Receiver",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -1886,6 +2959,10 @@ declare module "hardhat/types/runtime" {
       name: "ERC20",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ERC20>;
+    deployContract(
+      name: "ERC20Permit",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC20Permit>;
     deployContract(
       name: "ERC4626",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -1935,6 +3012,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Address>;
     deployContract(
+      name: "Create2",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Create2>;
+    deployContract(
       name: "ECDSA",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ECDSA>;
@@ -1963,6 +3044,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.SafeCast>;
     deployContract(
+      name: "Nonces",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Nonces>;
+    deployContract(
       name: "Pausable",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Pausable>;
@@ -1979,9 +3064,33 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Strings>;
     deployContract(
+      name: "AgoraTokenizedDepositAdapter",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AgoraTokenizedDepositAdapter>;
+    deployContract(
+      name: "AIAgentRegistry",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AIAgentRegistry>;
+    deployContract(
+      name: "AIAgentSwarm",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AIAgentSwarm>;
+    deployContract(
+      name: "AIMonitoringEngine",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AIMonitoringEngine>;
+    deployContract(
+      name: "ArbitrageEngine",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ArbitrageEngine>;
+    deployContract(
       name: "AttestationRegistry",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.AttestationRegistry>;
+    deployContract(
+      name: "SWIFTGPIAdapter",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SWIFTGPIAdapter>;
     deployContract(
       name: "BootstrapExample",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -2007,6 +3116,30 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.WormholeMintProxy>;
     deployContract(
+      name: "CarbonFootprintTracker",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CarbonFootprintTracker>;
+    deployContract(
+      name: "CBDCBridge",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CBDCBridge>;
+    deployContract(
+      name: "CBDCInfrastructure",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CBDCInfrastructure>;
+    deployContract(
+      name: "CBDCIntegrationHub",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CBDCIntegrationHub>;
+    deployContract(
+      name: "PolicyEngine",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.PolicyEngine>;
+    deployContract(
+      name: "TieredWallet",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.TieredWallet>;
+    deployContract(
       name: "IReserveQuorumView",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IReserveQuorumView>;
@@ -2019,9 +3152,13 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.PorBroadcaster>;
     deployContract(
-      name: "Errors",
+      name: "ChainInfrastructure",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Errors>;
+    ): Promise<Contracts.ChainInfrastructure>;
+    deployContract(
+      name: "CustomErrors",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CustomErrors>;
     deployContract(
       name: "ISO20022Events",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -2034,6 +3171,10 @@ declare module "hardhat/types/runtime" {
       name: "AccessRegistryUpgradeable",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.AccessRegistryUpgradeable>;
+    deployContract(
+      name: "AdvancedSanctionsEngine",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AdvancedSanctionsEngine>;
     deployContract(
       name: "ComplianceModuleRBAC",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -2055,6 +3196,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ComplianceRegistryUpgradeable>;
     deployContract(
+      name: "CrossBorderCompliance",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CrossBorderCompliance>;
+    deployContract(
       name: "KYCRegistry",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.KYCRegistry>;
@@ -2071,6 +3216,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.PolicyEngineUpgradeable>;
     deployContract(
+      name: "RegulatoryReporting",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.RegulatoryReporting>;
+    deployContract(
       name: "RoleIds",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.RoleIds>;
@@ -2078,6 +3227,38 @@ declare module "hardhat/types/runtime" {
       name: "SanctionsOracleDenylist",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.SanctionsOracleDenylist>;
+    deployContract(
+      name: "TransactionMonitoring",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.TransactionMonitoring>;
+    deployContract(
+      name: "TravelRuleEngine",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.TravelRuleEngine>;
+    deployContract(
+      name: "APIIntegrations",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.APIIntegrations>;
+    deployContract(
+      name: "BlockchainInteroperability",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.BlockchainInteroperability>;
+    deployContract(
+      name: "DataConnectors",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DataConnectors>;
+    deployContract(
+      name: "DecentralizedStorage",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DecentralizedStorage>;
+    deployContract(
+      name: "LegacySystemAdapters",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.LegacySystemAdapters>;
+    deployContract(
+      name: "RealTimeMessaging",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.RealTimeMessaging>;
     deployContract(
       name: "CourtOrderRegistry",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -2098,6 +3279,42 @@ declare module "hardhat/types/runtime" {
       name: "IERC20Forceable",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC20Forceable>;
+    deployContract(
+      name: "BlockchainExplorer",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.BlockchainExplorer>;
+    deployContract(
+      name: "ChainInfrastructure",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ChainInfrastructure>;
+    deployContract(
+      name: "DemoOrchestrator",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DemoOrchestrator>;
+    deployContract(
+      name: "DNASequencer",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DNASequencer>;
+    deployContract(
+      name: "LifeLineOrchestrator",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.LifeLineOrchestrator>;
+    deployContract(
+      name: "SystemBootstrap",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SystemBootstrap>;
+    deployContract(
+      name: "UnykornDNACore",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.UnykornDNACore>;
+    deployContract(
+      name: "InstitutionalDeFiHub",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.InstitutionalDeFiHub>;
+    deployContract(
+      name: "InstitutionalLendingProtocol",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.InstitutionalLendingProtocol>;
     deployContract(
       name: "IComplianceRegistry",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -2123,6 +3340,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MerkleStreamDistributorUpgradeable>;
     deployContract(
+      name: "DNASequencer",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DNASequencer>;
+    deployContract(
       name: "IERC1400",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC1400>;
@@ -2147,9 +3368,45 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MultiAssetEscrow>;
     deployContract(
+      name: "UnykornExplorer",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.UnykornExplorer>;
+    deployContract(
+      name: "ContractAccessFee",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ContractAccessFee>;
+    deployContract(
+      name: "FnalitySettlementAdapter",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.FnalitySettlementAdapter>;
+    deployContract(
+      name: "FractionalAssetProtocol",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.FractionalAssetProtocol>;
+    deployContract(
+      name: "GlobalFinancialInstitutions",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.GlobalFinancialInstitutions>;
+    deployContract(
+      name: "GlobalInfrastructureCodex",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.GlobalInfrastructureCodex>;
+    deployContract(
+      name: "MultiSigWallet",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.MultiSigWallet>;
+    deployContract(
       name: "PolicyRoles",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.PolicyRoles>;
+    deployContract(
+      name: "UniversalHealthcare",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.UniversalHealthcare>;
+    deployContract(
+      name: "UniversalDeployer",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.UniversalDeployer>;
     deployContract(
       name: "InsurancePolicyNFT",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -2183,6 +3440,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IComplianceRegistryV2>;
     deployContract(
+      name: "IPriceOracle",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IPriceOracle>;
+    deployContract(
       name: "IProofOfReserves",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IProofOfReserves>;
@@ -2190,6 +3451,10 @@ declare module "hardhat/types/runtime" {
       name: "IQuoteAdapter",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IQuoteAdapter>;
+    deployContract(
+      name: "IReserveManager",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IReserveManager>;
     deployContract(
       name: "IShareMaturityOracle",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -2203,6 +3468,26 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ISO20022EventEmitter>;
     deployContract(
+      name: "ISO20022MessageHandler",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ISO20022MessageHandler>;
+    deployContract(
+      name: "UnykornL1Bridge",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.UnykornL1Bridge>;
+    deployContract(
+      name: "L1L2Bridge",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.L1L2Bridge>;
+    deployContract(
+      name: "OptimisticSequencer",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.OptimisticSequencer>;
+    deployContract(
+      name: "ZKSequencer",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ZKSequencer>;
+    deployContract(
       name: "ReserveManager",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ReserveManager>;
@@ -2211,6 +3496,18 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ReserveManagerUpgradeable>;
     deployContract(
+      name: "IMidnightBridge",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IMidnightBridge>;
+    deployContract(
+      name: "IMidnightProofVerifier",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IMidnightProofVerifier>;
+    deployContract(
+      name: "MidnightSettlementAdapter",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.MidnightSettlementAdapter>;
+    deployContract(
       name: "MockComplianceRegistry",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MockComplianceRegistry>;
@@ -2218,6 +3515,26 @@ declare module "hardhat/types/runtime" {
       name: "MockMintableERC20",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MockMintableERC20>;
+    deployContract(
+      name: "FundUsageTracker",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.FundUsageTracker>;
+    deployContract(
+      name: "NetworkHealth",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.NetworkHealth>;
+    deployContract(
+      name: "SequencerMetrics",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SequencerMetrics>;
+    deployContract(
+      name: "SystemAnalytics",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SystemAnalytics>;
+    deployContract(
+      name: "DeploymentProofNFT",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DeploymentProofNFT>;
     deployContract(
       name: "CircuitBreaker",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -2259,6 +3576,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.PythQuoteAdapter>;
     deployContract(
+      name: "AdvancedPriceOracle",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AdvancedPriceOracle>;
+    deployContract(
       name: "AttestationOracle",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.AttestationOracle>;
@@ -2266,6 +3587,10 @@ declare module "hardhat/types/runtime" {
       name: "BankAccountProofOracle",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.BankAccountProofOracle>;
+    deployContract(
+      name: "DecentralizedOracleNetwork",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DecentralizedOracleNetwork>;
     deployContract(
       name: "IPriceOracle",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -2315,6 +3640,26 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.PolicyGuard>;
     deployContract(
+      name: "ImplementationProcedures",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ImplementationProcedures>;
+    deployContract(
+      name: "OperationalProtocols",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.OperationalProtocols>;
+    deployContract(
+      name: "QuantumGovernance",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.QuantumGovernance>;
+    deployContract(
+      name: "QuantumResistantCryptography",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.QuantumResistantCryptography>;
+    deployContract(
+      name: "MasterRegistry",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.MasterRegistry>;
+    deployContract(
       name: "CustodianNavReporter",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.CustodianNavReporter>;
@@ -2347,9 +3692,73 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.BaselCARModule>;
     deployContract(
+      name: "BaselIIIComplianceEngine",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.BaselIIIComplianceEngine>;
+    deployContract(
+      name: "BaselIIIRiskModule",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.BaselIIIRiskModule>;
+    deployContract(
+      name: "PortfolioRiskEngine",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.PortfolioRiskEngine>;
+    deployContract(
+      name: "RLNMultiCBDCAdapter",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.RLNMultiCBDCAdapter>;
+    deployContract(
+      name: "GoldRWAToken",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.GoldRWAToken>;
+    deployContract(
+      name: "NaturalResourceRightsToken",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.NaturalResourceRightsToken>;
+    deployContract(
+      name: "RenewableEnergyTokenization",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.RenewableEnergyTokenization>;
+    deployContract(
       name: "RWAVaultNFT",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.RWAVaultNFT>;
+    deployContract(
+      name: "AIEnhancedSecurity",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AIEnhancedSecurity>;
+    deployContract(
+      name: "CircuitBreaker",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CircuitBreaker>;
+    deployContract(
+      name: "DecentralizedIdentity",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DecentralizedIdentity>;
+    deployContract(
+      name: "PrivacyLayer",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.PrivacyLayer>;
+    deployContract(
+      name: "QuantumResistantCryptography",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.QuantumResistantCryptography>;
+    deployContract(
+      name: "RateLimiter",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.RateLimiter>;
+    deployContract(
+      name: "SequencerRegistry",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SequencerRegistry>;
+    deployContract(
+      name: "AtomicCrossAssetSettlement",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AtomicCrossAssetSettlement>;
+    deployContract(
+      name: "EmergencyCircuitBreaker",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.EmergencyCircuitBreaker>;
     deployContract(
       name: "FxPvPRouter",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -2370,6 +3779,10 @@ declare module "hardhat/types/runtime" {
       name: "NettingPool",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.NettingPool>;
+    deployContract(
+      name: "QuantumResistantZKSettlement",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.QuantumResistantZKSettlement>;
     deployContract(
       name: "ERC20Rail",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -2463,9 +3876,37 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.StablecoinRouter>;
     deployContract(
+      name: "UnykornStableRail",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.UnykornStableRail>;
+    deployContract(
+      name: "CompliantStable",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CompliantStable>;
+    deployContract(
+      name: "FeeRouter",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.FeeRouter>;
+    deployContract(
+      name: "NAVRebaseController",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.NAVRebaseController>;
+    deployContract(
+      name: "StablecoinPolicyEngine",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.StablecoinPolicyEngine>;
+    deployContract(
       name: "StableUSD",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.StableUSD>;
+    deployContract(
+      name: "GlobalStablecoinRegistry",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.GlobalStablecoinRegistry>;
+    deployContract(
+      name: "StakeholderRegistry",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.StakeholderRegistry>;
     deployContract(
       name: "IERC4626Lite",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -2478,6 +3919,22 @@ declare module "hardhat/types/runtime" {
       name: "SuretyBondNFT",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.SuretyBondNFT>;
+    deployContract(
+      name: "SWIFTGPIAdapter",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SWIFTGPIAdapter>;
+    deployContract(
+      name: "SWIFTIntegrationBridge",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SWIFTIntegrationBridge>;
+    deployContract(
+      name: "SWIFTSharedLedgerRail",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SWIFTSharedLedgerRail>;
+    deployContract(
+      name: "SystemBootstrap",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SystemBootstrap>;
     deployContract(
       name: "InstitutionalEMTUpgradeable",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -2507,6 +3964,42 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.WrappedShares4626>;
     deployContract(
+      name: "GlobalDEX",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.GlobalDEX>;
+    deployContract(
+      name: "InstitutionalDEX",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.InstitutionalDEX>;
+    deployContract(
+      name: "AssetBasket",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AssetBasket>;
+    deployContract(
+      name: "ETFWrapper",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ETFWrapper>;
+    deployContract(
+      name: "MMFVault",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.MMFVault>;
+    deployContract(
+      name: "TBillVault",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.TBillVault>;
+    deployContract(
+      name: "UniversalBasicIncome",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.UniversalBasicIncome>;
+    deployContract(
+      name: "UniversalDeployer",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.UniversalDeployer>;
+    deployContract(
+      name: "UnykornL1Bridge",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.UnykornL1Bridge>;
+    deployContract(
       name: "GuardedUUPS",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.GuardedUUPS>;
@@ -2515,47 +4008,48 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ISO20022Emitter>;
     deployContract(
+      name: "AlgorithmicVerification",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AlgorithmicVerification>;
+    deployContract(
+      name: "SystemStateMachines",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SystemStateMachines>;
+    deployContract(
+      name: "ThirdPartyValidation",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ThirdPartyValidation>;
+
+    deployContract(
       name: "IAny2EVMMessageReceiver",
+      args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IAny2EVMMessageReceiver>;
     deployContract(
       name: "IRouterClient",
+      args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IRouterClient>;
     deployContract(
-      name: "AccessControlUpgradeable",
+      name: "Client",
+      args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.AccessControlUpgradeable>;
+    ): Promise<Contracts.Client>;
     deployContract(
-      name: "Initializable",
+      name: "AggregatorV3Interface",
+      args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Initializable>;
-    deployContract(
-      name: "UUPSUpgradeable",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.UUPSUpgradeable>;
-    deployContract(
-      name: "ContextUpgradeable",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ContextUpgradeable>;
-    deployContract(
-      name: "ERC165Upgradeable",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC165Upgradeable>;
-    deployContract(
-      name: "PausableUpgradeable",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.PausableUpgradeable>;
-    deployContract(
-      name: "ReentrancyGuardUpgradeable",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ReentrancyGuardUpgradeable>;
-
+    ): Promise<Contracts.AggregatorV3Interface>;
     deployContract(
       name: "AccessControlUpgradeable",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.AccessControlUpgradeable>;
+    deployContract(
+      name: "OwnableUpgradeable",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.OwnableUpgradeable>;
     deployContract(
       name: "Initializable",
       args: any[],
@@ -2617,10 +4111,25 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.AccessControl>;
     deployContract(
+      name: "AccessControlEnumerable",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AccessControlEnumerable>;
+    deployContract(
+      name: "IAccessControlEnumerable",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IAccessControlEnumerable>;
+    deployContract(
       name: "IAccessControl",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IAccessControl>;
+    deployContract(
+      name: "Ownable",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Ownable>;
     deployContract(
       name: "TimelockController",
       args: any[],
@@ -2677,10 +4186,40 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IBeacon>;
     deployContract(
+      name: "Clones",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Clones>;
+    deployContract(
+      name: "ERC1967Proxy",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC1967Proxy>;
+    deployContract(
       name: "ERC1967Utils",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ERC1967Utils>;
+    deployContract(
+      name: "Proxy",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Proxy>;
+    deployContract(
+      name: "ProxyAdmin",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ProxyAdmin>;
+    deployContract(
+      name: "ITransparentUpgradeableProxy",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ITransparentUpgradeableProxy>;
+    deployContract(
+      name: "TransparentUpgradeableProxy",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.TransparentUpgradeableProxy>;
     deployContract(
       name: "IERC1155Receiver",
       args: any[],
@@ -2696,6 +4235,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ERC20>;
+    deployContract(
+      name: "ERC20Permit",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC20Permit>;
     deployContract(
       name: "ERC4626",
       args: any[],
@@ -2757,6 +4301,11 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Address>;
     deployContract(
+      name: "Create2",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Create2>;
+    deployContract(
       name: "ECDSA",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -2792,6 +4341,11 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.SafeCast>;
     deployContract(
+      name: "Nonces",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Nonces>;
+    deployContract(
       name: "Pausable",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -2812,10 +4366,40 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Strings>;
     deployContract(
+      name: "AgoraTokenizedDepositAdapter",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AgoraTokenizedDepositAdapter>;
+    deployContract(
+      name: "AIAgentRegistry",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AIAgentRegistry>;
+    deployContract(
+      name: "AIAgentSwarm",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AIAgentSwarm>;
+    deployContract(
+      name: "AIMonitoringEngine",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AIMonitoringEngine>;
+    deployContract(
+      name: "ArbitrageEngine",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ArbitrageEngine>;
+    deployContract(
       name: "AttestationRegistry",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.AttestationRegistry>;
+    deployContract(
+      name: "SWIFTGPIAdapter",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SWIFTGPIAdapter>;
     deployContract(
       name: "BootstrapExample",
       args: any[],
@@ -2847,6 +4431,36 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.WormholeMintProxy>;
     deployContract(
+      name: "CarbonFootprintTracker",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CarbonFootprintTracker>;
+    deployContract(
+      name: "CBDCBridge",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CBDCBridge>;
+    deployContract(
+      name: "CBDCInfrastructure",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CBDCInfrastructure>;
+    deployContract(
+      name: "CBDCIntegrationHub",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CBDCIntegrationHub>;
+    deployContract(
+      name: "PolicyEngine",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.PolicyEngine>;
+    deployContract(
+      name: "TieredWallet",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.TieredWallet>;
+    deployContract(
       name: "IReserveQuorumView",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -2862,10 +4476,15 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.PorBroadcaster>;
     deployContract(
-      name: "Errors",
+      name: "ChainInfrastructure",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Errors>;
+    ): Promise<Contracts.ChainInfrastructure>;
+    deployContract(
+      name: "CustomErrors",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CustomErrors>;
     deployContract(
       name: "ISO20022Events",
       args: any[],
@@ -2881,6 +4500,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.AccessRegistryUpgradeable>;
+    deployContract(
+      name: "AdvancedSanctionsEngine",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AdvancedSanctionsEngine>;
     deployContract(
       name: "ComplianceModuleRBAC",
       args: any[],
@@ -2907,6 +4531,11 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ComplianceRegistryUpgradeable>;
     deployContract(
+      name: "CrossBorderCompliance",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CrossBorderCompliance>;
+    deployContract(
       name: "KYCRegistry",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -2927,6 +4556,11 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.PolicyEngineUpgradeable>;
     deployContract(
+      name: "RegulatoryReporting",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.RegulatoryReporting>;
+    deployContract(
       name: "RoleIds",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -2936,6 +4570,46 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.SanctionsOracleDenylist>;
+    deployContract(
+      name: "TransactionMonitoring",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.TransactionMonitoring>;
+    deployContract(
+      name: "TravelRuleEngine",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.TravelRuleEngine>;
+    deployContract(
+      name: "APIIntegrations",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.APIIntegrations>;
+    deployContract(
+      name: "BlockchainInteroperability",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.BlockchainInteroperability>;
+    deployContract(
+      name: "DataConnectors",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DataConnectors>;
+    deployContract(
+      name: "DecentralizedStorage",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DecentralizedStorage>;
+    deployContract(
+      name: "LegacySystemAdapters",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.LegacySystemAdapters>;
+    deployContract(
+      name: "RealTimeMessaging",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.RealTimeMessaging>;
     deployContract(
       name: "CourtOrderRegistry",
       args: any[],
@@ -2961,6 +4635,51 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC20Forceable>;
+    deployContract(
+      name: "BlockchainExplorer",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.BlockchainExplorer>;
+    deployContract(
+      name: "ChainInfrastructure",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ChainInfrastructure>;
+    deployContract(
+      name: "DemoOrchestrator",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DemoOrchestrator>;
+    deployContract(
+      name: "DNASequencer",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DNASequencer>;
+    deployContract(
+      name: "LifeLineOrchestrator",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.LifeLineOrchestrator>;
+    deployContract(
+      name: "SystemBootstrap",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SystemBootstrap>;
+    deployContract(
+      name: "UnykornDNACore",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.UnykornDNACore>;
+    deployContract(
+      name: "InstitutionalDeFiHub",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.InstitutionalDeFiHub>;
+    deployContract(
+      name: "InstitutionalLendingProtocol",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.InstitutionalLendingProtocol>;
     deployContract(
       name: "IComplianceRegistry",
       args: any[],
@@ -2992,6 +4711,11 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MerkleStreamDistributorUpgradeable>;
     deployContract(
+      name: "DNASequencer",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DNASequencer>;
+    deployContract(
       name: "IERC1400",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -3022,10 +4746,55 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MultiAssetEscrow>;
     deployContract(
+      name: "UnykornExplorer",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.UnykornExplorer>;
+    deployContract(
+      name: "ContractAccessFee",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ContractAccessFee>;
+    deployContract(
+      name: "FnalitySettlementAdapter",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.FnalitySettlementAdapter>;
+    deployContract(
+      name: "FractionalAssetProtocol",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.FractionalAssetProtocol>;
+    deployContract(
+      name: "GlobalFinancialInstitutions",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.GlobalFinancialInstitutions>;
+    deployContract(
+      name: "GlobalInfrastructureCodex",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.GlobalInfrastructureCodex>;
+    deployContract(
+      name: "MultiSigWallet",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.MultiSigWallet>;
+    deployContract(
       name: "PolicyRoles",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.PolicyRoles>;
+    deployContract(
+      name: "UniversalHealthcare",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.UniversalHealthcare>;
+    deployContract(
+      name: "UniversalDeployer",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.UniversalDeployer>;
     deployContract(
       name: "InsurancePolicyNFT",
       args: any[],
@@ -3067,6 +4836,11 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IComplianceRegistryV2>;
     deployContract(
+      name: "IPriceOracle",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IPriceOracle>;
+    deployContract(
       name: "IProofOfReserves",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -3076,6 +4850,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IQuoteAdapter>;
+    deployContract(
+      name: "IReserveManager",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IReserveManager>;
     deployContract(
       name: "IShareMaturityOracle",
       args: any[],
@@ -3092,6 +4871,31 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ISO20022EventEmitter>;
     deployContract(
+      name: "ISO20022MessageHandler",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ISO20022MessageHandler>;
+    deployContract(
+      name: "UnykornL1Bridge",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.UnykornL1Bridge>;
+    deployContract(
+      name: "L1L2Bridge",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.L1L2Bridge>;
+    deployContract(
+      name: "OptimisticSequencer",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.OptimisticSequencer>;
+    deployContract(
+      name: "ZKSequencer",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ZKSequencer>;
+    deployContract(
       name: "ReserveManager",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -3102,6 +4906,21 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ReserveManagerUpgradeable>;
     deployContract(
+      name: "IMidnightBridge",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IMidnightBridge>;
+    deployContract(
+      name: "IMidnightProofVerifier",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IMidnightProofVerifier>;
+    deployContract(
+      name: "MidnightSettlementAdapter",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.MidnightSettlementAdapter>;
+    deployContract(
       name: "MockComplianceRegistry",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -3111,6 +4930,31 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MockMintableERC20>;
+    deployContract(
+      name: "FundUsageTracker",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.FundUsageTracker>;
+    deployContract(
+      name: "NetworkHealth",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.NetworkHealth>;
+    deployContract(
+      name: "SequencerMetrics",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SequencerMetrics>;
+    deployContract(
+      name: "SystemAnalytics",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SystemAnalytics>;
+    deployContract(
+      name: "DeploymentProofNFT",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DeploymentProofNFT>;
     deployContract(
       name: "CircuitBreaker",
       args: any[],
@@ -3162,6 +5006,11 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.PythQuoteAdapter>;
     deployContract(
+      name: "AdvancedPriceOracle",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AdvancedPriceOracle>;
+    deployContract(
       name: "AttestationOracle",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -3171,6 +5020,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.BankAccountProofOracle>;
+    deployContract(
+      name: "DecentralizedOracleNetwork",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DecentralizedOracleNetwork>;
     deployContract(
       name: "IPriceOracle",
       args: any[],
@@ -3232,6 +5086,31 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.PolicyGuard>;
     deployContract(
+      name: "ImplementationProcedures",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ImplementationProcedures>;
+    deployContract(
+      name: "OperationalProtocols",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.OperationalProtocols>;
+    deployContract(
+      name: "QuantumGovernance",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.QuantumGovernance>;
+    deployContract(
+      name: "QuantumResistantCryptography",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.QuantumResistantCryptography>;
+    deployContract(
+      name: "MasterRegistry",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.MasterRegistry>;
+    deployContract(
       name: "CustodianNavReporter",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -3272,10 +5151,90 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.BaselCARModule>;
     deployContract(
+      name: "BaselIIIComplianceEngine",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.BaselIIIComplianceEngine>;
+    deployContract(
+      name: "BaselIIIRiskModule",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.BaselIIIRiskModule>;
+    deployContract(
+      name: "PortfolioRiskEngine",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.PortfolioRiskEngine>;
+    deployContract(
+      name: "RLNMultiCBDCAdapter",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.RLNMultiCBDCAdapter>;
+    deployContract(
+      name: "GoldRWAToken",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.GoldRWAToken>;
+    deployContract(
+      name: "NaturalResourceRightsToken",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.NaturalResourceRightsToken>;
+    deployContract(
+      name: "RenewableEnergyTokenization",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.RenewableEnergyTokenization>;
+    deployContract(
       name: "RWAVaultNFT",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.RWAVaultNFT>;
+    deployContract(
+      name: "AIEnhancedSecurity",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AIEnhancedSecurity>;
+    deployContract(
+      name: "CircuitBreaker",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CircuitBreaker>;
+    deployContract(
+      name: "DecentralizedIdentity",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DecentralizedIdentity>;
+    deployContract(
+      name: "PrivacyLayer",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.PrivacyLayer>;
+    deployContract(
+      name: "QuantumResistantCryptography",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.QuantumResistantCryptography>;
+    deployContract(
+      name: "RateLimiter",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.RateLimiter>;
+    deployContract(
+      name: "SequencerRegistry",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SequencerRegistry>;
+    deployContract(
+      name: "AtomicCrossAssetSettlement",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AtomicCrossAssetSettlement>;
+    deployContract(
+      name: "EmergencyCircuitBreaker",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.EmergencyCircuitBreaker>;
     deployContract(
       name: "FxPvPRouter",
       args: any[],
@@ -3301,6 +5260,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.NettingPool>;
+    deployContract(
+      name: "QuantumResistantZKSettlement",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.QuantumResistantZKSettlement>;
     deployContract(
       name: "ERC20Rail",
       args: any[],
@@ -3417,10 +5381,45 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.StablecoinRouter>;
     deployContract(
+      name: "UnykornStableRail",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.UnykornStableRail>;
+    deployContract(
+      name: "CompliantStable",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CompliantStable>;
+    deployContract(
+      name: "FeeRouter",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.FeeRouter>;
+    deployContract(
+      name: "NAVRebaseController",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.NAVRebaseController>;
+    deployContract(
+      name: "StablecoinPolicyEngine",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.StablecoinPolicyEngine>;
+    deployContract(
       name: "StableUSD",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.StableUSD>;
+    deployContract(
+      name: "GlobalStablecoinRegistry",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.GlobalStablecoinRegistry>;
+    deployContract(
+      name: "StakeholderRegistry",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.StakeholderRegistry>;
     deployContract(
       name: "IERC4626Lite",
       args: any[],
@@ -3436,6 +5435,26 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.SuretyBondNFT>;
+    deployContract(
+      name: "SWIFTGPIAdapter",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SWIFTGPIAdapter>;
+    deployContract(
+      name: "SWIFTIntegrationBridge",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SWIFTIntegrationBridge>;
+    deployContract(
+      name: "SWIFTSharedLedgerRail",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SWIFTSharedLedgerRail>;
+    deployContract(
+      name: "SystemBootstrap",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SystemBootstrap>;
     deployContract(
       name: "InstitutionalEMTUpgradeable",
       args: any[],
@@ -3472,6 +5491,51 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.WrappedShares4626>;
     deployContract(
+      name: "GlobalDEX",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.GlobalDEX>;
+    deployContract(
+      name: "InstitutionalDEX",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.InstitutionalDEX>;
+    deployContract(
+      name: "AssetBasket",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AssetBasket>;
+    deployContract(
+      name: "ETFWrapper",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ETFWrapper>;
+    deployContract(
+      name: "MMFVault",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.MMFVault>;
+    deployContract(
+      name: "TBillVault",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.TBillVault>;
+    deployContract(
+      name: "UniversalBasicIncome",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.UniversalBasicIncome>;
+    deployContract(
+      name: "UniversalDeployer",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.UniversalDeployer>;
+    deployContract(
+      name: "UnykornL1Bridge",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.UnykornL1Bridge>;
+    deployContract(
       name: "GuardedUUPS",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -3482,50 +5546,20 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ISO20022Emitter>;
     deployContract(
-      name: "IAny2EVMMessageReceiver",
+      name: "AlgorithmicVerification",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IAny2EVMMessageReceiver>;
+    ): Promise<Contracts.AlgorithmicVerification>;
     deployContract(
-      name: "IRouterClient",
+      name: "SystemStateMachines",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IRouterClient>;
+    ): Promise<Contracts.SystemStateMachines>;
     deployContract(
-      name: "AccessControlUpgradeable",
+      name: "ThirdPartyValidation",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.AccessControlUpgradeable>;
-    deployContract(
-      name: "Initializable",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Initializable>;
-    deployContract(
-      name: "UUPSUpgradeable",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.UUPSUpgradeable>;
-    deployContract(
-      name: "ContextUpgradeable",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ContextUpgradeable>;
-    deployContract(
-      name: "ERC165Upgradeable",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC165Upgradeable>;
-    deployContract(
-      name: "PausableUpgradeable",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.PausableUpgradeable>;
-    deployContract(
-      name: "ReentrancyGuardUpgradeable",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ReentrancyGuardUpgradeable>;
+    ): Promise<Contracts.ThirdPartyValidation>;
 
     // default types
     getContractFactory(
